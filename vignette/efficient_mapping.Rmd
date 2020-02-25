@@ -1,7 +1,11 @@
 ---
 title: "Make maps quickly"
 author: "Sean Rohan"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Make maps quickly}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}
