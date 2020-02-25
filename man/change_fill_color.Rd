@@ -4,10 +4,10 @@
 \alias{change_fill_color}
 \title{Change color scale on plots}
 \usage{
-change_fill_color(in.dat, new.scheme, show.plot = TRUE, ...)
+change_fill_color(x, new.scheme, show.plot = TRUE, ...)
 }
 \arguments{
-\item{in.dat}{A list containing the ggplot object returned by \code{make_idw_map()}}
+\item{x}{A list containing the ggplot object returned by \code{make_idw_map()}}
 }
 \value{
 Returns a ggplot object with the fill scale replaced

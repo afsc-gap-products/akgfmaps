@@ -5,7 +5,7 @@
 \title{Create map file}
 \usage{
 create_map_file(
-  in.dat,
+  x,
   file.prefix = NA,
   file.path = NA,
   try.change_text_size = FALSE,
@@ -17,7 +17,7 @@ create_map_file(
 )
 }
 \arguments{
-\item{in.dat}{List containing ggplot object}
+\item{x}{List containing ggplot object}
 
 \item{file.prefix}{Character vector indicating what name should precede the file name. If not provided, uses \code{key.title} from the output of \code{make_idw_map}}
 

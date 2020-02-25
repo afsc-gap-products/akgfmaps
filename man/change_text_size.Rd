@@ -4,10 +4,10 @@
 \alias{change_text_size}
 \title{Function to change the size of text in plots}
 \usage{
-change_text_size(in.dat, size.mult, scale.theme = 1.125)
+change_text_size(x, size.mult, scale.theme = 1.125)
 }
 \arguments{
-\item{in.plot}{ggplot object that requires text resizing}
+\item{x}{ggplot object that requires text resizing}
 }
 \description{
 Function to change the size of text in plots

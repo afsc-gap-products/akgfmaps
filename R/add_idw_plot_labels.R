@@ -14,11 +14,13 @@
 #' 
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 
-add_idw_plot_labels <- function(in.dat, lab.select = c("islands", "bathymetry", "convention line", "mainland", "peninsula"), 
+add_map_labels <- function(x, lab.select = c("islands", "bathymetry", "convention line", "mainland", "peninsula"), 
                                 new.places = NULL, 
                                 lab.replace = FALSE,
                                 transform.new.places = TRUE,
                                 add.scale.bar = "br") {
+  in.dat <- x
+  
   # Load labels and plotting locations
   placenames <- read.csv(file = system.file("data", 
                                             file = "placenames.csv", 

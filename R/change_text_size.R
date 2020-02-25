@@ -1,11 +1,13 @@
 #' Function to change the size of text in plots
 #' 
-#' @param in.plot ggplot object that requires text resizing
+#' @param x ggplot object that requires text resizing
 #' @size.mult Size multiplier for rescaling text.
 #' 
 #' @author Sean K. Rohan, \email{sean.rohan@@noaa.gov}
 
-change_text_size <- function(in.dat, size.mult, scale.theme = 1.125) {
+change_text_size <- function(x, size.mult, scale.theme = 1.125) {
+  
+  in.dat <- x
   
   # Vector to store class categories
   geom.class <- vector(length = length(in.dat$plot$layers))

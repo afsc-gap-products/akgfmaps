@@ -2,10 +2,10 @@
 #' 
 #' This function can be used to make inverse-distance-weighted plots for the eastern Bering Sea and northern Bering Sea
 
-#' @param cpue.df Data frame which contains at minimum: CPUE, LATITUDE, and LONGITUDE. Can be passed as vectors instead (see below). Default value: \code{NA}
+#' @param x Data frame which contains at minimum: CPUE, LATITUDE, and LONGITUDE. Can be passed as vectors instead (see below). Default value: \code{NA}
 #' @param region Character vector indicating which plotting region to use. 
 #' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in degrees c(lon, lat). Default c(0.05, 0.05)
-#' @param SPECIES_NAME
+#' @param COMMON_NAME
 #' @param LATITUDE
 #' @param LONGITUDE
 #' @param CPUE_KGHA
@@ -14,7 +14,7 @@
 #' @param set.breaks Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"
 #' @param grid.cell Optional. Numeric vector of length two, specifying the resolution for the extrapolation grid in degrees. Default c(0.05,0.05)
 #' @param set.crs Character vector containing the coordinate reference system for projecting the extrapolation grid.
-#' @param key.title Character vector which will appear in the legend above CPUE (kg/ha).
+#' @param key.title Character vector which will appear in the legend above CPUE (kg/ha). Default = "auto" tries to pull COMMON_NAME from input.
 #' @param log.transform Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.
 #' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 4
 #' 
@@ -22,8 +22,8 @@
 #' 
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 
-make_idw_map <- function(cpue.df = NA,
-                          SPECIES_NAME = NA,
+make_idw_map <- function(x = NA,
+                          COMMON_NAME = NA,
                           LATITUDE = NA,
                           LONGITUDE = NA,
                           CPUE_KGHA = NA,
@@ -33,15 +33,19 @@ make_idw_map <- function(cpue.df = NA,
                           grid.cell = c(0.05, 0.05),
                           set.crs = "+proj=longlat +datum=NAD83",
                           proj.crs = "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-                          key.title = NULL,
+                          key.title = "auto",
                           log.transform = FALSE,
                           idw.nmax = 4) {
-  x <- cpue.df
   if(is.na(x)) {
-    x <- data.frame(SPECIES_NAME = SPECIES_NAME,
+    x <- data.frame(COMMON_NAME = COMMON_NAME,
                     LATITUDE = LATITUDE,
                     LONGITUDE = LONGITUDE,
                     CPUE_KGHA = CPUE_KGHA)
+  }
+  
+  # Determine what key.title should be
+  if(key.title == "auto") {
+    key.title <- x$COMMON_NAME[1]
   }
   
   # Set up mapping region
@@ -55,34 +59,21 @@ make_idw_map <- function(cpue.df = NA,
   x <- st_as_sf(x, coords = c(x = "LONGITUDE", y = "LATITUDE"), crs = crs(set.crs)) %>% 
     st_transform(crs = crs(proj.crs))
   
-  # Load spatial layers
-  # akland <- sf::st_read(paste(seantools::root.dir(), "afsc/WIP/fast maps/geo/akland/akland.shp", sep = "")) %>% 
-  #   sf::st_transform(crs = crs(x))
-  
-  akland <- sf::st_read(system.file("data", "akland.shp", package = "akgfmaps"))
+  akland <- sf::st_read(system.file("data", "akland.shp", package = "akgfmaps"), quiet = TRUE)
   
   # Southern area only
   if(region == "bs.south") {
-    # survey.area <- sf::st_read(paste(seantools::root.dir(), "afsc/WIP/fast maps/geo/extrpolation_area/ebs_south_survey_boundary.shp", sep = "")) %>% 
-    #   sf::st_transform(crs = crs(x))
-    # bathymetry <- sf::st_read(paste(seantools::root.dir(), "afsc/WIP/fast maps/geo/bathymetry/ebs_south_bathymetry.shp", sep = "")) %>% 
-    #   sf::st_transform(crs = crs(x))
-    
-    survey.area <- sf::st_read(system.file("data", "ebs_south_survey_boundary.shp", package = "akgfmaps")) %>% 
+    survey.area <- sf::st_read(system.file("data", "ebs_south_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE) %>% 
       sf::st_transform(crs = crs(x))
-    bathymetry <- sf::st_read(system.file("data", "ebs_south_bathymetry.shp", package = "akgfmaps")) %>% 
+    bathymetry <- sf::st_read(system.file("data", "ebs_south_bathymetry.shp", package = "akgfmaps"), quiet = TRUE) %>% 
       sf::st_transform(crs = crs(x))
   }
   
   # South and north
   if(region == "bs.all") {
-    # survey.area <- sf::st_read(paste(seantools::root.dir(), "afsc/WIP/fast maps/geo/extrpolation_area/ebs_south_and_north_survey_boundary.shp", sep = "")) %>% 
-    #   sf::st_transform(crs = crs(x))
-    # bathymetry <- sf::st_read(paste(seantools::root.dir(), "afsc/WIP/fast maps/geo/bathymetry/ebs_south_and_north_bathymetry.shp", sep = "")) %>% 
-    #   sf::st_transform(crs = crs(x))
-    survey.area <- sf::st_read(system.file("data", "ebs_south_and_north_survey_boundary.shp", package = "akgfmaps")) %>% 
+    survey.area <- sf::st_read(system.file("data", "ebs_south_and_north_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE) %>% 
       sf::st_transform(crs = crs(x))
-    bathymetry <- sf::st_read(system.file("data", "ebs_south_and_north_bathymetry.shp", package = "akgfmaps")) %>% 
+    bathymetry <- sf::st_read(system.file("data", "ebs_south_and_north_bathymetry.shp", package = "akgfmaps"), quiet = TRUE) %>% 
       sf::st_transform(crs = crs(x))
     
   }
@@ -119,13 +110,14 @@ make_idw_map <- function(cpue.df = NA,
   # Make sure breaks go to zero
   if(min(set.breaks) > 0) {
     set.breaks <- c(0, set.breaks)
-    if(min(set.breaks) == 0) {
-      set.breaks <- c(-1, set.breaks)
-    }
+  }
+  
+  if(min(set.breaks) == 0) {
+    set.breaks <- c(-1, set.breaks)
   }
   
   # Make sure breaks 
-  if(max(set.breaks) > max(stn.predict$var1.pred)){
+  if(max(set.breaks) < max(stn.predict$var1.pred)){
     set.breaks[length(set.breaks)] <- max(stn.predict$var1.pred) + 1
   }
   
