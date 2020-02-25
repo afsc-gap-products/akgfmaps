@@ -25,4 +25,4 @@ Imports: gstat,
     colorspace,
     ggspatial
 Suggests: knitr, rmarkdown
-VignetteBuilder: knitr::rmarkdown
+VignetteBuilder: knitr
