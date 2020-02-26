@@ -23,8 +23,8 @@ create_map_file <- function(x,
                             res = 300, 
                             bg = "transparent") {
   in.dat <- x
-  
   size.changed <- FALSE
+  
   # Create file.prefix if not provided
   if(is.na(file.prefix)) {
     file.prefix <- in.dat$key.title
