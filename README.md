@@ -17,4 +17,4 @@ devtools::install_github("sean-rohan/akgfmaps", build_vignettes = TRUE)
 
 # Vignettes
 
-Vignettes for akgfmaps are accessible using \code{browseVignettes('akgfmaps')}
+Vignettes are accessible using browseVignettes('akgfmaps').
