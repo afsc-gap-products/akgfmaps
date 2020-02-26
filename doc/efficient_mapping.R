@@ -1,22 +1,7 @@
----
-title: "Make maps quickly"
-author: "Sean Rohan"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Make maps quickly}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
-```
 
-## Make maps quickly and efficiently using pipe operators
-
-The following code shows how to use akgfmaps to quickly and efficiently make maps without cluttering up the workspace. Prior to this step, it is necessary to determine what breaks, colors, labels, and map sizes to use for each species.
-
-```{r, message=FALSE, warning=FALSE}
+## ---- message=FALSE, warning=FALSE--------------------------------------------
 library(akgfmaps)
 
 akgfmaps::YFS2017 %>% 
@@ -33,4 +18,5 @@ akgfmaps::YFS2017 %>%
                             units = "in", 
                             res = 300, 
                             bg = "transparent")
-```
+
+

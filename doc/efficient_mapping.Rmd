@@ -33,4 +33,5 @@ akgfmaps::YFS2017 %>%
                             units = "in", 
                             res = 300, 
                             bg = "transparent")
+
 ```

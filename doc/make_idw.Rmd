@@ -1,0 +1,169 @@
+---
+title: "Make inverse distance weighted maps using akgfmaps"
+author: "Sean Rohan"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{How to make IDW maps using akgfmaps}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+This vignette demonstrates how to create IDW maps using akgfmaps. If you haven't installed akgfmaps already, follow the installation instructions on the \code{README}. Then, load the akgfmaps package.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(akgfmaps)
+```
+
+The package and all of the dependencies should load. If they do not, make sure you are running R >= 3.6, and verify that all of the dependencies listed in the \code{DESCRIPTION} file are installed.
+
+## Documentation
+
+Function documentation is accessible using the standard R \code{?} convention (e.g. documentation for \code{make_idw_map} can be accessed using \code{?make_idw_map}).
+
+```{r eval=FALSE}
+?make_idw_map
+```
+
+## Make IDW maps
+
+Start by loading and inspecting the 2017 EBS and NBS yellowfin sole CPUE data that is included with the package. 
+
+```{r}
+# Load 2017 EBS and NBS yellowfin sole data
+yfs2017 <- akgfmaps::YFS2017
+head(yfs2017)
+```
+
+The data includes the species common name, year, station id, latitude, longitude, and catch-per-unit effort in kilograms per hectare. At minimum, the data must include latitude, longitude, and catch-per-unit effort data to plot CPUE.
+
+The function for performing the IDW and making a plot is \code{make_idw_map}. The function uses gstat to perform the IDW, then raster, stars, and sf for plotting. As arguments to the \code{make_idw_map} function, Users can specify:
+
+ * The domain for IDW and mapping, using the 'region' argument. Currently, maps can automatically be generated standard EBS shelf survey area (region = "bs.south") and full EBS shelf (region = "bs.all").
+ * Set break points for plotting, manually or algorithmically, using the 'set.breaks' argument. This can be a numeric vector of breaks (manual) or a character vector passed to \code{classInt::classIntervals) to algorithmically define breaks.
+ * Generate a custom extrpolation domain for the output. This is automatically generated for "bs.south" and "bs.all"
+ * The resolution of the extrapolation grid using the 'grid.cell' argument. Extrpolation takes longer for riner resolution grids.
+ * Add a key.title (e.g. species name).
+ * Define an input coordinate reference system. Retain the default setting if input is in degrees latitude and longitude.
+ * Define an output coordinate reference system that will be used for plotting (defaults to Albers Equal Area).
+ * Set the number of 'neighbor' points used for IDW. Defaults to 4, more neighbors takes longer to run.
+ * Data can be passed to the function using a data.frame or vectors. If using a data.frame, column names need to include CPUE_KGHA, LATITUDE, and LONGITUDE.
+ 
+ See function documentation for default arguments. 
+ 
+ Below, we call the make_idw_map argument, specifying:
+  * region = "bs.all" (northern + southern EBS), which has a predefined extrapolation area.
+  * \code{grid.cell = c(0.02,0.02)
+
+
+```{r, message=FALSE, warning=TRUE}
+opt1 <- make_idw_map(x = yfs2017, # Pass data as a data frame
+             region = "bs.all", # Predefined bs.all area
+             set.breaks = "jenks", # Gets Jenks breaks from classint::classIntervals()
+             grid.cell = c(0.02, 0.02), # 0.2x0.2 degree grid cells
+             key.title = "yellowfin sole") # Include yellowfin sole in the legend title
+
+```
+
+The \code{make_idw_map} function returns a list containing object which contain information about the region, number of breaks, and key.title, which are used by other functions to manipulate plots and add labels.
+
+```{r}
+opt1$region
+opt1$n.breaks
+opt1$key.title
+```
+
+Another object in the list is a extrapolation grid (a 'stars' object) which can be used to make plots outside of akgfmaps, but also retains the crs for plotting.
+
+```{r}
+plot(opt1$extrapolation.grid)
+st_crs(opt1$extrapolation.grid)
+class(opt1$extrapolation.grid)
+```
+
+The last object in the list is a ggplot object.
+
+```{r, warning = FALSE}
+opt1$plot
+```
+
+Map layers are included in the package and do not need to be provided separately. Changes to text sizing, color palette, and addition of plot labels is done using change_text_size, change_fill_color, and add_idw
+
+
+## Changing colors
+
+The \code{change_fill_color} function changes the fill color palette using predefined color palettes. Refer to the function documentation for a list of colors. Below, I show two transformations, one to grey scale and one to red, using pipe operators \code{%>%} and passing the new fill color to the \code{new.scheme} argument. If no argument is provided to new.scheme, a color palette selector tool will open in a separate window \code{colorspace::choose_palette()}. The predefined color palettes are colorblind and grayscale friendly.
+
+```{r, warning=FALSE, message=FALSE}
+# Grey Note that the WHOLE list that was returned by make_idw_map should be passed to the function.
+opt1.grey <- opt1 %>% change_fill_color(new.scheme = "grey", show.plot = FALSE)
+
+# Red
+opt1.red <- opt1 %>% change_fill_color(new.scheme = "red", show.plot = FALSE)
+
+opt1.grey$plot
+opt1.red$plot
+
+```
+
+The returned list objects retain the same structure as the objects from make_idw_map
+
+
+## Adding labels
+
+Labels can be added by passing a data frame of labels, locations, and label types to the \code{add_idw_labels} function. Alternatively, pre-defined labels can be added to the plot based on the region. Below, pre-defined labels are added to the plot using \code{geom_text} and \code{geom_shadowtext}. Below, labels and a scale bar are added to the greyscale plot using pre-defined settings based on the plot region.
+
+
+```{r warning=FALSE}
+opt1.grey <- opt1.grey %>% add_map_labels()
+opt1.grey$plot
+```
+
+Custom labels can also be appended to the object, with sizing and orientation based on defined 'types.' In the example below, a data frame is passed with plotting locations. Internally, the \code{add_idw_plot_labels} function transforms long/lat coordinates in eastings to the Albers Equal Area projection of the map. See function documentation for options to turn on/off spatial transformations.
+
+```{r, warning=FALSE, message=FALSE}
+# ONLY custom label
+opt1.red2 <- opt1.red %>% add_map_labels(new.places = data.frame(type = "islands", region = "bs.all", x = -163, y = 57, lab = "Bristol Bay"), lab.replace = TRUE)
+opt1.red2$plot
+
+```
+
+```{r, warning=FALSE, message=FALSE}
+# Add custom label
+opt1.red <- opt1.red %>% add_map_labels(new.places = data.frame(type = "islands", region = "bs.all", x = -163, y = 57, lab = "Bristol Bay"), lab.replace = FALSE)
+opt1.red$plot
+
+```
+
+## Create map file
+
+After labels and colors are added to the map, the \code{create_map_file()} function can be used to create publication-quality png files. It automatically rescales axis and text labels for some pre-defined plot sizes. Output file names can be specified using file.prefix, or they will be extracted automatically from the input list. The function passes plotting arguments to \code{png()}. The argument \code{try.change_text_size} indicates whether the function should try to resize text based on a pre-defined scaling factor.
+
+```{r}
+opt1.grey %>%
+create_map_file(width = 8, # Passed to png()
+                height = 6,  # Passed to png() 
+                units = "in",  # Passed to png()
+                res = 300,  # Passed to png()
+                bg = "transparent", # Passed to png()
+                file.path = "./", 
+                try.change_text_size = TRUE)
+```
+
+## Resizing text
+
+If the desired size for the map is not pre-defined, the \code{change_text_size()} function can be used resize plot text prior to creating a map.
+
+```{r warning=FALSE}
+opt.grey2 <- opt1.grey %>% change_text_size(size.mult = 0.5)
+opt.grey2$plot
+```
+
+## Exploring break options
+
+See the breaks vignette for details.

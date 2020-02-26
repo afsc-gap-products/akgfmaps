@@ -8,13 +8,19 @@ This package was built in R 3.6.2.
 
 # Installation
 
-akgfmaps can be installed by starting R and running the following code. Installation requires the devtools package.
+akgfmaps can be installed by starting R and running the code below.
 
+To build with vignettes:
+```{r}
+devtools::install_github("sean-rohan/akgfmaps", build_vignettes = TRUE)
 ```
-require(devtools)
-install_github("sean-rohan/akgfmaps")
+
+To build without vignettes (faster):
+```{r}
+devtools::install_github("sean-rohan/akgfmaps")
 ```
 
-#Vignette
 
-Forthcoming...
+#Vignettes
+
+Once installed, vignettes for akgfmaps are accessible using \code{browseVignettes('akgfmaps')}
