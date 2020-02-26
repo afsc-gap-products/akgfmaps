@@ -3,7 +3,7 @@
 #' Select which place labels should be included on the map based on category and region. Currently supports regions: 'bs.all' and 'bs.south'
 #' See data/placenames for the default list of locations.
 #'   
-#' @param in.dat A list containing the ggplot object returned by \code{make_idw_map()} or \code{change_fill_color}.
+#' @param x A list containing the ggplot object returned by \code{make_idw_map()} or \code{change_fill_color}.
 #' @param lab.select A vector indicating which types of labels to include on the map.
 #' @param new.places A data frame containing new locations and labels to add to the map.
 #' @param lab.replace Logical indicating whether new.places should be added to the default labels or replace the default labels.

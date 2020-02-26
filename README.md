@@ -1,7 +1,5 @@
 # akgfmaps
-A package to produce publication-quality catch-per-unit-effort maps using R using bottom-trawl survey catch data. Package currently includes support for the eastern Bering Sea continental shelf and northern Bering Sea.
-
-Spatial layers necessary for plotting are included in the package.
+An R package for producing publication-ready catch-per-unit-effort maps from bottom-trawl survey catch data from Alaska. The package currently includes support for the eastern Bering Sea continental shelf and northern Bering Sea.
 
 This package was built in R 3.6.2.
 
