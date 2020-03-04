@@ -75,7 +75,6 @@ make_idw_map <- function(x = NA,
       sf::st_transform(crs = crs(x))
     bathymetry <- sf::st_read(system.file("data", "ebs_south_and_north_bathymetry.shp", package = "akgfmaps"), quiet = TRUE) %>% 
       sf::st_transform(crs = crs(x))
-    
   }
   
   # Inverse distance weighting
