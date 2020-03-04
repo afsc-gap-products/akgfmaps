@@ -4,7 +4,13 @@ Title: Make CPUE maps
 Version: 0.0.2
 Authors@R: person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre"))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
-Depends: R (>= 3.6.0),
+Depends: R (>= 3.6.0)
+Description: This package makes inverse-distance weighted maps of bottom-trawl survey CPUE. Maps are intended to provide a qualitative visualization of CPUE.
+License: GPL (>=2)
+Encoding: UTF-8
+LazyData: false
+RoxygenNote: 7.0.2
+Imports: colorspace,
     gstat,
     dplyr,
     sf,
@@ -18,11 +24,5 @@ Depends: R (>= 3.6.0),
     classInt,
     magrittr,
     ggspatial
-Description: This package makes inverse-distance weighted maps of bottom-trawl survey CPUE. Maps are intended to provide a qualitative visualization of CPUE.
-License: GPL (>=2)
-Encoding: UTF-8
-LazyData: false
-RoxygenNote: 7.0.2
-Imports: colorspace
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
