@@ -3,13 +3,12 @@
 #' This function can be used to make inverse-distance-weighted plots for the eastern Bering Sea and northern Bering Sea
 
 #' @param x Data frame which contains at minimum: CPUE, LATITUDE, and LONGITUDE. Can be passed as vectors instead (see below). Default value: \code{NA}
-#' @param region Character vector indicating which plotting region to use. 
+#' @param region Character vector indicating which plotting region to use. Options: bs.south, bs.north, bs.all
 #' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in degrees c(lon, lat). Default c(0.05, 0.05)
 #' @param COMMON_NAME
 #' @param LATITUDE
 #' @param LONGITUDE
 #' @param CPUE_KGHA
-#' @param region Optional. Character vector specifying which plotting region is to be used. Options: bs.south, bs.north, bs.all
 #' @param extrap.box Optional. Vector specifying the dimensions of the extrapolation grid. Elements of the vector should be named to specify the minimum and maximum x and y values c(xmn, xmx, ymn, ymx). If not provided, region will be used to set the extrapolation area.
 #' @param set.breaks Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"
 #' @param grid.cell Optional. Numeric vector of length two, specifying the resolution for the extrapolation grid in degrees. Default c(0.05,0.05)
@@ -96,7 +95,7 @@ make_idw_map <- function(x = NA,
   extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) %>% 
     sf::st_as_sf() %>% 
     sf::st_transform(crs = crs(x)) %>% 
-    sf::st_rasterize() %>% 
+    stars::st_rasterize() %>% 
     sf::st_join(survey.area, join = st_intersects) 
   
   # Format breaks for plotting----------------------------------------------------------------------
