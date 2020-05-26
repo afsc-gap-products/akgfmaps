@@ -43,47 +43,47 @@ make_idw_map <- function(x = NA,
                     CPUE_KGHA = CPUE_KGHA)
   }
   
-  # Determine what key.title should be
+  # Set legend title--------------------------------------------------------------------------------
   if(key.title == "auto") {
     key.title <- x$COMMON_NAME[1]
   }
   
-  # Set up mapping region
+  # Set up mapping region---------------------------------------------------------------------------
   if(is.na(extrap.box)) {
     if(region == "bs.south") {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 63)}
-    #if(region == "bs.north") {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 68)}
     if(region == "bs.all") {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 68)}
   }
   
-  # Assign CRS to input data
-  x <- sf::st_as_sf(x, coords = c(x = "LONGITUDE", y = "LATITUDE"), crs = crs(set.crs)) %>% 
-    st_transform(crs = crs(proj.crs))
+  # Assign CRS to input data------------------------------------------------------------------------
+  x <- sf::st_as_sf(x, coords = c(x = "LONGITUDE", y = "LATITUDE"), crs = sf::st_crs(set.crs)) %>% 
+    sf::st_transform(crs = sf::st_crs(proj.crs))
   
-  akland <- sf::st_read(system.file("data", "akland.shp", package = "akgfmaps"), quiet = TRUE)
+  akland <- sf::st_read(system.file("data", "akland.shp", package = "akgfmaps"), quiet = TRUE) %>% 
+    sf::st_transform(crs = sf::st_crs(proj.crs))
   
-  # Southern area only
+  # SEBS--------------------------------------------------------------------------------------------
   if(region == "bs.south") {
     survey.area <- sf::st_read(system.file("data", "ebs_south_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE) %>% 
-      sf::st_transform(crs = crs(x))
+      sf::st_transform(crs = sf::st_crs(x))
     bathymetry <- sf::st_read(system.file("data", "ebs_south_bathymetry.shp", package = "akgfmaps"), quiet = TRUE) %>% 
-      sf::st_transform(crs = crs(x))
+      sf::st_transform(crs = sf::st_crs(x))
   }
   
-  # South and north
+  # SEBS + NEBS-------------------------------------------------------------------------------------
   if(region == "bs.all") {
     survey.area <- sf::st_read(system.file("data", "ebs_south_and_north_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE) %>% 
-      sf::st_transform(crs = crs(x))
+      sf::st_transform(crs = sf::st_crs(x))
     bathymetry <- sf::st_read(system.file("data", "ebs_south_and_north_bathymetry.shp", package = "akgfmaps"), quiet = TRUE) %>% 
-      sf::st_transform(crs = crs(x))
+      sf::st_transform(crs = sf::st_crs(x))
   }
   
-  # Inverse distance weighting
+  # Inverse distance weighting----------------------------------------------------------------------
   idw_fit <- gstat::gstat(formula = CPUE_KGHA~1, locations = x, nmax = idw.nmax)
   
-  # Predict station points
+  # Predict station points--------------------------------------------------------------------------
   stn.predict <- predict(idw_fit, x)
   
-  # Generate extrapolation grid
+  # Generate extrapolation grid---------------------------------------------------------------------
   sp_extrap.raster <- raster::raster(xmn = extrap.box['xmn'],
                                      xmx=extrap.box['xmx'],
                                      ymn=extrap.box['ymn'],
@@ -92,21 +92,21 @@ make_idw_map <- function(x = NA,
                                      nrow=(extrap.box['ymx']-extrap.box['ymn'])/grid.cell,
                                      crs = crs(set.crs)) %>% projectRaster(crs = crs(x))
   
-  # Predict, rasterize, mask
+  # Predict, rasterize, mask------------------------------------------------------------------------
   extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) %>% 
-    st_as_sf() %>% 
-    st_transform(crs = crs(x)) %>% 
-    st_rasterize() %>% 
-    st_join(survey.area, join = st_intersects) 
+    sf::st_as_sf() %>% 
+    sf::st_transform(crs = crs(x)) %>% 
+    sf::st_rasterize() %>% 
+    sf::st_join(survey.area, join = st_intersects) 
   
-  # Format breaks for plotting
+  # Format breaks for plotting----------------------------------------------------------------------
   # Automatic break selection based on character vector.
   if(is.character(set.breaks[1])) {
     set.breaks <- tolower(set.breaks)
     set.breaks <- c(-1, round(classInt::classIntervals(x$CPUE_KGHA, n = 5, style = set.breaks)$brks))
   }
   
-  # Make sure breaks go to zero
+  # Ensure breaks go to zero------------------------------------------------------------------------
   if(min(set.breaks) > 0) {
     set.breaks <- c(0, set.breaks)
   }
@@ -115,13 +115,13 @@ make_idw_map <- function(x = NA,
     set.breaks <- c(-1, set.breaks)
   }
   
-  # Make sure breaks 
+  # Ensure breaks span the full range---------------------------------------------------------------
   if(max(set.breaks) < max(stn.predict$var1.pred)){
     set.breaks[length(set.breaks)] <- max(stn.predict$var1.pred) + 1
   }
   
   
-  # Trim breaks to significant digits
+  # Trim breaks to significant digits to account for differences in range among species-------------
   dig.lab <- 7
   set.levels <- cut(stn.predict$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
   
@@ -131,13 +131,13 @@ make_idw_map <- function(x = NA,
     
   }
   
-  # Cut extrapolation grid
+  # Cut extrapolation grid to support discrete scale------------------------------------------------
   extrap.grid$var1.pred <- cut(extrap.grid$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
   
-  # Which breaks need commas?
+  # Which breaks need commas?-----------------------------------------------------------------------
   sig.dig <- round(set.breaks[which(nchar(round(set.breaks)) >= 4)])
   
-  # Function to make neat legend labels
+  # Drop brackets, add commas, create 'No catch' level to legend labels-----------------------------
   make_level_labels <- function(vec) {
     vec <- as.character(vec)
     vec[grep("-1", vec)] <- "No catch"
@@ -150,13 +150,13 @@ make_idw_map <- function(x = NA,
     return(vec)
   }
   
-  # Assign level names to breaks for plotting
+  # Assign level names to breaks for plotting-------------------------------------------------------
   extrap.grid$var1.pred <- factor(make_level_labels(extrap.grid$var1.pred), levels = make_level_labels(levels(set.levels)))
   
-  # Number of breaks for color adjustments
+  # Number of breaks for color adjustments----------------------------------------------------------
   n.breaks <- length(levels(set.levels))
   
-  # Make plot
+  # Make plot---------------------------------------------------------------------------------------
   if(region %in% c("bs.south", "bs.all")) {
   p1 <- ggplot() +
     geom_stars(data = extrap.grid) +
