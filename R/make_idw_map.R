@@ -57,7 +57,7 @@ make_idw_map <- function(x = NA,
   x <- sf::st_as_sf(x, coords = c(x = "LONGITUDE", y = "LATITUDE"), crs = sf::st_crs(set.crs)) %>% 
     sf::st_transform(crs = sf::st_crs(proj.crs))
   
-  akland <- sf::st_read(system.file("data", "akland.shp", package = "akgfmaps"), quiet = TRUE) %>% 
+  akland <- sf::st_read(system.file("data", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE) %>% 
     sf::st_transform(crs = sf::st_crs(proj.crs))
   
   # SEBS--------------------------------------------------------------------------------------------
