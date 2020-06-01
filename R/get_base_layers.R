@@ -22,9 +22,14 @@ get_base_layers <- function(select.region, set.crs = "+proj=longlat +datum=NAD83
   if(select.region == "bs.south") {
     survey.area <- sf::st_read(system.file("data", "ebs_south_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
     bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-174.8851, -156.8722), 
-                                                                   y = c(52.51490, 66.13251)), 
+    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.2851, -154.2722), 
+                                                                   y = c(54.51490, 63.13251)), 
                                                         out.crs = set.crs)
+    graticule <- st_graticule(lat = seq(54,64,2), 
+                              lon = seq(-180,-140, 5), 
+                              margin = 1e-5)
+    lon.breaks <- seq(-180, -154, 5)
+    lat.breaks <- seq(54,64,2)
   }
   
   # NEBS+SEBS---------------------------------------------------------------------------------------
@@ -55,6 +60,9 @@ get_base_layers <- function(select.region, set.crs = "+proj=longlat +datum=NAD83
               survey.area = survey.area,
               bathymetry = bathymetry,
               place.labels = place.labels,
+              graticule = graticule,
               crs = set.crs,
-              plot.boundary = plot.boundary))
+              plot.boundary = plot.boundary,
+              lon.breaks = lon.breaks,
+              lat.breaks = lat.breaks))
 }
