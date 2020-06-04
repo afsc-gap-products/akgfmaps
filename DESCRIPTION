@@ -7,7 +7,7 @@ Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 3.6.2),
     classInt (>= 0.4-1),
     dplyr,
-    ggplot,
+    ggplot2,
     ggspatial,
     gstat (>= 2.0-1),
     magrittr,
