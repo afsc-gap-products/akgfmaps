@@ -6,15 +6,18 @@ Authors@R: person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut"
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 3.6.2),
     classInt (>= 0.4-1),
+    dplyr,
+    ggplot,
     ggspatial,
     gstat (>= 2.0-1),
+    magrittr,
+    plyr,
     raster,
     RColorBrewer,
     reshape,
     sf,
     shadowtext,
-    stars,
-    tidyverse
+    stars
 Description: This package makes inverse-distance weighted maps of bottom-trawl survey CPUE. Maps are intended to provide a qualitative visualization of CPUE.
 License: GPL (>=2)
 Encoding: UTF-8
