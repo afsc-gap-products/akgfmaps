@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Get base mapping layers
 
-The `get_base_layers()` function retrieves shapefiles and other map features that are typically used to make plots of RACE survey areas. The function transforms layers to a user-specified projection based on a coordinate reference system. Alternatively, a default coordinate reference system can be assigned by the function, based on the region.
+The get_base_layers() function retrieves shapefiles and other map features that are typically used to make plots of RACE survey areas. The function transforms layers to a user-specified projection based on a coordinate reference system. Alternatively, a default coordinate reference system can be assigned by the function, based on the region.
 
 As of 5/27/2020, get_base_layers has support for the SEBS shelf survey area, and SEBS+EBS shelf.
 
@@ -30,14 +30,14 @@ names(SEBS)
 
 ```
 
-The list returned by `get_base_layers()` contains:
-*akland = Alaska land (class `sf`).
-*survey.area = Survey area boundary (class `sf`).
-*bathymetry = Bathymetric contours. EBS shelf default: 50 m, 100 m, 200 m (class `sf`).
-*place.labels = A data frame with labels and plotting locations (class `data.frame`).
-*graticule = Graticule (class `sf`).
-*crs = The coordinate reference system for the layers (class `crs`).
-*plot.boundary = Suggested plot boundary (class `data.frame`).
+The list returned by get_base_layers contains:
+*akland = Alaska land (class sf).
+*survey.area = Survey area boundary (class sf).
+*bathymetry = Bathymetric contours. EBS shelf default: 50 m, 100 m, 200 m (class sf).
+*place.labels = A data frame with labels and plotting locations (class data.frame).
+*graticule = Graticule (class sf).
+*crs = The coordinate reference system for the layers (class crs).
+*plot.boundary = Suggested plot boundary (class data.frame).
 *lon.breaks = Latitude breaks corresponding with graticule.
 *lat.breaks = Longitude breaks corresponding with graticule.
 
@@ -95,7 +95,7 @@ SEBS_plot + geom_text(data = my_label,
 
 ## Add labels
 
-Formatted placename labels can be added directly to the plot using `akgfmaps::add_map_labels()`, although it is suggested to add labels manually to avoid formatting issues.
+Formatted placename labels can be added directly to the plot using akgfmaps::add_map_labels(), although it is suggested to add labels manually to avoid formatting issues.
 
 ```{r fig.width=8, fig.height = 6}
 (SEBS_plot %>% add_map_labels(region = "bs.south", new.places = SEBS$place.labels))
