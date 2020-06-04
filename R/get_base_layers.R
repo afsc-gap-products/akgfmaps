@@ -11,7 +11,7 @@ get_base_layers <- function(select.region, set.crs = "+proj=longlat +datum=NAD83
   # Automatically set CRS---------------------------------------------------------------------------
   if(set.crs == "auto") {
     region.crs <- c("+proj=aea +lat_1=55 +lat_2=60 +lat_0=57.5 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-                    "+proj=aea +lat_1=55 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
+                    "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
     set.crs <- region.crs[match(select.region, c("bs.south", "bs.all"))]
   }
   
