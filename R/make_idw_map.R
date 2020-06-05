@@ -22,7 +22,6 @@
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 
 make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA, CPUE_KGHA = NA, region = "bs.south", extrap.box = NA, set.breaks = "jenks", grid.cell = c(0.05, 0.05), set.crs = "+proj=longlat +datum=NAD83", proj.crs = "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs", key.title = "auto", log.transform = FALSE, idw.nmax = 4) {
-  
   if(is.na(x)) {
     x <- data.frame(COMMON_NAME = COMMON_NAME,
                     LATITUDE = LATITUDE,
@@ -83,8 +82,15 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   # Predict, rasterize, mask------------------------------------------------------------------------
   extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) %>%
   rasterFromXYZ() %>%
-    mask(survey.area) %>%
-    as.data.frame(xy = TRUE)
+    mask(survey.area) 
+  
+  # Shenanigans to deal with an issue with an error after a raster mask is applied------------------
+  eg.coords <- coordinates(extrap.grid)
+  eg.layer <- extrap.grid@data@values
+  
+  extrap.grid <- data.frame(x = eg.coords[,1],
+                            y = eg.coords[,2],
+                            layer = eg.layer)
 
   # Format breaks for plotting----------------------------------------------------------------------
   # Automatic break selection based on character vector.
