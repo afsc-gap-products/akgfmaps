@@ -12,7 +12,8 @@
 #' @param extrap.box Optional. Vector specifying the dimensions of the extrapolation grid. Elements of the vector should be named to specify the minimum and maximum x and y values c(xmn, xmx, ymn, ymx). If not provided, region will be used to set the extrapolation area.
 #' @param set.breaks Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"
 #' @param grid.cell Optional. Numeric vector of length two, specifying the resolution for the extrapolation grid in degrees. Default c(0.05,0.05)
-#' @param set.crs Character vector containing the coordinate reference system for projecting the extrapolation grid.
+#' @param in.crs Character vector containing the coordinate reference system for projecting the extrapolation grid.
+#' @param out.crs Character vector containing the coordinate reference system for projecting the extrapolation grid.
 #' @param key.title Character vector which will appear in the legend above CPUE (kg/ha). Default = "auto" tries to pull COMMON_NAME from input.
 #' @param log.transform Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.
 #' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 4
@@ -21,7 +22,7 @@
 #' 
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 
-make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA, CPUE_KGHA = NA, region = "bs.south", extrap.box = NA, set.breaks = "jenks", grid.cell = c(0.05, 0.05), set.crs = "+proj=longlat +datum=NAD83", proj.crs = "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs", key.title = "auto", log.transform = FALSE, idw.nmax = 4) {
+make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA, CPUE_KGHA = NA, region = "bs.south", extrap.box = NA, set.breaks = "jenks", grid.cell = c(0.05, 0.05), in.crs = "+proj=longlat +datum=NAD83", out.crs = "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs", key.title = "auto", log.transform = FALSE, idw.nmax = 4) {
   if(is.na(x)) {
     x <- data.frame(COMMON_NAME = COMMON_NAME,
                     LATITUDE = LATITUDE,
@@ -41,11 +42,11 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   }
   
   # Assign CRS to input data------------------------------------------------------------------------
-  x <- sf::st_as_sf(x, coords = c(x = "LONGITUDE", y = "LATITUDE"), crs = sf::st_crs(set.crs)) %>% 
-    sf::st_transform(crs = sf::st_crs(proj.crs))
+  x <- sf::st_as_sf(x, coords = c(x = "LONGITUDE", y = "LATITUDE"), crs = sf::st_crs(in.crs)) %>% 
+    sf::st_transform(crs = sf::st_crs(out.crs))
   
   akland <- sf::st_read(system.file("data", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE) %>% 
-    sf::st_transform(crs = sf::st_crs(proj.crs))
+    sf::st_transform(crs = sf::st_crs(out.crs))
   
   # SEBS--------------------------------------------------------------------------------------------
   if(region == "bs.south") {
@@ -76,7 +77,7 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
                                      ymx=extrap.box['ymx'],
                                      ncol=(extrap.box['xmx']-extrap.box['xmn'])/grid.cell,
                                      nrow=(extrap.box['ymx']-extrap.box['ymn'])/grid.cell,
-                                     crs = crs(set.crs)) %>% 
+                                     crs = crs(in.crs)) %>% 
     projectRaster(crs = crs(x))
   
   # Predict, rasterize, mask------------------------------------------------------------------------
@@ -181,5 +182,6 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
               extrapolation.grid = extrap.grid,
               region = region,
               n.breaks = n.breaks,
-              key.title = key.title))
+              key.title = key.title,
+              crs = out.crs))
 }

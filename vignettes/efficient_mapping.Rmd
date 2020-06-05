@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 The following code shows how to use akgfmaps to quickly and efficiently make maps without cluttering up the workspace. Prior to this step, it is necessary to determine what breaks, colors, labels, and map sizes to use for each species.
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, fig.width=12, fig.height = 9}
 library(akgfmaps)
 
 akgfmaps::YFS2017 %>% 

@@ -61,7 +61,7 @@ The function for performing the IDW and making a plot is \code{make_idw_map}. Th
   * \code{grid.cell = c(0.02,0.02)
 
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height = 6}
 opt1 <- make_idw_map(x = yfs2017, # Pass data as a data frame
              region = "bs.all", # Predefined bs.all area
              set.breaks = "jenks", # Gets Jenks breaks from classint::classIntervals()
@@ -78,17 +78,15 @@ opt1$n.breaks
 opt1$key.title
 ```
 
-Another object in the list is a extrapolation grid (a 'stars' object) which can be used to make plots outside of akgfmaps, but also retains the crs for plotting.
+The extrapolation.grid is a data frame that contains coordinates, layer continuous values, and discrete values that can be used to make plots outside of akgfmaps.
 
 ```{r}
-plot(opt1$extrapolation.grid)
-st_crs(opt1$extrapolation.grid)
-class(opt1$extrapolation.grid)
+head(opt1$extrapolation.grid)
 ```
 
 The last object in the list is a ggplot object.
 
-```{r, warning = FALSE}
+```{r, warning = FALSE, fig.width=8, fig.height = 6}
 opt1$plot
 ```
 
@@ -99,7 +97,7 @@ Map layers are included in the package and do not need to be provided separately
 
 The \code{change_fill_color} function changes the fill color palette using predefined color palettes. Refer to the function documentation for a list of colors. Below, I show two transformations, one to grey scale and one to red, using pipe operators \code{%>%} and passing the new fill color to the \code{new.scheme} argument. If no argument is provided to new.scheme, a color palette selector tool will open in a separate window \code{colorspace::choose_palette()}. The predefined color palettes are colorblind and grayscale friendly.
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, fig.width=8, fig.height = 6}
 # Grey Note that the WHOLE list that was returned by make_idw_map should be passed to the function.
 opt1.grey <- opt1 %>% change_fill_color(new.scheme = "grey", show.plot = FALSE)
 
@@ -119,21 +117,21 @@ The returned list objects retain the same structure as the objects from make_idw
 Labels can be added by passing a data frame of labels, locations, and label types to the \code{add_idw_labels} function. Alternatively, pre-defined labels can be added to the plot based on the region. Below, pre-defined labels are added to the plot using \code{geom_text} and \code{geom_shadowtext}. Below, labels and a scale bar are added to the greyscale plot using pre-defined settings based on the plot region.
 
 
-```{r warning=FALSE}
+```{r warning=FALSE, fig.width=8, fig.height = 6}
 opt1.grey <- opt1.grey %>% add_map_labels()
 opt1.grey$plot
 ```
 
 Custom labels can also be appended to the object, with sizing and orientation based on defined 'types.' In the example below, a data frame is passed with plotting locations. Internally, the \code{add_idw_plot_labels} function transforms long/lat coordinates in eastings to the Albers Equal Area projection of the map. See function documentation for options to turn on/off spatial transformations.
 
-```{r warning=FALSE, message=FALSE}
+```{r warning=FALSE, message=FALSE, fig.width=8, fig.height = 6}
 # ONLY custom label
 opt1.red2 <- opt1.red %>% add_map_labels(new.places = data.frame(type = "islands", region = "bs.all", x = -163, y = 57, lab = "Bristol Bay"), lab.replace = TRUE)
 opt1.red2$plot
 
 ```
 
-```{r warning=FALSE, message=FALSE}
+```{r warning=FALSE, message=FALSE, fig.width=8, fig.height = 6}
 # Add custom label
 opt1.red <- opt1.red %>% add_map_labels(new.places = data.frame(type = "islands", region = "bs.all", x = -163, y = 57, lab = "Bristol Bay"), lab.replace = FALSE)
 opt1.red$plot
@@ -144,7 +142,7 @@ opt1.red$plot
 
 After labels and colors are added to the map, the \code{create_map_file()} function can be used to create publication-quality png files. It automatically rescales axis and text labels for some pre-defined plot sizes. Output file names can be specified using file.prefix, or they will be extracted automatically from the input list. The function passes plotting arguments to \code{png()}. The argument \code{try.change_text_size} indicates whether the function should try to resize text based on a pre-defined scaling factor.
 
-```{r warning = FALSE}
+```{r warning = FALSE, fig.width=8, fig.height = 6}
 opt1.grey %>%
 create_map_file(width = 8, # Passed to png()
                 height = 6,  # Passed to png() 
@@ -157,9 +155,9 @@ create_map_file(width = 8, # Passed to png()
 
 ## Resizing text
 
-If the desired size for the map is not pre-defined, the \code{change_text_size()} function can be used resize plot text prior to creating a map.
+The \code{change_text_size()} function can be used resize plot text prior to creating a map if the desired size for the map is not pre-defined.
 
-```{r warning=FALSE}
+```{r warning=FALSE, fig.width=8, fig.height = 6}
 opt.grey2 <- opt1.grey %>% change_text_size(size.mult = 0.5)
 opt.grey2$plot
 ```
