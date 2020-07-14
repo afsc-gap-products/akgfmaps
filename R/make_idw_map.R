@@ -50,17 +50,17 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   
   # SEBS--------------------------------------------------------------------------------------------
   if(region == "bs.south") {
-    survey.area <- sf::st_read(system.file("data", "ebs_south_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE) %>% 
+    survey.area <- sf::st_read(system.file("data", "sebs_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE) %>% 
       sf::st_transform(crs = sf::st_crs(x))
-    bathymetry <- sf::st_read(system.file("data", "ebs_south_bathymetry.shp", package = "akgfmaps"), quiet = TRUE) %>% 
+    bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE) %>% 
       sf::st_transform(crs = sf::st_crs(x))
   }
   
   # SEBS + NEBS-------------------------------------------------------------------------------------
   if(region == "bs.all") {
-    survey.area <- sf::st_read(system.file("data", "ebs_south_and_north_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE) %>% 
+    survey.area <- sf::st_read(system.file("data", "ebs_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE) %>% 
       sf::st_transform(crs = sf::st_crs(x))
-    bathymetry <- sf::st_read(system.file("data", "ebs_south_and_north_bathymetry.shp", package = "akgfmaps"), quiet = TRUE) %>% 
+    bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE) %>% 
       sf::st_transform(crs = sf::st_crs(x))
   }
   
@@ -69,7 +69,7 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   
   # Predict station points--------------------------------------------------------------------------
   stn.predict <- predict(idw_fit, x)
-  
+
   # Generate extrapolation grid---------------------------------------------------------------------
   sp_extrap.raster <- raster::raster(xmn = extrap.box['xmn'],
                                      xmx=extrap.box['xmx'],
@@ -82,8 +82,8 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   
   # Predict, rasterize, mask------------------------------------------------------------------------
   extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) %>%
-  rasterFromXYZ() %>%
-    mask(survey.area) 
+  rasterFromXYZ() #%>% mask(survey.area)  
+  extrap.grid <- mask(extrap.grid, survey.area) 
   
   # Shenanigans to deal with an issue with an error after a raster mask is applied------------------
   eg.coords <- coordinates(extrap.grid)
