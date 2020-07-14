@@ -1,7 +1,7 @@
 Package: akgfmaps
 Type: Package
 Title: Make CPUE maps
-Version: 0.0.6
+Version: 1.0.0
 Authors@R: person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre"))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 3.6.2),
