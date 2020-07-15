@@ -30,18 +30,6 @@
 
 make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA, CPUE_KGHA = NA, region = "bs.south", extrap.box = NA, set.breaks = "jenks", grid.cell = c(0.05, 0.05), in.crs = "+proj=longlat +datum=NAD83", out.crs = "auto", key.title = "auto", log.transform = FALSE, idw.nmax = 4, use.survey.bathymetry = TRUE) {
   
-  x = akgfmaps::YFS2017
-  region = "bs.all"
-  extrap.box = NA
-  set.breaks = "jenks"
-  grid.cell = c(0.05, 0.05)
-  in.crs = "+proj=longlat +datum=NAD83"
-  out.crs = "auto"
-  key.title = "auto"
-  log.transform = FALSE
-  idw.nmax = 4
-  use.survey.bathymetry = TRUE  
-  
   # Convert vectors to data fram if x is NA---------------------------------------------------------
   if(is.na(x)) {
     x <- data.frame(COMMON_NAME = COMMON_NAME,
