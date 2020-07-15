@@ -17,12 +17,26 @@
 #' @param key.title Character vector which will appear in the legend above CPUE (kg/ha). Default = "auto" tries to pull COMMON_NAME from input.
 #' @param log.transform Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.
 #' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 4
-#' 
+#' @param use.survey.bathymetry Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE
 #' @return Returns a list containing: (1) $plot–a ggplot IDW map, (2) $extrapolation.grid–the extrapolation grid with estimated values, (4) $region–the region, which is used by \code{gapidw::change_fill_color()} for subsequent plot labeling, (4) $n.breaks–the number of level breaks, which is used by \code{gapidw::change_fill_color()} to adjust scale.
 #' 
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 
-make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA, CPUE_KGHA = NA, region = "bs.south", extrap.box = NA, set.breaks = "jenks", grid.cell = c(0.05, 0.05), in.crs = "+proj=longlat +datum=NAD83", out.crs = "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs", key.title = "auto", log.transform = FALSE, idw.nmax = 4) {
+make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA, CPUE_KGHA = NA, region = "bs.south", extrap.box = NA, set.breaks = "jenks", grid.cell = c(0.05, 0.05), in.crs = "+proj=longlat +datum=NAD83", out.crs = "auto", key.title = "auto", log.transform = FALSE, idw.nmax = 4, use.survey.bathymetry = TRUE) {
+  
+  x = akgfmaps::YFS2017
+  region = "bs.all"
+  extrap.box = NA
+  set.breaks = "jenks"
+  grid.cell = c(0.05, 0.05)
+  in.crs = "+proj=longlat +datum=NAD83"
+  out.crs = "auto"
+  key.title = "auto"
+  log.transform = FALSE
+  idw.nmax = 4
+  use.survey.bathymetry = TRUE  
+  
+  # Convert vectors to data fram if x is NA---------------------------------------------------------
   if(is.na(x)) {
     x <- data.frame(COMMON_NAME = COMMON_NAME,
                     LATITUDE = LATITUDE,
@@ -37,32 +51,25 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   
   # Set up mapping region---------------------------------------------------------------------------
   if(is.na(extrap.box)) {
-    if(region == "bs.south") {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 63)}
-    if(region == "bs.all") {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 68)}
+    if(region %in% c("bs.south", "sebs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 63)}
+    if(region %in% c("bs.all", "ebs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 68)}
+  }
+  
+  # Load map layers---------------------------------------------------------------------------------
+  map_layers <- akgfmaps::get_base_layers(select.region = region, set.crs = out.crs)
+  
+  # Assign CRS to handle automatic selection--------------------------------------------------------
+  out.crs <- map_layers$crs
+  
+  # Use survey bathymetry
+  if(use.survey.bathymetry) {
+    map_layers$bathymetry <- get_survey_bathymetry(select.region = region, set.crs = out.crs)
+    map_layers$bathymetry <- sf::st_intersection(map_layers$bathymetry, map_layers$survey.area)
   }
   
   # Assign CRS to input data------------------------------------------------------------------------
   x <- sf::st_as_sf(x, coords = c(x = "LONGITUDE", y = "LATITUDE"), crs = sf::st_crs(in.crs)) %>% 
-    sf::st_transform(crs = sf::st_crs(out.crs))
-  
-  akland <- sf::st_read(system.file("data", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE) %>% 
-    sf::st_transform(crs = sf::st_crs(out.crs))
-  
-  # SEBS--------------------------------------------------------------------------------------------
-  if(region == "bs.south") {
-    survey.area <- sf::st_read(system.file("data", "sebs_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE) %>% 
-      sf::st_transform(crs = sf::st_crs(x))
-    bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE) %>% 
-      sf::st_transform(crs = sf::st_crs(x))
-  }
-  
-  # SEBS + NEBS-------------------------------------------------------------------------------------
-  if(region == "bs.all") {
-    survey.area <- sf::st_read(system.file("data", "ebs_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE) %>% 
-      sf::st_transform(crs = sf::st_crs(x))
-    bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE) %>% 
-      sf::st_transform(crs = sf::st_crs(x))
-  }
+    sf::st_transform(crs = map_layers$crs)
   
   # Inverse distance weighting----------------------------------------------------------------------
   idw_fit <- gstat::gstat(formula = CPUE_KGHA~1, locations = x, nmax = idw.nmax)
@@ -83,7 +90,7 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   # Predict, rasterize, mask------------------------------------------------------------------------
   extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) %>%
   rasterFromXYZ() #%>% mask(survey.area)  
-  extrap.grid <- mask(extrap.grid, survey.area) 
+  extrap.grid <- mask(extrap.grid, map_layers$survey.area) 
   
   # Shenanigans to deal with an issue with an error after a raster mask is applied------------------
   eg.coords <- coordinates(extrap.grid)
@@ -145,38 +152,38 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   }
   
   # Assign level names to breaks for plotting-------------------------------------------------------
-  extrap.grid$discrete_layer <- factor(make_level_labels(extrap.grid$discrete_layer), levels = make_level_labels(levels(set.levels)))
+  extrap.grid$discrete_layer <- factor(make_level_labels(extrap.grid$discrete_layer), 
+                                       levels = make_level_labels(levels(set.levels)))
   
   # Number of breaks for color adjustments----------------------------------------------------------
   n.breaks <- length(levels(set.levels))
   
   # Make plot---------------------------------------------------------------------------------------
-  if(region %in% c("bs.south", "bs.all")) {
-  p1 <- ggplot() +
-    geom_tile(data = extrap.grid, aes(x = x, y = y, fill = discrete_layer)) +
-    geom_sf(data = bathymetry) + 
-    geom_sf(data = survey.area, fill = NA) +
-    geom_sf(data = akland, fill = "grey80") +
-    geom_sf(data = bathymetry) + 
-    geom_sf(data = st_graticule(lat = seq(50,66,2), lon = seq(-180,-140, 5), margin = 1e-5),  color = alpha("grey70", 0.3)) +
-    scale_fill_manual(name = paste0(key.title, "\nCPUE (kg/ha)"), 
-                      values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]), 
-                      na.translate = FALSE, # Don't use NA
-                      drop = FALSE) + # Keep all levels in the plot
-    scale_x_continuous(breaks = seq(-180, -154, 5)) + 
-    scale_y_continuous() + 
-    coord_sf(xlim = c(-1.4e6, -1.3e5),
-             ylim = c(5e5, 1.8e6)) +
-    theme(panel.border = element_rect(color = "black", fill = NA),
-          panel.background = element_rect(fill = NA, color = "black"),
-          legend.key = element_rect(fill = NA, color = "grey70"),
-          legend.position = c(0.12, 0.18),
-          axis.title = element_blank(),
-          axis.text = element_text(size = 10),
-          legend.text = element_text(size = 10),
-          legend.title = element_text(size = 10),
-          plot.background = element_rect(fill = NA, color = NA))
-  }
+    p1 <- ggplot() +
+    geom_sf(data = map_layers$survey.area, fill = NA) +
+      geom_tile(data = extrap.grid, aes(x = x, y = y, fill = discrete_layer)) +
+      geom_sf(data = map_layers$bathymetry) + 
+      geom_sf(data = map_layers$survey.area, fill = NA) +
+      geom_sf(data = map_layers$akland, fill = "grey80") +
+      geom_sf(data = map_layers$bathymetry) +
+      geom_sf(data = map_layers$graticule, color = alpha("grey70", 0.3)) +
+      scale_fill_manual(name = paste0(key.title, "\nCPUE (kg/ha)"), 
+                        values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]), 
+                        na.translate = FALSE, # Don't use NA
+                        drop = FALSE) + # Keep all levels in the plot
+      scale_x_continuous(breaks = map_layers$lon.breaks) + 
+      scale_y_continuous(breaks = map_layers$lat.breaks) + 
+      coord_sf(xlim = map_layers$plot.boundary$x,
+               ylim = map_layers$plot.boundary$y) +
+      theme(panel.border = element_rect(color = "black", fill = NA),
+            panel.background = element_rect(fill = NA, color = "black"),
+            legend.key = element_rect(fill = NA, color = "grey70"),
+            legend.position = c(0.12, 0.18),
+            axis.title = element_blank(),
+            axis.text = element_text(size = 10),
+            legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            plot.background = element_rect(fill = NA, color = NA))
   
   return(list(plot = p1, 
               extrapolation.grid = extrap.grid,
