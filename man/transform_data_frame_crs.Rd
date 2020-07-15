@@ -6,6 +6,7 @@
 \usage{
 transform_data_frame_crs(
   x,
+  coords = c("x", "y"),
   in.crs = "+proj=longlat",
  
     out.crs = "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
@@ -13,7 +14,9 @@ transform_data_frame_crs(
 )
 }
 \arguments{
-\item{x}{Input data frame with longitude column named 'x' and latitude column named 'y'}
+\item{x}{Input data frame.}
+
+\item{coords}{Vector of names of coordinate column with order longitude and latitude. Default c("x", "y")}
 
 \item{in.crs}{Coordinate reference system for input data frame. Default = '+proj=longlat'}
 

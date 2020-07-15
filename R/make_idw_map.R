@@ -18,7 +18,13 @@
 #' @param log.transform Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.
 #' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 4
 #' @param use.survey.bathymetry Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE
-#' @return Returns a list containing: (1) $plot–a ggplot IDW map, (2) $extrapolation.grid–the extrapolation grid with estimated values, (4) $region–the region, which is used by \code{gapidw::change_fill_color()} for subsequent plot labeling, (4) $n.breaks–the number of level breaks, which is used by \code{gapidw::change_fill_color()} to adjust scale.
+#' @return Returns a list containing: 
+#' (1) plot: a ggplot IDW map;
+#' (2) extrapolation.grid: the extrapolation grid with estimated values;
+#' (3) region: the region;
+#' (4) n.breaks: the number of level breaks;
+#' (5) key.title: title for the legend;
+#' (6) crs: coordinate reference system as a PROJ6 (WKT2:2019) string; 
 #' 
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 

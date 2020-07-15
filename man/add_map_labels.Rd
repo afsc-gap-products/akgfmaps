@@ -7,6 +7,7 @@
 add_map_labels(
   x,
   lab.select = c("islands", "bathymetry", "convention line", "mainland", "peninsula"),
+  region = NA,
   new.places = NULL,
   lab.replace = FALSE,
   transform.new.places = TRUE,
@@ -14,7 +15,11 @@ add_map_labels(
 )
 }
 \arguments{
+\item{x}{A list containing the ggplot object returned by \code{make_idw_map()} or \code{change_fill_color()}. Alternatively, a gg object.}
+
 \item{lab.select}{A vector indicating which types of labels to include on the map.}
+
+\item{region}{Vector indicating the plotting region. Only specify if x is a gg object.}
 
 \item{new.places}{A data frame containing new locations and labels to add to the map.}
 
@@ -23,8 +28,6 @@ add_map_labels(
 \item{transform.new.places}{Logical indicating whether the data frame passed to new.places should be transformed to match the map projection.}
 
 \item{add.scale.bar}{A character vector indicating where to add the scale bar. "br" for bottom right, "tl" for top left, etc. Default = "br"}
-
-\item{in.dat}{A list containing the ggplot object returned by \code{make_idw_map()} or \code{change_fill_color}.}
 }
 \value{
 Returns input list with IDW plot labels added.

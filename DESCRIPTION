@@ -1,7 +1,7 @@
 Package: akgfmaps
 Type: Package
 Title: Make CPUE maps
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre"))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 3.6.2),
@@ -23,7 +23,7 @@ Description: This package makes inverse-distance weighted maps of bottom-trawl s
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Imports: colorspace,
     viridis
 Suggests: knitr, rmarkdown

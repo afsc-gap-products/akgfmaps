@@ -14,18 +14,18 @@ make_idw_map(
   extrap.box = NA,
   set.breaks = "jenks",
   grid.cell = c(0.05, 0.05),
-  set.crs = "+proj=longlat +datum=NAD83",
- 
-    proj.crs = "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+  in.crs = "+proj=longlat +datum=NAD83",
+  out.crs = "auto",
   key.title = "auto",
   log.transform = FALSE,
-  idw.nmax = 4
+  idw.nmax = 4,
+  use.survey.bathymetry = TRUE
 )
 }
 \arguments{
 \item{x}{Data frame which contains at minimum: CPUE, LATITUDE, and LONGITUDE. Can be passed as vectors instead (see below). Default value: \code{NA}}
 
-\item{region}{Optional. Character vector specifying which plotting region is to be used. Options: bs.south, bs.north, bs.all}
+\item{region}{Character vector indicating which plotting region to use. Options: bs.south, bs.north, bs.all}
 
 \item{extrap.box}{Optional. Vector specifying the dimensions of the extrapolation grid. Elements of the vector should be named to specify the minimum and maximum x and y values c(xmn, xmx, ymn, ymx). If not provided, region will be used to set the extrapolation area.}
 
@@ -33,16 +33,26 @@ make_idw_map(
 
 \item{grid.cell}{Optional. Numeric vector of length two, specifying the resolution for the extrapolation grid in degrees. Default c(0.05,0.05)}
 
-\item{set.crs}{Character vector containing the coordinate reference system for projecting the extrapolation grid.}
+\item{in.crs}{Character vector containing the coordinate reference system for projecting the extrapolation grid.}
+
+\item{out.crs}{Character vector containing the coordinate reference system for projecting the extrapolation grid.}
 
 \item{key.title}{Character vector which will appear in the legend above CPUE (kg/ha). Default = "auto" tries to pull COMMON_NAME from input.}
 
 \item{log.transform}{Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.}
 
 \item{idw.nmax}{Maximum number of adjacent stations to use for interpolation. Default = 4}
+
+\item{use.survey.bathymetry}{Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE}
 }
 \value{
-Returns a list containing: (1) $plot–a ggplot IDW map, (2) $extrapolation.grid–the extrapolation grid with estimated values, (4) $region–the region, which is used by \code{gapidw::change_fill_color()} for subsequent plot labeling, (4) $n.breaks–the number of level breaks, which is used by \code{gapidw::change_fill_color()} to adjust scale.
+Returns a list containing: 
+(1) plot: a ggplot IDW map;
+(2) extrapolation.grid: the extrapolation grid with estimated values;
+(3) region: the region;
+(4) n.breaks: the number of level breaks;
+(5) key.title: title for the legend;
+(6) crs: coordinate reference system as a PROJ6 (WKT2:2019) string;
 }
 \description{
 This function can be used to make inverse-distance-weighted plots for the eastern Bering Sea and northern Bering Sea
