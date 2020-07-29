@@ -2,15 +2,13 @@
 #' 
 #' Generates a pdf file with plots of layers, file names, and default coordinate reference systems for all of the shapefiles that are included in the package.
 #' 
-#' @param out_loc Output directory and file name for the pdf. Default produces a pdf named 'akgfmaps_layer_guide.pdf' i the working directory.
+#' @param out_loc Filepath for output. Must be a pdf.
 
 generate_layer_guide <- function(out_loc = "akgfmaps_layer_guide.pdf") {
   
   library(ggplot2)
   library(ggthemes)
   library(sf)
-  
-  out_loc <- "akgfmaps_layer_guide.pdf"
   
   if(!grepl(".pdf", out_loc)) {
     stop("out_loc must be a .pdf file!")

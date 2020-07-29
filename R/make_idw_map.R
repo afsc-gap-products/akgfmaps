@@ -28,7 +28,7 @@
 #' 
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 
-make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA, CPUE_KGHA = NA, region = "bs.south", extrap.box = NA, set.breaks = "jenks", grid.cell = c(0.05, 0.05), in.crs = "+proj=longlat +datum=NAD83", out.crs = "auto", key.title = "auto", log.transform = FALSE, idw.nmax = 4, use.survey.bathymetry = TRUE) {
+make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA, CPUE_KGHA = NA, region = "bs.south", extrap.box = NA, set.breaks = "jenks", grid.cell = c(0.05, 0.05), in.crs = "+proj=longlat", out.crs = "auto", key.title = "auto", log.transform = FALSE, idw.nmax = 4, use.survey.bathymetry = TRUE) {
   
   # Convert vectors to data fram if x is NA---------------------------------------------------------
   if(is.na(x)) {
@@ -55,10 +55,9 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   # Assign CRS to handle automatic selection--------------------------------------------------------
   out.crs <- map_layers$crs
   
-  # Use survey bathymetry
+  # Use survey bathymetry---------------------------------------------------------------------------
   if(use.survey.bathymetry) {
     map_layers$bathymetry <- get_survey_bathymetry(select.region = region, set.crs = out.crs)
-    map_layers$bathymetry <- sf::st_intersection(map_layers$bathymetry, map_layers$survey.area)
   }
   
   # Assign CRS to input data------------------------------------------------------------------------
@@ -82,17 +81,15 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
     projectRaster(crs = crs(x))
   
   # Predict, rasterize, mask------------------------------------------------------------------------
-  extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) %>%
-  rasterFromXYZ() #%>% mask(survey.area)  
-  extrap.grid <- mask(extrap.grid, map_layers$survey.area) 
+  extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) %>% 
+    sf::st_as_sf() %>% 
+    sf::st_transform(crs = crs(x)) %>% 
+    stars::st_rasterize() %>% 
+    sf::st_join(map_layers$survey.area, join = st_intersects) 
   
-  # Shenanigans to deal with an issue with an error after a raster mask is applied------------------
-  eg.coords <- coordinates(extrap.grid)
-  eg.layer <- extrap.grid@data@values
-  
-  extrap.grid <- data.frame(x = eg.coords[,1],
-                            y = eg.coords[,2],
-                            layer = eg.layer)
+  ggplot() + geom_sf(data = map_layers$survey.area) +
+    geom_stars(data = extrap.grid)
+
 
   # Format breaks for plotting----------------------------------------------------------------------
   # Automatic break selection based on character vector.
@@ -127,7 +124,8 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   }
   
   # Cut extrapolation grid to support discrete scale------------------------------------------------
-  extrap.grid$discrete_layer <- cut(extrap.grid$layer, set.breaks, right = TRUE, dig.lab = dig.lab)
+  extrap.grid$var1.pred <- cut(extrap.grid$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
+  # extrap.grid$discrete_layer <- cut(extrap.grid$layer, set.breaks, right = TRUE, dig.lab = dig.lab)
 
   # Which breaks need commas?-----------------------------------------------------------------------
   sig.dig <- round(set.breaks[which(nchar(round(set.breaks)) >= 4)])
@@ -146,8 +144,7 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   }
   
   # Assign level names to breaks for plotting-------------------------------------------------------
-  extrap.grid$discrete_layer <- factor(make_level_labels(extrap.grid$discrete_layer), 
-                                       levels = make_level_labels(levels(set.levels)))
+  extrap.grid$var1.pred <- factor(make_level_labels(extrap.grid$var1.pred), levels = make_level_labels(levels(set.levels)))
   
   # Number of breaks for color adjustments----------------------------------------------------------
   n.breaks <- length(levels(set.levels))
@@ -155,8 +152,7 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   # Make plot---------------------------------------------------------------------------------------
     p1 <- ggplot() +
     geom_sf(data = map_layers$survey.area, fill = NA) +
-      geom_tile(data = extrap.grid, aes(x = x, y = y, fill = discrete_layer)) +
-      geom_sf(data = map_layers$bathymetry) + 
+    geom_stars(data = extrap.grid) +
       geom_sf(data = map_layers$survey.area, fill = NA) +
       geom_sf(data = map_layers$akland, fill = "grey80") +
       geom_sf(data = map_layers$bathymetry) +
@@ -179,7 +175,8 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
             legend.title = element_text(size = 10),
             plot.background = element_rect(fill = NA, color = NA))
   
-  return(list(plot = p1, 
+  return(list(plot = p1,
+              map_layers = map_layers,
               extrapolation.grid = extrap.grid,
               region = region,
               n.breaks = n.breaks,

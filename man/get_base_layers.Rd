@@ -4,10 +4,14 @@
 \alias{get_base_layers}
 \title{Function to get base layers for plotting}
 \usage{
-get_base_layers(select.region, set.crs = "+proj=longlat +datum=NAD83")
+get_base_layers(
+  select.region,
+  set.crs = "+proj=longlat +datum=NAD83",
+  use.survey.bathymetry = FALSE
+)
 }
 \arguments{
-\item{select.region}{Character vector indicating which region. Options = bs.south', 'bs.all'}
+\item{select.region}{Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, ecs, ebs.ecs}
 
 \item{set.crs}{Which coordinate reference system should be used? If "auto", an Albers Equal Area coordinate reference system is automatically assigned. Default = "+proj=longlat +datum=NAD83"}
 }

@@ -7,7 +7,7 @@
 generate_layer_guide(out_loc = "akgfmaps_layer_guide.pdf")
 }
 \arguments{
-\item{out_loc}{Output directory and file name for the pdf. Default produces a pdf named 'akgfmaps_layer_guide.pdf' i the working directory.}
+\item{out_loc}{Filepath for output. Must be a pdf.}
 }
 \description{
 Generates a pdf file with plots of layers, file names, and default coordinate reference systems for all of the shapefiles that are included in the package.

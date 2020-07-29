@@ -14,7 +14,7 @@ make_idw_map(
   extrap.box = NA,
   set.breaks = "jenks",
   grid.cell = c(0.05, 0.05),
-  in.crs = "+proj=longlat +datum=NAD83",
+  in.crs = "+proj=longlat",
   out.crs = "auto",
   key.title = "auto",
   log.transform = FALSE,

@@ -2,11 +2,12 @@
 #' 
 #' This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
 #' 
-#' @param select.region Character vector indicating which region. Options = bs.south', 'bs.all'
+#' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, ecs, ebs.ecs
 #' @param set.crs Which coordinate reference system should be used? If "auto", an Albers Equal Area coordinate reference system is automatically assigned. Default = "+proj=longlat +datum=NAD83"
+#' @param use.survey.bathymetry
 #' @return Returns a list containing sf objects land, bathymetry, survey area boundary, survey strata, a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
 
-get_base_layers <- function(select.region, set.crs = "+proj=longlat +datum=NAD83") {
+get_base_layers <- function(select.region, set.crs = "+proj=longlat +datum=NAD83", use.survey.bathymetry = FALSE) {
   
   # Automatically set CRS---------------------------------------------------------------------------
   if(set.crs == "auto") {
@@ -23,11 +24,13 @@ get_base_layers <- function(select.region, set.crs = "+proj=longlat +datum=NAD83
   # Land shapefile----------------------------------------------------------------------------------
   akland <- sf::st_read(system.file("data", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE)
   
+  #Bathymetry shapefile-----------------------------------------------------------------------------
+  bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
+  
   # SEBS--------------------------------------------------------------------------------------------
   if(select.region %in% c("bs.south", "sebs")) {
     survey.area <- sf::st_read(system.file("data", "sebs_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "sebs_strata.shp", package = "akgfmaps"), quiet = TRUE) 
-    bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.3, -154.3), 
                                                                    y = c(54.5, 63.15)), 
                                                         out.crs = set.crs)
@@ -42,7 +45,6 @@ get_base_layers <- function(select.region, set.crs = "+proj=longlat +datum=NAD83
   if(select.region %in% c("bs.all", "ebs")) {
     survey.area <- sf::st_read(system.file("data", "ebs_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ebs_strata.shp", package = "akgfmaps"), quiet = TRUE) 
-    bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.8, -154.7), 
                                                                    y = c(54, 65.1)), 
                                                         out.crs = set.crs)
@@ -57,7 +59,6 @@ get_base_layers <- function(select.region, set.crs = "+proj=longlat +datum=NAD83
   if(select.region == "ecs") {
     survey.area <- sf::st_read(system.file("data", "chukchi_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE) 
-    bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170, -156), 
                                                                    y = c(65, 73)), 
                                                         out.crs = set.crs)
@@ -72,7 +73,7 @@ get_base_layers <- function(select.region, set.crs = "+proj=longlat +datum=NAD83
   if(select.region == "ebs.ecs") {
     survey.area <- sf::st_read(system.file("data", "ebs_chukchi_survey_boundary.shp", package = "akgfmaps"), 
                                quiet = TRUE)
-    survey.strata <- sf::st_read(system.file("data", "chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE) 
+    survey.strata <- sf::st_read(system.file("data", "ebs_chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE) 
     bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177, -151), 
                                                                    y = c(54.5, 72.5)), 
