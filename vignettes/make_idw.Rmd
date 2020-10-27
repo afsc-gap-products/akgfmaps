@@ -78,10 +78,16 @@ opt1$n.breaks
 opt1$key.title
 ```
 
-The extrapolation.grid is a data frame that contains coordinates, layer continuous values, and discrete values that can be used to make plots outside of akgfmaps.
+The extrapolation.grid is a stars object that contains **discrete** CPUE values.
 
 ```{r}
-head(opt1$extrapolation.grid)
+class(opt1$extrapolation.grid)
+```
+
+The continuous.grid is a stars object that contains **continuous** CPUE values.
+
+```{r}
+class(opt1$continuous.grid)
 ```
 
 The last object in the list is a ggplot object.

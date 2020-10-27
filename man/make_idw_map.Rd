@@ -19,7 +19,8 @@ make_idw_map(
   key.title = "auto",
   log.transform = FALSE,
   idw.nmax = 4,
-  use.survey.bathymetry = TRUE
+  use.survey.bathymetry = TRUE,
+  return.continuous.grid = TRUE
 )
 }
 \arguments{
@@ -44,15 +45,18 @@ make_idw_map(
 \item{idw.nmax}{Maximum number of adjacent stations to use for interpolation. Default = 4}
 
 \item{use.survey.bathymetry}{Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE}
+
+\item{return.continuous.grid}{If TRUE, also returns an extrapolation grid on a continuous scale.}
 }
 \value{
 Returns a list containing: 
 (1) plot: a ggplot IDW map;
-(2) extrapolation.grid: the extrapolation grid with estimated values;
-(3) region: the region;
-(4) n.breaks: the number of level breaks;
-(5) key.title: title for the legend;
-(6) crs: coordinate reference system as a PROJ6 (WKT2:2019) string;
+(2) extrapolation.grid: the extrapolation grid with estimated values on a discrete scale;
+(3) continuous.grid: extrapolation grid with estimates on a continuous scale;
+(4) region: the region;
+(5) n.breaks: the number of level breaks;
+(6) key.title: title for the legend;
+(7) crs: coordinate reference system as a PROJ6 (WKT2:2019) string;
 }
 \description{
 This function can be used to make inverse-distance-weighted plots for the eastern Bering Sea and northern Bering Sea

@@ -18,17 +18,19 @@
 #' @param log.transform Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.
 #' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 4
 #' @param use.survey.bathymetry Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE
+#' @param return.continuous.grid If TRUE, also returns an extrapolation grid on a continuous scale.
 #' @return Returns a list containing: 
 #' (1) plot: a ggplot IDW map;
-#' (2) extrapolation.grid: the extrapolation grid with estimated values;
-#' (3) region: the region;
-#' (4) n.breaks: the number of level breaks;
-#' (5) key.title: title for the legend;
-#' (6) crs: coordinate reference system as a PROJ6 (WKT2:2019) string; 
+#' (2) extrapolation.grid: the extrapolation grid with estimated values on a discrete scale;
+#' (3) continuous.grid: extrapolation grid with estimates on a continuous scale;
+#' (4) region: the region;
+#' (5) n.breaks: the number of level breaks;
+#' (6) key.title: title for the legend;
+#' (7) crs: coordinate reference system as a PROJ6 (WKT2:2019) string; 
 #' 
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 
-make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA, CPUE_KGHA = NA, region = "bs.south", extrap.box = NA, set.breaks = "jenks", grid.cell = c(0.05, 0.05), in.crs = "+proj=longlat", out.crs = "auto", key.title = "auto", log.transform = FALSE, idw.nmax = 4, use.survey.bathymetry = TRUE) {
+make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA, CPUE_KGHA = NA, region = "bs.south", extrap.box = NA, set.breaks = "jenks", grid.cell = c(0.05, 0.05), in.crs = "+proj=longlat", out.crs = "auto", key.title = "auto", log.transform = FALSE, idw.nmax = 4, use.survey.bathymetry = TRUE, return.continuous.grid = TRUE) {
   
   # Convert vectors to data fram if x is NA---------------------------------------------------------
   if(is.na(x)) {
@@ -87,9 +89,12 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
     stars::st_rasterize() %>% 
     sf::st_join(map_layers$survey.area, join = st_intersects) 
   
-  ggplot() + geom_sf(data = map_layers$survey.area) +
-    geom_stars(data = extrap.grid)
-
+  # Return continuous grid if return.continuous.grid is TRUE ---------------------------------------
+  if(return.continuous.grid) {
+    continuous.grid <- extrap.grid
+  } else {
+    continuous.grid <- NA
+  }
 
   # Format breaks for plotting----------------------------------------------------------------------
   # Automatic break selection based on character vector.
@@ -178,6 +183,7 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
   return(list(plot = p1,
               map_layers = map_layers,
               extrapolation.grid = extrap.grid,
+              continuous.grid = continuous.grid,
               region = region,
               n.breaks = n.breaks,
               key.title = key.title,

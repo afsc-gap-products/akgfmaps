@@ -35,3 +35,5 @@
 inst/doc
 doc
 Meta
+*.csv
+*.png
