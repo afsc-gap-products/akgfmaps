@@ -19,12 +19,21 @@ make_idw_map(
   key.title = "auto",
   log.transform = FALSE,
   idw.nmax = 4,
+  idp = 2,
   use.survey.bathymetry = TRUE,
   return.continuous.grid = TRUE
 )
 }
 \arguments{
 \item{x}{Data frame which contains at minimum: CPUE, LATITUDE, and LONGITUDE. Can be passed as vectors instead (see below). Default value: \code{NA}}
+
+\item{COMMON_NAME}{Common name}
+
+\item{LATITUDE}{Latitude (degrees north)}
+
+\item{LONGITUDE}{Longitude (degrees east; Western hemisphere is negative)}
+
+\item{CPUE_KGHA}{Catch per unit effort in kilograms per hectare}
 
 \item{region}{Character vector indicating which plotting region to use. Options: bs.south, bs.north, bs.all}
 
@@ -42,7 +51,9 @@ make_idw_map(
 
 \item{log.transform}{Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.}
 
-\item{idw.nmax}{Maximum number of adjacent stations to use for interpolation. Default = 4}
+\item{idw.nmax}{Maximum number of adjacent stations to use for interpolation. Default = 8}
+
+\item{idp}{Inverse distance weighting power. Default = 2}
 
 \item{use.survey.bathymetry}{Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE}
 

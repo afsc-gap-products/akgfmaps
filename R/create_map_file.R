@@ -11,7 +11,7 @@
 #' @param units Units of width and height. Passed to \code{png}.
 #' @param res Resolution of the output. Passed to \code{png}.
 #' @param bg Color of the background. Passed to \code{png}.
-
+#' @export
 
 create_map_file <- function(x,
                             file.prefix = NA, 

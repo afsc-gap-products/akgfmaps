@@ -4,8 +4,10 @@
 #' 
 #' @param out_loc Filepath for output. Must be a pdf.
 #' @param select.regions Which regions to include in the output? Default selects all supported regions.
+#' @export
 
-generate_region_guide <- function(out_loc = "akgfmaps_region_layers.pdf", select.regions = NA) {
+generate_region_guide <- function(out_loc = "akgfmaps_region_layers.pdf", 
+                                  select.regions = NA) {
   
   if(!grepl(".pdf", out_loc)) {
     stop("out_loc must be a .pdf file!")

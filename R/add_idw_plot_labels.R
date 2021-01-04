@@ -1,7 +1,6 @@
 #' Add labels to IDW plots
 #' 
-#' Select which place labels should be included on the map based on category and region. Currently supports regions: 'bs.all' and 'bs.south'
-#' See data/placenames for the default list of locations.
+#' Select which place labels should be included on the map based on category and region. Currently supports regions: 'bs.all' and 'bs.south'. See data/placenames for the default list of locations.
 #'   
 #' @param x A list containing the ggplot object returned by \code{make_idw_map()} or \code{change_fill_color()}. Alternatively, a gg object.
 #' @param lab.select A vector indicating which types of labels to include on the map.
@@ -10,12 +9,17 @@
 #' @param lab.replace Logical indicating whether new.places should be added to the default labels or replace the default labels.
 #' @param transform.new.places Logical indicating whether the data frame passed to new.places should be transformed to match the map projection.
 #' @param add.scale.bar A character vector indicating where to add the scale bar. "br" for bottom right, "tl" for top left, etc. Default = "br"
-#' 
 #' @return Returns input list with IDW plot labels added.
-#' 
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
+#' @export
 
-add_map_labels <- function(x, lab.select = c("islands", "bathymetry", "convention line", "mainland", "peninsula"), region = NA, new.places = NULL, lab.replace = FALSE, transform.new.places = TRUE, add.scale.bar = "br") {
+add_map_labels <- function(x, 
+                           lab.select = c("islands", "bathymetry", "convention line", "mainland", "peninsula"), 
+                           region = NA, 
+                           new.places = NULL, 
+                           lab.replace = FALSE, 
+                           transform.new.places = TRUE, 
+                           add.scale.bar = "br") {
   if(class(x) == "list") {
     in.dat <- x
     

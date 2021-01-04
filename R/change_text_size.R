@@ -4,8 +4,11 @@
 #' @size.mult Size multiplier for rescaling text.
 #' 
 #' @author Sean K. Rohan, \email{sean.rohan@@noaa.gov}
+#' @export
 
-change_text_size <- function(x, size.mult, scale.theme = 1.125) {
+change_text_size <- function(x, 
+                             size.mult, 
+                             scale.theme = 1.125) {
   
   in.dat <- x
   

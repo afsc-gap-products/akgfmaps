@@ -6,8 +6,11 @@
 #' @param set.crs Which coordinate reference system should be used? If "auto", an Albers Equal Area coordinate reference system is automatically assigned. Default = "+proj=longlat +datum=NAD83"
 #' @param use.survey.bathymetry
 #' @return Returns a list containing sf objects land, bathymetry, survey area boundary, survey strata, a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
+#' @export
 
-get_base_layers <- function(select.region, set.crs = "+proj=longlat +datum=NAD83", use.survey.bathymetry = FALSE) {
+get_base_layers <- function(select.region, 
+                            set.crs = "+proj=longlat +datum=NAD83", 
+                            use.survey.bathymetry = FALSE) {
   
   # Automatically set CRS---------------------------------------------------------------------------
   if(set.crs == "auto") {

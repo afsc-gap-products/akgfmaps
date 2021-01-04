@@ -5,12 +5,13 @@
 #' @param x A list containing the ggplot object returned by \code{make_idw_map()}
 #' @new.scheme Fill scale to use for plotting. Can pass a palette. Default = NA opens colorspace selector
 #' @... Pass additional arguments to ggplot2::scale_fill_xx functions.
-#'
 #' @return Returns a ggplot object with the fill scale replaced
-#'
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
+#' @export
 
-change_fill_color <- function(x, new.scheme, show.plot = TRUE, ...) {
+change_fill_color <- function(x, 
+                              new.scheme, 
+                              show.plot = TRUE, ...) {
   in.dat <- x
   # Extratc legend title
   key.title <- in.dat$plot$scales$scales[[1]]$name

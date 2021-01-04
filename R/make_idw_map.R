@@ -1,14 +1,14 @@
 #' Make IDW maps of CPUE for the EBS/NBS
 #' 
 #' This function can be used to make inverse-distance-weighted plots for the eastern Bering Sea and northern Bering Sea
-
+#' 
 #' @param x Data frame which contains at minimum: CPUE, LATITUDE, and LONGITUDE. Can be passed as vectors instead (see below). Default value: \code{NA}
 #' @param region Character vector indicating which plotting region to use. Options: bs.south, bs.north, bs.all
 #' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in degrees c(lon, lat). Default c(0.05, 0.05)
-#' @param COMMON_NAME
-#' @param LATITUDE
-#' @param LONGITUDE
-#' @param CPUE_KGHA
+#' @param COMMON_NAME Common name
+#' @param LATITUDE Latitude (degrees north)
+#' @param LONGITUDE Longitude (degrees east; Western hemisphere is negative)
+#' @param CPUE_KGHA Catch per unit effort in kilograms per hectare
 #' @param extrap.box Optional. Vector specifying the dimensions of the extrapolation grid. Elements of the vector should be named to specify the minimum and maximum x and y values c(xmn, xmx, ymn, ymx). If not provided, region will be used to set the extrapolation area.
 #' @param set.breaks Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"
 #' @param grid.cell Optional. Numeric vector of length two, specifying the resolution for the extrapolation grid in degrees. Default c(0.05,0.05)
@@ -16,7 +16,8 @@
 #' @param out.crs Character vector containing the coordinate reference system for projecting the extrapolation grid.
 #' @param key.title Character vector which will appear in the legend above CPUE (kg/ha). Default = "auto" tries to pull COMMON_NAME from input.
 #' @param log.transform Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.
-#' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 4
+#' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 8
+#' @param idp Inverse distance weighting power. Default = 2 
 #' @param use.survey.bathymetry Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE
 #' @param return.continuous.grid If TRUE, also returns an extrapolation grid on a continuous scale.
 #' @return Returns a list containing: 
@@ -27,10 +28,26 @@
 #' (5) n.breaks: the number of level breaks;
 #' (6) key.title: title for the legend;
 #' (7) crs: coordinate reference system as a PROJ6 (WKT2:2019) string; 
-#' 
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
+#' @export
 
-make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA, CPUE_KGHA = NA, region = "bs.south", extrap.box = NA, set.breaks = "jenks", grid.cell = c(0.05, 0.05), in.crs = "+proj=longlat", out.crs = "auto", key.title = "auto", log.transform = FALSE, idw.nmax = 4, use.survey.bathymetry = TRUE, return.continuous.grid = TRUE) {
+make_idw_map <- function(x = NA, 
+                         COMMON_NAME = NA, 
+                         LATITUDE = NA, 
+                         LONGITUDE = NA, 
+                         CPUE_KGHA = NA, 
+                         region = "bs.south", 
+                         extrap.box = NA, 
+                         set.breaks = "jenks", 
+                         grid.cell = c(0.05, 0.05), 
+                         in.crs = "+proj=longlat", 
+                         out.crs = "auto", 
+                         key.title = "auto", 
+                         log.transform = FALSE, 
+                         idw.nmax = 4,
+                         idp = 2,
+                         use.survey.bathymetry = TRUE, 
+                         return.continuous.grid = TRUE) {
   
   # Convert vectors to data fram if x is NA---------------------------------------------------------
   if(is.na(x)) {
@@ -67,7 +84,7 @@ make_idw_map <- function(x = NA, COMMON_NAME = NA, LATITUDE = NA, LONGITUDE = NA
     sf::st_transform(crs = map_layers$crs)
   
   # Inverse distance weighting----------------------------------------------------------------------
-  idw_fit <- gstat::gstat(formula = CPUE_KGHA~1, locations = x, nmax = idw.nmax)
+  idw_fit <- gstat::gstat(formula = CPUE_KGHA~1, locations = x, nmax = idw.nmax, idp = idp)
   
   # Predict station points--------------------------------------------------------------------------
   stn.predict <- predict(idw_fit, x)

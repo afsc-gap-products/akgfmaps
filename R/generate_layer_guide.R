@@ -3,6 +3,7 @@
 #' Generates a pdf file with plots of layers, file names, and default coordinate reference systems for all of the shapefiles that are included in the package.
 #' 
 #' @param out_loc Filepath for output. Must be a pdf.
+#' @export
 
 generate_layer_guide <- function(out_loc = "akgfmaps_layer_guide.pdf") {
   

@@ -2,12 +2,13 @@
 #' 
 #' Retrieves bathymetric contours that have been used in tech memos and reports through 2019 for the EBS.
 #' 
-#' @param select.region
-#' @param set.crs
-#' 
+#' @param select.region Region to select
+#' @param set.crs CRS to use
 #' @return Returns an sf multiline object with survey contours.
+#' @export
 
-get_survey_bathymetry <- function(select.region, set.crs) {
+get_survey_bathymetry <- function(select.region, 
+                                  set.crs) {
   
   #' Automatically set CRS---------------------------------------------------------------------------
   if(set.crs == "auto") {

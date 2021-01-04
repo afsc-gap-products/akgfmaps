@@ -7,11 +7,12 @@
 get_survey_bathymetry(select.region, set.crs)
 }
 \arguments{
-\item{set.crs}{}
+\item{select.region}{Region to select}
+
+\item{set.crs}{CRS to use}
 }
 \value{
 Returns an sf multiline object with survey contours.
-Automatically set CRS---------------------------------------------------------------------------
 }
 \description{
 Retrieves bathymetric contours that have been used in tech memos and reports through 2019 for the EBS.
