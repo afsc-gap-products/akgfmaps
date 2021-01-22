@@ -84,7 +84,7 @@ make_idw_map <- function(x = NA,
     sf::st_transform(crs = map_layers$crs)
   
   # Inverse distance weighting----------------------------------------------------------------------
-  idw_fit <- gstat::idw.locations(formula = CPUE_KGHA~1, locations = x, nmax = idw.nmax, idp = idp)
+  idw_fit <- gstat::idw(formula = CPUE_KGHA~1, locations = x, nmax = idw.nmax, idp = idp)
   
   # Predict station points--------------------------------------------------------------------------
   stn.predict <- predict(idw_fit, x)
