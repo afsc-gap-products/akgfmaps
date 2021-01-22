@@ -1,0 +1,103 @@
+---
+title: "Get base layers"
+author: "Sean Rohan"
+date: "5/27/2020"
+vignette:  >
+  %\VignetteIndexEntry{Get base layers}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Get base mapping layers
+
+The get_base_layers() function retrieves shapefiles and other map features that are typically used to make plots of RACE survey areas. The function transforms layers to a user-specified projection based on a coordinate reference system. Alternatively, a default coordinate reference system can be assigned by the function, based on the region.
+
+As of 5/27/2020, get_base_layers has support for the SEBS shelf survey area, and SEBS+EBS shelf.
+
+## Retrieve layers with projection automatically selected
+
+This chunk of code retrieves layers for the EBS shelf survey area and automatically assigns a projection (Albers Equal Area with standard latitudes at 55 °N and 60 °N, cetner latitude 57.5 °N, center longitude at 170 °W **...this is relevant below**). Layers are returned in a list.
+```{r}
+library(akgfmaps)
+
+SEBS <- get_base_layers(select.region = "bs.south", set.crs = "auto")
+class(SEBS)
+names(SEBS)
+
+```
+
+The list returned by get_base_layers contains:
+*akland = Alaska land (class sf).
+*survey.area = Survey area boundary (class sf).
+*bathymetry = Bathymetric contours. EBS shelf default: 50 m, 100 m, 200 m (class sf).
+*place.labels = A data frame with labels and plotting locations (class data.frame).
+*graticule = Graticule (class sf).
+*crs = The coordinate reference system for the layers (class crs).
+*plot.boundary = Suggested plot boundary (class data.frame).
+*lon.breaks = Latitude breaks corresponding with graticule.
+*lat.breaks = Longitude breaks corresponding with graticule.
+
+## Make a map
+
+Here is a map that uses all of the layers except the plot labels.
+
+```{r fig.width=8, fig.height = 6}
+
+(SEBS_plot <- ggplot() +
+  geom_sf(data = SEBS$akland) +
+  geom_sf(data = SEBS$bathymetry) +
+  geom_sf(data = SEBS$survey.area, fill = NA) +
+  geom_sf(data = SEBS$graticule, color = "grey70", alpha = 0.5) +
+  coord_sf(xlim = SEBS$plot.boundary$x, 
+           ylim = SEBS$plot.boundary$y) +
+  scale_x_continuous(name = "Longitude", 
+                     breaks = SEBS$lon.breaks) + 
+  scale_y_continuous(name = "Latitude", 
+                     breaks = SEBS$lat.breaks) + 
+  theme_bw())
+
+```
+
+## Adding your own layers
+
+Although the map shows the x-axis and y-axis as latitude and longitude with degrees, coordinates for all of the layers are in **meters**.
+
+Therefore, adding text to the map at 58 N, 165 W using coordinates x = -165, y = 58 results in a label centered 165 m (longitudinally) and 58 m (latitudinally) away from the center of the projection.
+
+```{r fig.width=8, fig.height = 6}
+my_label <- data.frame(x = -165, y = 58, label = "Thar be\ndragons")
+
+SEBS_plot + geom_text(data = my_label, 
+                      mapping = aes(x = x, 
+                                    y = y, 
+                                    label = label), 
+                      color = "red")
+
+```
+
+The akgfmaps package includes a function to convert data frame coordinates to the projection without changing the data frame type.
+
+```{r fig.width=8, fig.height = 6}
+my_label <- data.frame(x = -165, y = 58, label = "Thar be\ndragons") %>% 
+  akgfmaps::transform_data_frame_crs(in.crs = "+proj=longlat", out.crs = SEBS$crs)
+
+SEBS_plot + geom_text(data = my_label, 
+                      mapping = aes(x = x, 
+                                    y = y, 
+                                    label = label), 
+                      color = "red")
+
+```
+
+## Add labels
+
+Formatted placename labels can be added directly to the plot using akgfmaps::add_map_labels(), although it is suggested to add labels manually to avoid formatting issues.
+
+```{r fig.width=8, fig.height = 6}
+(SEBS_plot %>% add_map_labels(region = "bs.south", new.places = SEBS$place.labels))
+
+```

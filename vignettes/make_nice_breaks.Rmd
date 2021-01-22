@@ -1,0 +1,57 @@
+---
+title: "Making breaks"
+author: "Sean Rohan"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Making breaks}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Finding nice breaks for plotting
+
+The default Jenks breaks used by \code{make_idw_map()} does not always work well, so the \code{eval_plot_breaks()} function can be used to explore algorithmically-based alternatives. Here, I explore some options for plotting the 2017 yellowfin sole data.
+
+First, I examine some breaks for different algorithms.
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(akgfmaps)
+yfs2017 <- akgfmaps::YFS2017
+eval_plot_breaks(CPUE = yfs2017$CPUE_KGHA, n.breaks = 5)
+```
+
+Now, let's compare kmeans and jenks using a coarse grid.
+
+```{r message=FALSE, warning=FALSE}
+# Create IDW for Jenks
+yfs.opt1 <- make_idw_map(x = yfs2017,
+             region = "bs.all",
+             set.breaks = "jenks",
+             grid.cell = c(0.05, 0.05), # Coarse grid
+             key.title = "yellowfin sole")
+
+yfs.opt2 <- make_idw_map(x = yfs2017,
+             region = "bs.all",
+             set.breaks = "kmeans", 
+             grid.cell = c(0.05, 0.05), # Coarse grid
+             key.title = "yellowfin sole")
+
+yfs.opt1$plot
+yfs.opt2$plot
+```
+
+Now, I'll try some user-specified values based on past survey tech memos. I set the upper break limit (1000) below the maximum CPUE from the data (~1207) because \code{make_idw_map()} adjusts the upper and lower limits of the scale to ensure all data fall within the plotted range.
+
+```{r, message=FALSE, warning=FALSE}
+yfs.opt3 <- make_idw_map(x = yfs2017,
+             region = "bs.all",
+             set.breaks = c(0, 25, 100, 250, 500, 1000),
+             grid.cell = c(0.05, 0.05), # Coarse grid
+             key.title = "yellowfin sole")
+yfs.opt3$plot
+
+```
+
