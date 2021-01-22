@@ -1,7 +1,6 @@
 #' Generate blank region catalogue
 #' 
 #' Generates a pdf file with plots of layers returned by get_base_layers().
-#' 
 #' @param out_loc Filepath for output. Must be a pdf.
 #' @param select.regions Which regions to include in the output? Default selects all supported regions.
 #' @export

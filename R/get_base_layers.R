@@ -1,18 +1,19 @@
 #' Function to get base layers for plotting
 #' 
 #' This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
-#' 
 #' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, ecs, ebs.ecs
-#' @param set.crs Which coordinate reference system should be used? If "auto", an Albers Equal Area coordinate reference system is automatically assigned. Default = "+proj=longlat +datum=NAD83"
-#' @param use.survey.bathymetry
-#' @return Returns a list containing sf objects land, bathymetry, survey area boundary, survey strata, a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
+#' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
+#' @param use.survey.bathymetry Should survey bathymetry be used?
+#' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
+#' 
 #' @export
+
 
 get_base_layers <- function(select.region, 
                             set.crs = "+proj=longlat +datum=NAD83", 
                             use.survey.bathymetry = FALSE) {
   
-  # Automatically set CRS---------------------------------------------------------------------------
+  ## Automatically set CRS
   if(set.crs == "auto") {
     region.crs <- c(
       "+proj=aea +lat_1=55 +lat_2=60 +lat_0=57.5 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
@@ -27,7 +28,7 @@ get_base_layers <- function(select.region,
   # Land shapefile----------------------------------------------------------------------------------
   akland <- sf::st_read(system.file("data", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE)
   
-  #Bathymetry shapefile-----------------------------------------------------------------------------
+  # Bathymetry shapefile-----------------------------------------------------------------------------
   bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
   
   # SEBS--------------------------------------------------------------------------------------------

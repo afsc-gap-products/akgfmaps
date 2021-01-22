@@ -10,7 +10,7 @@
 get_survey_bathymetry <- function(select.region, 
                                   set.crs) {
   
-  #' Automatically set CRS---------------------------------------------------------------------------
+  # Automatically set CRS---------------------------------------------------------------------------
   if(set.crs == "auto") {
     region.crs <- c(
       "+proj=aea +lat_1=55 +lat_2=60 +lat_0=57.5 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",

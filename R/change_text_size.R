@@ -1,8 +1,7 @@
 #' Function to change the size of text in plots
 #' 
 #' @param x ggplot object that requires text resizing
-#' @size.mult Size multiplier for rescaling text.
-#' 
+#' @param size.mult Size multiplier for rescaling text.
 #' @author Sean K. Rohan, \email{sean.rohan@@noaa.gov}
 #' @export
 

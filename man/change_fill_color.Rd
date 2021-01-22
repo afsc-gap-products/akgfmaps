@@ -8,6 +8,10 @@ change_fill_color(x, new.scheme, show.plot = TRUE, ...)
 }
 \arguments{
 \item{x}{A list containing the ggplot object returned by \code{make_idw_map()}}
+
+\item{new.scheme}{Fill scale to use for plotting. Can pass a palette. Default = NA opens colorspace selector}
+
+\item{...}{Pass additional arguments to ggplot2::scale_fill_xx functions.}
 }
 \value{
 Returns a ggplot object with the fill scale replaced

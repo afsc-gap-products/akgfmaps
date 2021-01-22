@@ -8,6 +8,8 @@ change_text_size(x, size.mult, scale.theme = 1.125)
 }
 \arguments{
 \item{x}{ggplot object that requires text resizing}
+
+\item{size.mult}{Size multiplier for rescaling text.}
 }
 \description{
 Function to change the size of text in plots

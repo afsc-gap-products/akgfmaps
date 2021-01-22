@@ -1,7 +1,6 @@
 #' Create map file
 #' 
 #' Creates a .png map with the assigned file prefix in the designated file path (i.e. directory)
-#' 
 #' @param x List containing ggplot object
 #' @param file.prefix Character vector indicating what name should precede the file name. If not provided, uses \code{key.title} from the output of \code{make_idw_map}
 #' @param file.path File path where the png should be saved. By default, Saves to working directory.
