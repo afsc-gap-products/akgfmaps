@@ -23,7 +23,7 @@ Description: This package makes inverse-distance weighted maps of bottom-trawl s
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Imports: colorspace,
     viridis
 Suggests: knitr, rmarkdown

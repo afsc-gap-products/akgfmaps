@@ -19,7 +19,6 @@ make_idw_map(
   key.title = "auto",
   log.transform = FALSE,
   idw.nmax = 4,
-  idp = 2,
   use.survey.bathymetry = TRUE,
   return.continuous.grid = TRUE
 )
@@ -53,11 +52,11 @@ make_idw_map(
 
 \item{idw.nmax}{Maximum number of adjacent stations to use for interpolation. Default = 8}
 
-\item{idp}{Inverse distance weighting power. Default = 2}
-
 \item{use.survey.bathymetry}{Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE}
 
 \item{return.continuous.grid}{If TRUE, also returns an extrapolation grid on a continuous scale.}
+
+\item{idp}{Inverse distance weighting power. Default = 2}
 }
 \value{
 Returns a list containing: 

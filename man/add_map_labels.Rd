@@ -33,8 +33,7 @@ add_map_labels(
 Returns input list with IDW plot labels added.
 }
 \description{
-Select which place labels should be included on the map based on category and region. Currently supports regions: 'bs.all' and 'bs.south'
-See data/placenames for the default list of locations.
+Select which place labels should be included on the map based on category and region. Currently supports regions: 'bs.all' and 'bs.south'. See data/placenames for the default list of locations.
 }
 \author{
 Sean Rohan \email{sean.rohan@noaa.gov}
