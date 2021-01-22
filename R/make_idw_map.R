@@ -45,6 +45,7 @@ make_idw_map <- function(x = NA,
                          key.title = "auto", 
                          log.transform = FALSE, 
                          idw.nmax = 4,
+                         idp = 2,
                          use.survey.bathymetry = TRUE, 
                          return.continuous.grid = TRUE) {
   
@@ -83,7 +84,7 @@ make_idw_map <- function(x = NA,
     sf::st_transform(crs = map_layers$crs)
   
   # Inverse distance weighting----------------------------------------------------------------------
-  idw_fit <- gstat::gstat(formula = CPUE_KGHA~1, locations = x, nmax = idw.nmax)
+  idw_fit <- gstat::idw.locations(formula = CPUE_KGHA~1, locations = x, nmax = idw.nmax, idp = idp)
   
   # Predict station points--------------------------------------------------------------------------
   stn.predict <- predict(idw_fit, x)
