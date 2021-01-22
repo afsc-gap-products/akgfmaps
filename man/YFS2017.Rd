@@ -5,10 +5,15 @@
 \alias{YFS2017}
 \title{Yellowfin sole CPUE data}
 \format{
-A data frame with 376 rows and 5 variables:
+A data frame with 376 rows and y variables:
 \describe{
+  \item{COMMON_NAME}{Species common name}
+  \item{YEAR}{Survey year}
+  \item{HAUL}{Haul number}
+  \item{STATIONID}{Station ID}
   \item{LONGITUDE}{Longitude in decimal degrees}
   \item{LATITUDE}{Latitude in decimal degrees}
+  \item{CPUE_KGHA}{Catch per unit effort in kilograms per hectare}
   ...
 }
 }
