@@ -19,7 +19,7 @@ The default Jenks breaks used by \code{make_idw_map()} does not always work well
 First, I examine some breaks for different algorithms.
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(akgfmaps)
-yfs2017 <- akgfmaps::YFS2017
+yfs2017 <- akgfmaps:::YFS2017
 eval_plot_breaks(CPUE = yfs2017$CPUE_KGHA, n.breaks = 5)
 ```
 
