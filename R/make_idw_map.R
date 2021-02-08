@@ -116,7 +116,14 @@ make_idw_map <- function(x = NA,
   # Automatic break selection based on character vector.
   if(is.character(set.breaks[1])) {
     set.breaks <- tolower(set.breaks)
-    set.breaks <- c(-1, round(classInt::classIntervals(x$CPUE_KGHA, n = 5, style = set.breaks)$brks))
+    
+    # Set breaks ----
+    break.vals <- classInt::classIntervals(x$CPUE_KGHA, n = 5, style = set.breaks)$brks
+    
+    # Setup rounding for small CPUE ----
+    alt.round <- floor(-1*(min((log10(break.vals)-2)[abs(break.vals) > 0])))
+    
+    set.breaks <- c(-1, round(break.vals, alt.round))
   }
   
   # Ensure breaks go to zero------------------------------------------------------------------------
@@ -138,12 +145,18 @@ make_idw_map <- function(x = NA,
   dig.lab <- 7
   set.levels <- cut(stn.predict$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
   
-  while(length(grep("\\.", set.levels)) > 0) {
-    dig.lab <- dig.lab - 1
-    set.levels <- cut(stn.predict$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
-    
-  }
-  
+  if(alt.round > 0) {
+    while(dig.lab > alt.round) { # Rounding for small CPUE
+        dig.lab <- dig.lab - 1
+        set.levels <- cut(stn.predict$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
+      }
+    } else { # Rounding for large CPUE
+      while(length(grep("\\.", set.levels)) > 0) {
+        dig.lab <- dig.lab - 1
+        set.levels <- cut(stn.predict$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
+      }
+    }
+      
   # Cut extrapolation grid to support discrete scale------------------------------------------------
   extrap.grid$var1.pred <- cut(extrap.grid$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
   # extrap.grid$discrete_layer <- cut(extrap.grid$layer, set.breaks, right = TRUE, dig.lab = dig.lab)
@@ -158,8 +171,10 @@ make_idw_map <- function(x = NA,
     vec <- sub("\\(", "\\>", vec)
     vec <- sub("\\,", "–", vec)
     vec <- sub("\\]", "", vec)
-    for(j in 1:length(sig.dig)) {
-      vec <- sub(sig.dig[j], format(sig.dig[j], nsmall=0, big.mark=","), vec)
+    if(length(sig.dig) > 3) {
+      for(j in 1:length(sig.dig)) {
+        vec <- sub(sig.dig[j], format(sig.dig[j], nsmall=0, big.mark=","), vec)
+      }
     }
     return(vec)
   }
