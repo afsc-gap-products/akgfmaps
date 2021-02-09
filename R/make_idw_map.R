@@ -114,6 +114,8 @@ make_idw_map <- function(x = NA,
 
   # Format breaks for plotting----------------------------------------------------------------------
   # Automatic break selection based on character vector.
+  alt.round <- 0 # Set alternative rounding factor to zero based on user-specified breaks
+  
   if(is.character(set.breaks[1])) {
     set.breaks <- tolower(set.breaks)
     

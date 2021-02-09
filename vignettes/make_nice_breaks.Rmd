@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Finding nice breaks for plotting
 
-The default Jenks breaks used by \code{make_idw_map()} does not always work well, so the \code{eval_plot_breaks()} function can be used to explore algorithmically-based alternatives. Here, I explore some options for plotting the 2017 yellowfin sole data.
+The default Jenks breaks used by \code{make_idw_map()} does not always work well, so the \code{eval_plot_breaks()} function can be used to explore algorithmic alternatives. Here, I explore some options for plotting the 2017 yellowfin sole data.
 
 First, I examine some breaks for different algorithms.
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
