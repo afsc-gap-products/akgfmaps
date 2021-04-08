@@ -48,7 +48,7 @@ add_map_labels <- function(x,
     placenames <- subset(placenames, region == in.dat$region & type %in% lab.select)
     
     # Make plot
-    if(in.dat$region %in% c("bs.all")) {
+    if(in.dat$region %in% c("bs.all", "ebs")) {
       in.dat$plot <- in.dat$plot + 
         geom_text(data = subset(placenames, type == "mainland"), aes(x = x, y = y, label = lab), size = 14, group = 99) +
         geom_shadowtext(data = subset(placenames, type == "peninsula"), 
@@ -68,7 +68,7 @@ add_map_labels <- function(x,
   } else if(class(x) == "gg"){
     # Add labels to ggplot object ------------------------------------------------------------------
     placenames <- subset(new.places, region == region & type %in% lab.select)
-    if(region %in% c("bs.all", "bs.south")) {
+    if(region %in% c("bs.all", "bs.south", "sebs")) {
       in.dat <- x + 
         geom_text(data = subset(placenames, type == "mainland"), aes(x = x, y = y, label = lab), size = 14, group = 99) +
         geom_shadowtext(data = subset(placenames, type == "peninsula"), 
