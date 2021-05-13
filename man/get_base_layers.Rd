@@ -11,7 +11,7 @@ get_base_layers(
 )
 }
 \arguments{
-\item{select.region}{Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, ecs, ebs.ecs}
+\item{select.region}{Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east}
 
 \item{set.crs}{Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.}
 
