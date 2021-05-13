@@ -8,10 +8,9 @@
 #' 
 #' @export
 
-
 get_base_layers <- function(select.region, 
                             set.crs = "+proj=longlat +datum=NAD83", 
-                            use.survey.bathymetry = FALSE) {
+                            use.survey.bathymetry = TRUE) {
   
   ## Automatically set CRS
   if(set.crs == "auto") {
@@ -25,7 +24,10 @@ get_base_layers <- function(select.region,
       "+proj=aea +lat_1=50.83 +lat_2=52.67 +lat_0=51.75 +lon_0=-179 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=50.83 +lat_2=52.67 +lat_0=51.75 +lon_0=-179 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=50.83 +lat_2=52.67 +lat_0=51.75 +lon_0=-179 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=50.83 +lat_2=52.67 +lat_0=51.75 +lon_0=-179 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
+      "+proj=aea +lat_1=50.83 +lat_2=52.67 +lat_0=51.75 +lon_0=-179 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
     set.crs <- region.crs[match(select.region, c("bs.south", 
                                                  "sebs", 
                                                  "bs.all", 
@@ -35,14 +37,22 @@ get_base_layers <- function(select.region,
                                                  "ai",
                                                  "ai.west",
                                                  "ai.central",
-                                                 "ai.east"))]
+                                                 "ai.east",
+                                                 "goa",
+                                                 "goa.west",
+                                                 "goa.east"))]
   }
-  
-  # Land shapefile----------------------------------------------------------------------------------
-  akland <- sf::st_read(system.file("data", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE)
-  
-  # Bathymetry shapefile-----------------------------------------------------------------------------
-  bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
+
+  # Bathymetry and land shapefiles ---------------------------------------------------------------  
+  if(select.region %in% c("bs.south", "sebs", "bs.all", "ebs", "ecs", "ebs.ecs")) {
+    akland <- sf::st_read(system.file("data", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE)
+    bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
+    
+  } else if(select.region %in% c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")) {
+    akland <- sf::st_read(system.file("data", "alaska_canada_dcw.shp", package = "akgfmaps"), quiet = TRUE)
+    bathymetry <- sf::st_read(system.file("data", "alaska_race.shp", package = "akgfmaps"), quiet = TRUE)
+  }
+
   
   # SEBS--------------------------------------------------------------------------------------------
   if(select.region %in% c("bs.south", "sebs")) {
@@ -51,9 +61,6 @@ get_base_layers <- function(select.region,
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.3, -154.3), 
                                                                    y = c(54.5, 63.15)), 
                                                         out.crs = set.crs)
-    graticule <- st_graticule(lat = seq(54,64,2), 
-                              lon = seq(-180,-140, 5), 
-                              margin = 1e-5)
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(54,64,2)
   }
@@ -65,9 +72,6 @@ get_base_layers <- function(select.region,
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.8, -154.7), 
                                                                    y = c(54, 65.1)), 
                                                         out.crs = set.crs)
-    graticule <- st_graticule(lat = seq(54,68,2), 
-                              lon = seq(-180,-140, 5), 
-                              margin = 1e-5)
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(54,66,2)
   }
@@ -79,98 +83,97 @@ get_base_layers <- function(select.region,
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170, -156), 
                                                                    y = c(65, 73)), 
                                                         out.crs = set.crs)
-    graticule <- st_graticule(lat = seq(60,76,2), 
-                              lon = seq(-180,-140, 5), 
-                              margin = 1e-5)
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(66,76,2)
   }
   
   # Chukchi+EBS ------------------------------------------------------------------------------------
   if(select.region == "ebs.ecs") {
-    survey.area <- sf::st_read(system.file("data", "ebs_chukchi_survey_boundary.shp", package = "akgfmaps"), 
-                               quiet = TRUE)
+    survey.area <- sf::st_read(system.file("data", "ebs_chukchi_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ebs_chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE) 
-    bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177, -151), 
                                                                    y = c(54.5, 72.5)), 
                                                         out.crs = set.crs)
-    graticule <- st_graticule(lat = seq(54,78,4), 
-                              lon = seq(-180,-140, 5), 
-                              margin = 1e-5)
     lon.breaks <- seq(-180, -150, 5)
     lat.breaks <- seq(54,78,4)
   }
   
   # Aleutian Islands -------------------------------------------------------------------------------
   if(select.region == "ai") {
-    survey.area <- sf::st_read(system.file("data", "ebs_chukchi_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.strata <- sf::st_read(system.file("data", "ebs_chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    bathymetry <- sf::st_read(system.file("data", "alaska_race.shp", package = "akgfmaps"), quiet = TRUE)
-    bathymetry <- dplyr::filter(bathymetry, METERS %in% c(100, 300, 500, 700))
-    
+    survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(170, -160), 
                                                                    y = c(49, 54.5)), 
                                                         out.crs = set.crs)
-    graticule <- st_graticule(lat = seq(44, 56, 2), 
-                              lon = c(170, 175, -180, -175, -170, -165, -160), 
-                              margin = 1e-5)
     lon.breaks <- c(170, 175, -180, -175, -170, -165, -160)
     lat.breaks <- seq(44, 56, 2)
   }
   
-  # Aleutian Islands - EAST -------------------------------------------------------------------------------
+  # Aleutian Islands - East ------------------------------------------------------------------------
   if(select.region == "ai.east") {
-    survey.area <- sf::st_read(system.file("data", "ebs_chukchi_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.strata <- sf::st_read(system.file("data", "ebs_chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    bathymetry <- sf::st_read(system.file("data", "alaska_race.shp", package = "akgfmaps"), quiet = TRUE)
-    bathymetry <- dplyr::filter(bathymetry, METERS %in% c(100, 300, 500, 700))
-    
+    survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-173.5, -165.7), 
                                                                    y = c(51.8, 54.3)), 
                                                         out.crs = set.crs)
     lon.breaks <- seq(-176, -164, 2)
     lat.breaks <- seq(52, 55, 1)
-    
-    graticule <- st_graticule(lat = lat.breaks, 
-                              lon = lon.breaks, 
-                              margin = 1e-5)
   }
   
   # Aleutian Islands - Central ---------------------------------------------------------------------
   if(select.region == "ai.central") {
-    survey.area <- sf::st_read(system.file("data", "ebs_chukchi_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.strata <- sf::st_read(system.file("data", "ebs_chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    bathymetry <- sf::st_read(system.file("data", "alaska_race.shp", package = "akgfmaps"), quiet = TRUE)
-    bathymetry <- dplyr::filter(bathymetry, METERS %in% c(100, 300, 500, 700))
-    
+    survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(178.5, -173.5), 
                                                                    y = c(50.8, 52.8)), 
                                                         out.crs = set.crs)
     lon.breaks <- c(176, 178, 180, seq(-178, -170, 2))
     lat.breaks <- seq(51,55,2)
-    
-    graticule <- st_graticule(lat = lat.breaks, 
-                              lon = lon.breaks, 
-                              margin = 1e-5)
   }
   
   # Aleutian Islands - West ---------------------------------------------------------------------
   if(select.region == "ai.west") {
-    survey.area <- sf::st_read(system.file("data", "ebs_chukchi_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.strata <- sf::st_read(system.file("data", "ebs_chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    bathymetry <- sf::st_read(system.file("data", "alaska_race.shp", package = "akgfmaps"), quiet = TRUE)
-    bathymetry <- dplyr::filter(bathymetry, METERS %in% c(100, 300, 500, 700))
-    
+    survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(171.2, 178.5), 
                                                                    y = c(50.7, 53.75)), 
                                                         out.crs = set.crs)
     lon.breaks <- seq(168, 180, 2)
     lat.breaks <- seq(50,55,2)
-    
-    graticule <- st_graticule(lat = lat.breaks, 
-                              lon = lon.breaks, 
-                              margin = 1e-5)
+  }
+  
+  
+  # Gulf of Alaska ---------------------------------------------------------------------------------
+  if(select.region == "goa") {
+    survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170.5, -128), 
+                                                                   y = c(52, 60)), 
+                                                        out.crs = set.crs)
+    lon.breaks <- seq(-175, -130, 5)
+    lat.breaks <- seq(52,64,2)
+  }
+  
+  # Gulf of Alaska - West --------------------------------------------------------------------------
+  if(select.region == "goa.west") {
+    survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170.5, -150), 
+                                                                   y = c(52.2, 60.5)), 
+                                                        out.crs = set.crs)
+    lon.breaks <- seq(-174, -144, 2)
+    lat.breaks <- seq(52, 64, 2)
+  }
+  
+  # Gulf of Alaska - East --------------------------------------------------------------------------
+  if(select.region == "goa.east") {
+    survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-150, -126.1), 
+                                                                   y = c(54, 60.5)), 
+                                                        out.crs = set.crs)
+    lon.breaks <- seq(-160, -124, 2)
+    lat.breaks <- seq(52, 64, 2)
   }
   
   # Set CRS-----------------------------------------------------------------------------------------
@@ -178,6 +181,21 @@ get_base_layers <- function(select.region,
     set.crs <- sf::st_crs(set.crs)
   }
   
+  # Use survey bathymetry --------------------------------------------------------------------------
+  if(use.survey.bathymetry) {
+    if(select.region %in% c("ai", "ai.west", "ai.central", "ai.east")) {
+      bathymetry <- dplyr::filter(bathymetry, METERS %in% c(100, 300, 500, 700))    
+    } else if(select.region %in% c("goa", "goa.west", "goa.east")) {
+      bathymetry <- dplyr::filter(bathymetry, METERS %in% c(100, 200, 700))     
+    }
+  }
+  
+  # Make graticule ---------------------------------------------------------------------------------
+  graticule <- st_graticule(lat = lat.breaks, 
+                            lon = lon.breaks, 
+                            margin = 1e-5)
+  
+  # Set CRS for layers -----------------------------------------------------------------------------
   akland <- akland %>% sf::st_transform(crs = set.crs)
   survey.area <- survey.area %>% sf::st_transform(crs = set.crs)
   survey.strata <- survey.strata %>% sf::st_transform(crs = set.crs)

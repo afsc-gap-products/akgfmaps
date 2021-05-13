@@ -7,7 +7,7 @@
 get_base_layers(
   select.region,
   set.crs = "+proj=longlat +datum=NAD83",
-  use.survey.bathymetry = FALSE
+  use.survey.bathymetry = TRUE
 )
 }
 \arguments{

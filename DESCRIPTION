@@ -1,7 +1,7 @@
 Package: akgfmaps
 Type: Package
-Title: Make CPUE maps
-Version: 1.5.1
+Title: Alaska groundfish mapping
+Version: 1.6.0
 Authors@R: person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre"))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 4.0.0),
@@ -19,7 +19,7 @@ Depends: R (>= 4.0.0),
     sf,
     shadowtext,
     stars
-Description: This package makes inverse-distance weighted maps of bottom-trawl survey CPUE. Maps are intended to provide a qualitative visualization of CPUE.
+Description: This package provides tools and shapefile layers to facilitation production of maps and spatial analysis in Alaska Fisheries Science Center groundfish survey regions. Tools include functions for qualitative visualization of CPUE.
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: false
