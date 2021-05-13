@@ -1,6 +1,6 @@
 #' Calculate cold pool area in the southeastern Bering Sea using varying interpolation methods
 #' 
-#' Compare 
+#' Calculate cold pool area using nearest-neighbor interpolation, inverse distance weighting, and ordinary kriging methods.
 #' 
 #' @param dat Input data frame. Must include columns for latitude, longitde, and variable to be interpolated.
 #' @param dat.year Year
@@ -12,17 +12,20 @@
 #' @param cell.resolution Dimensions of interpolation grid cell in meters.
 #' @param nm Maximum number of cells to use for interpolation. 
 #' @param pre Prefix for file names in output (in development.)
+#' @param write.to.file If true, writes output to GeoTIFF format file. Default = FALSE.
+#' @export
 
 calculate_cold_pool_area <- function(dat,
                                 dat.year,
                                 var.col,
                                 lat.col,
                                 lon.col,
-                                in.crs = "+proj=longlat +datum=NAD83",
+                                in.crs = "+proj=longlat",
                                 interpolation.crs,
                                 cell.resolution,
                                 nm = Inf,
-                                pre = NA)
+                                pre = NA,
+                                write.to.file = FALSE)
 {
   names(dat)[which(names(dat) == var.col)] <- "var.col"
   names(dat)[which(names(dat) == lat.col)] <- "lat.col"
@@ -65,25 +68,40 @@ calculate_cold_pool_area <- function(dat,
                                     sebs_layers$survey.area) %>% 
     cpa_from_raster(temperature_threshold = 0)
   
-  # Inverse distance weighting (ArcGIS Default) ----
-  idw_fit <- gstat::gstat(formula = var.col ~ 1, 
+  # Inverse distance weighting with nmax = 4 (Lauth method) ----
+  idw_nmax4_fit <- gstat::gstat(formula = var.col ~ 1, 
                           locations = sp_interp.df,
                           set = list(idp = 2),
                           nmax = 4)
-  idw.predict <- predict(idw_fit, as(sp_interp.raster, "SpatialGrid"))
+  idw_nmax4.predict <- predict(idw_nmax4_fit, as(sp_interp.raster, "SpatialGrid"))
   
-  cpe_lte2_idw <- rasterize_and_mask(idw.predict, 
+  cpe_lte2_idw_nmax4 <- rasterize_and_mask(idw_nmax4.predict, 
                                 sebs_layers$survey.area) %>% 
     cpa_from_raster(temperature_threshold = 2)
   
-  cpe_lte0_idw <- rasterize_and_mask(idw.predict, 
+  cpe_lte0_idw_nmax4 <- rasterize_and_mask(idw_nmax4.predict, 
                                     sebs_layers$survey.area) %>% 
+    cpa_from_raster(temperature_threshold = 0)
+  
+  # Inverse distance weighting  ----
+  idw_fit <- gstat::gstat(formula = var.col ~ 1, 
+                          locations = sp_interp.df,
+                          set = list(idp = 2),
+                          nmax = nm)
+  idw.predict <- predict(idw_fit, as(sp_interp.raster, "SpatialGrid"))
+  
+  cpe_lte2_idw <- rasterize_and_mask(idw.predict, 
+                                     sebs_layers$survey.area) %>% 
+    cpa_from_raster(temperature_threshold = 2)
+  
+  cpe_lte0_idw <- rasterize_and_mask(idw.predict, 
+                                     sebs_layers$survey.area) %>% 
     cpa_from_raster(temperature_threshold = 0)
   
   # Set up a new IDW for ordinary kriging ----
   idw_vgm_fit <- gstat::gstat(formula = var.col ~ 1, 
                               locations = sp_interp.df, 
-                              nmax = Inf)
+                              nmax = nm)
   
   # Ordinary Kriging: Exponential VGM----
   exp.vgfit <- gstat::fit.variogram(variogram(idw_vgm_fit), 
@@ -220,6 +238,7 @@ calculate_cold_pool_area <- function(dat,
   
   cpe_df <- data.frame(year = dat.year,
                        nn_lte2 = cpe_lte2_nn, 
+                       idw_nmax4_lte2 = cpe_lte2_idw_nmax4, 
                        idw_lte2 = cpe_lte2_idw, 
                        bes_lte2 = cpe_lte2_bes, 
                        exp_lte2 = cpe_lte2_exp, 
@@ -230,7 +249,8 @@ calculate_cold_pool_area <- function(dat,
                        ste_lte2 = cpe_lte2_ste,
                        tps_lte2 = cpe_lte2_tps,
                        nn_lte0 = cpe_lte0_nn, 
-                       idw_lte0 = cpe_lte0_idw, 
+                       idw_nmax4_lte0 = cpe_lte0_idw_nmax4,
+                       idw_lte0 = cpe_lte0_idw,
                        bes_lte0 = cpe_lte0_bes, 
                        exp_lte0 = cpe_lte0_exp, 
                        cir_lte0 = cpe_lte0_cir, 
@@ -239,6 +259,72 @@ calculate_cold_pool_area <- function(dat,
                        mat_lte0 = cpe_lte0_mat,
                        ste_lte0 = cpe_lte0_ste,
                        tps_lte0 = cpe_lte0_tps)
+  
+  if(write.to.file) {
+    print("Writing rasters")
+    if(!dir.exists("./output/")) {
+      dir.create("./output/")
+    }
+    if(!dir.exists("./output/raster/")) {
+      dir.create("./output/raster/")
+    }
+
+    # write unmasked surfaces to raster
+    raster::writeRaster(raster::raster(nn.predict), 
+                        filename = paste0("./output/raster/nn_", dat.year, "_", var.col, ".tif" ),
+                        format = "GTiff", 
+                        overwrite = TRUE)
+    
+    raster::writeRaster(raster::raster(idw.predict), 
+                        filename = paste0("./output/raster/idw_", dat.year, "_", var.col, ".tif" ),
+                        format = "GTiff", 
+                        overwrite = TRUE)
+    
+    raster::writeRaster(raster::raster(idw_nmax4.predict), 
+                        filename = paste0("./output/raster/idw_nmax4_", dat.year, "_", var.col, ".tif" ),
+                        format = "GTiff", 
+                        overwrite = TRUE)
+    
+    raster::writeRaster(raster::raster(exp.predict), 
+                        filename = paste0("./output/raster/exp_", dat.year, "_", var.col, ".tif" ),
+                        format = "GTiff", 
+                        overwrite = TRUE)
+    
+    raster::writeRaster(raster::raster(sph.predict), 
+                        filename = paste0("./output/raster/sph_", dat.year, "_", var.col, ".tif" ),
+                        format = "GTiff", 
+                        overwrite = TRUE)
+    
+    raster::writeRaster(raster::raster(bes.predict), 
+                        filename = paste0("./output/raster/bes_", dat.year, "_", var.col, ".tif" ),
+                        format = "GTiff", 
+                        overwrite = TRUE)
+    
+    raster::writeRaster(raster::raster(gau.predict), 
+                        filename = paste0("./output/raster/gau_", dat.year, "_", var.col, ".tif" ),
+                        format = "GTiff", 
+                        overwrite = TRUE)
+    
+    raster::writeRaster(raster::raster(cir.predict), 
+                        filename = paste0("./output/raster/cir_", dat.year, "_", var.col, ".tif" ),
+                        format = "GTiff", 
+                        overwrite = TRUE)
+    
+    raster::writeRaster(raster::raster(mat.predict), 
+                        filename = paste0("./output/raster/mat_", dat.year, "_", var.col, ".tif" ),
+                        format = "GTiff", 
+                        overwrite = TRUE)
+    
+    raster::writeRaster(raster::raster(ste.predict), 
+                        filename = paste0("./output/raster/ste_", dat.year, "_", var.col, ".tif" ),
+                        format = "GTiff", 
+                        overwrite = TRUE)
+    
+    raster::writeRaster(tps.predict, 
+                        filename = paste0("./output/raster/tps_", dat.year, "_", var.col, ".tif" ),
+                        format = "GTiff", 
+                        overwrite = TRUE)
+  }
   
   return(cpe_df)
   

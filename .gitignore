@@ -28,6 +28,7 @@
 *_cache/
 /cache/
 /archive/
+/output/
 
 # Temporary files created by R markdown
 *.utf8.md

@@ -4,6 +4,7 @@
 #' 
 #' @param sgrid Gridded spatial data
 #' @param amask Object to use as an area mask (simple features object or one of many sp objects)
+#' @export
 
 rasterize_and_mask <- function(sgrid, amask) {
   

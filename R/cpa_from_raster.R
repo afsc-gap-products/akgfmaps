@@ -5,7 +5,7 @@
 #' @param x A RasterLayer object.
 #' @param raster_units Character vector indicating units for x and y dimensions in the raster. Default = "m" for meters.
 #' @param temperature_threshold Numeric. Temperature threshold for value.
-#' 
+#' @export
 
 cpa_from_raster <- function(x, 
                                      raster_units = "m", 
