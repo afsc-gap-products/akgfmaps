@@ -4,13 +4,15 @@
 #' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
-#' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
+#' @param return.survey.grid Should a survey grid be returned (default = FALSE)
+#' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
 #' 
 #' @export
 
 get_base_layers <- function(select.region, 
                             set.crs = "+proj=longlat +datum=NAD83", 
-                            use.survey.bathymetry = TRUE) {
+                            use.survey.bathymetry = TRUE,
+                            return.survey.grid = FALSE) {
   
   ## Automatically set CRS
   if(set.crs == "auto") {
@@ -57,7 +59,8 @@ get_base_layers <- function(select.region,
   # SEBS--------------------------------------------------------------------------------------------
   if(select.region %in% c("bs.south", "sebs")) {
     survey.area <- sf::st_read(system.file("data", "sebs_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.strata <- sf::st_read(system.file("data", "sebs_strata.shp", package = "akgfmaps"), quiet = TRUE) 
+    survey.strata <- sf::st_read(system.file("data", "sebs_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.3, -154.3), 
                                                                    y = c(54.5, 63.15)), 
                                                         out.crs = set.crs)
@@ -69,6 +72,7 @@ get_base_layers <- function(select.region,
   if(select.region %in% c("bs.all", "ebs")) {
     survey.area <- sf::st_read(system.file("data", "ebs_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ebs_strata.shp", package = "akgfmaps"), quiet = TRUE) 
+    survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.8, -154.7), 
                                                                    y = c(54, 65.1)), 
                                                         out.crs = set.crs)
@@ -79,7 +83,8 @@ get_base_layers <- function(select.region,
   # Chukchi---------------------------------------------------------------------------------------
   if(select.region == "ecs") {
     survey.area <- sf::st_read(system.file("data", "chukchi_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.strata <- sf::st_read(system.file("data", "chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE) 
+    survey.strata <- sf::st_read(system.file("data", "chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.grid <- NULL
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170, -156), 
                                                                    y = c(65, 73)), 
                                                         out.crs = set.crs)
@@ -90,7 +95,8 @@ get_base_layers <- function(select.region,
   # Chukchi+EBS ------------------------------------------------------------------------------------
   if(select.region == "ebs.ecs") {
     survey.area <- sf::st_read(system.file("data", "ebs_chukchi_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.strata <- sf::st_read(system.file("data", "ebs_chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE) 
+    survey.strata <- sf::st_read(system.file("data", "ebs_chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.grid <- NULL
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177, -151), 
                                                                    y = c(54.5, 72.5)), 
                                                         out.crs = set.crs)
@@ -102,6 +108,7 @@ get_base_layers <- function(select.region,
   if(select.region == "ai") {
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.grid <- NULL
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(170, -160), 
                                                                    y = c(49, 54.5)), 
                                                         out.crs = set.crs)
@@ -113,6 +120,7 @@ get_base_layers <- function(select.region,
   if(select.region == "ai.east") {
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.grid <- NULL
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-173.5, -165.7), 
                                                                    y = c(51.8, 54.3)), 
                                                         out.crs = set.crs)
@@ -124,6 +132,7 @@ get_base_layers <- function(select.region,
   if(select.region == "ai.central") {
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.grid <- NULL
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(178.5, -173.5), 
                                                                    y = c(50.8, 52.8)), 
                                                         out.crs = set.crs)
@@ -135,6 +144,7 @@ get_base_layers <- function(select.region,
   if(select.region == "ai.west") {
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.grid <- NULL
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(171.2, 178.5), 
                                                                    y = c(50.7, 53.75)), 
                                                         out.crs = set.crs)
@@ -147,6 +157,7 @@ get_base_layers <- function(select.region,
   if(select.region == "goa") {
     survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.grid <- NULL
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170.5, -128), 
                                                                    y = c(52, 60)), 
                                                         out.crs = set.crs)
@@ -158,6 +169,7 @@ get_base_layers <- function(select.region,
   if(select.region == "goa.west") {
     survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.grid <- NULL
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170.5, -150), 
                                                                    y = c(52.2, 60.5)), 
                                                         out.crs = set.crs)
@@ -169,6 +181,7 @@ get_base_layers <- function(select.region,
   if(select.region == "goa.east") {
     survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.grid <- NULL
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-150, -126.1), 
                                                                    y = c(54, 60.5)), 
                                                         out.crs = set.crs)
@@ -201,6 +214,22 @@ get_base_layers <- function(select.region,
   survey.strata <- survey.strata %>% sf::st_transform(crs = set.crs)
   bathymetry <- bathymetry %>% sf::st_transform(crs = set.crs)
   
+  # Set up survey grid -----------------------------------------------------------------------------
+  if(!is.null(survey.grid) & return.survey.grid) {
+    survey.grid <- survey.grid %>% sf::st_transform(crs = set.crs)
+    
+    # EBS survey grid clipping ---------------------------------------------------------------------
+    if(select.region %in% c("bs.all", "ebs", "bs.south", "sebs", "bs.north", "nbs")) {
+      grid.intersects <- survey.area %>% 
+        sf::st_union() %>% 
+        sf::st_intersects(survey.grid)
+      survey.grid <- survey.grid[grid.intersects[[1]],]
+      survey.grid$STATIONID[survey.grid$STATIONID == "Z-04"] <- "AZ0504" # Divided station in SEBS
+      survey.mask <- survey.area %>% sf::st_union()
+      survey.grid <- sf::st_intersection(survey.grid, survey.mask) %>%
+        filter(STATIONID %in% akgfmaps::get_survey_stations(select.region = select.region))
+    }
+  }
   
   # Get place labels--------------------------------------------------------------------------------
   place.labels <- read.csv(file = system.file("data", "placenames.csv", package = "akgfmaps")) %>%
@@ -210,6 +239,7 @@ get_base_layers <- function(select.region,
   return(list(akland = akland,
               survey.area = survey.area,
               survey.strata = survey.strata,
+              survey.grid = survey.grid,
               bathymetry = bathymetry,
               place.labels = place.labels,
               graticule = graticule,
