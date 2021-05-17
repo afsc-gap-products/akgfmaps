@@ -108,7 +108,7 @@ get_base_layers <- function(select.region,
   if(select.region == "ai") {
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.grid <- NULL
+    survey.grid <- sf::st_read(system.file("data", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(170, -160), 
                                                                    y = c(49, 54.5)), 
                                                         out.crs = set.crs)
@@ -120,7 +120,7 @@ get_base_layers <- function(select.region,
   if(select.region == "ai.east") {
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.grid <- NULL
+    survey.grid <- sf::st_read(system.file("data", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-173.5, -165.7), 
                                                                    y = c(51.8, 54.3)), 
                                                         out.crs = set.crs)
@@ -132,7 +132,7 @@ get_base_layers <- function(select.region,
   if(select.region == "ai.central") {
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.grid <- NULL
+    survey.grid <- sf::st_read(system.file("data", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(178.5, -173.5), 
                                                                    y = c(50.8, 52.8)), 
                                                         out.crs = set.crs)
@@ -144,7 +144,7 @@ get_base_layers <- function(select.region,
   if(select.region == "ai.west") {
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.grid <- NULL
+    survey.grid <- sf::st_read(system.file("data", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(171.2, 178.5), 
                                                                    y = c(50.7, 53.75)), 
                                                         out.crs = set.crs)
@@ -157,7 +157,7 @@ get_base_layers <- function(select.region,
   if(select.region == "goa") {
     survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.grid <- NULL
+    survey.grid <- sf::st_read(system.file("data", "goa_grid.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170.5, -128), 
                                                                    y = c(52, 60)), 
                                                         out.crs = set.crs)
@@ -169,7 +169,7 @@ get_base_layers <- function(select.region,
   if(select.region == "goa.west") {
     survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.grid <- NULL
+    survey.grid <- sf::st_read(system.file("data", "goa_grid.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170.5, -150), 
                                                                    y = c(52.2, 60.5)), 
                                                         out.crs = set.crs)
@@ -181,7 +181,7 @@ get_base_layers <- function(select.region,
   if(select.region == "goa.east") {
     survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.grid <- NULL
+    survey.grid <- sf::st_read(system.file("data", "goa_grid.shp", package = "akgfmaps"), quiet = TRUE)
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-150, -126.1), 
                                                                    y = c(54, 60.5)), 
                                                         out.crs = set.crs)
