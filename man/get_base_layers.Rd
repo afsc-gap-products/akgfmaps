@@ -7,18 +7,21 @@
 get_base_layers(
   select.region,
   set.crs = "+proj=longlat +datum=NAD83",
-  use.survey.bathymetry = FALSE
+  use.survey.bathymetry = TRUE,
+  return.survey.grid = FALSE
 )
 }
 \arguments{
-\item{select.region}{Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, ecs, ebs.ecs}
+\item{select.region}{Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east}
 
 \item{set.crs}{Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.}
 
 \item{use.survey.bathymetry}{Should survey bathymetry be used?}
+
+\item{return.survey.grid}{Should a survey grid be returned (default = FALSE)}
 }
 \value{
-A list containing sf objects land, bathymetry, survey area boundary, survey strata, a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
+A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
 }
 \description{
 This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
