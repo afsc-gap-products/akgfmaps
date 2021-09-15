@@ -1,7 +1,7 @@
 #' Function to get base layers for plotting
 #' 
 #' This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
-#' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east
+#' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
 #' @param return.survey.grid Should a survey grid be returned (default = FALSE)
@@ -34,6 +34,8 @@ get_base_layers <- function(select.region,
                                                  "sebs", 
                                                  "bs.all", 
                                                  "ebs", 
+                                                 "bs.north", 
+                                                 "nbs", 
                                                  "ecs", 
                                                  "ebs.ecs", 
                                                  "ai",
@@ -68,7 +70,7 @@ get_base_layers <- function(select.region,
     lat.breaks <- seq(54,64,2)
   }
   
-  # NEBS+SEBS---------------------------------------------------------------------------------------
+  # NEBS:NBS+SEBS---------------------------------------------------------------------------------------
   if(select.region %in% c("bs.all", "ebs")) {
     survey.area <- sf::st_read(system.file("data", "ebs_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ebs_strata.shp", package = "akgfmaps"), quiet = TRUE) 
@@ -79,6 +81,30 @@ get_base_layers <- function(select.region,
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(54,66,2)
   }
+    
+  # NBS---------------------------------------------------------------------------------------
+  if (select.region %in% c("bs.north", "nbs")) {
+    survey.area <- sf::st_read(system.file("data", 
+                                           "ebs_survey_boundary.shp", package = "akgfmaps"), 
+                               quiet = TRUE)  %>% 
+      dplyr::filter(SURVEY %in% "NBS_SHELF")
+    
+    survey.strata <- sf::st_read(system.file("data", 
+                                             "ebs_strata.shp", package = "akgfmaps"), 
+                                 quiet = TRUE) %>% 
+      dplyr::filter(Stratum %in% c(81,70,71))
+    
+    survey.grid <- sf::st_read(system.file("data", 
+                                           "bs_grid_w_corners.shp", package = "akgfmaps"), 
+                               quiet = TRUE)%>% 
+      dplyr::filter(STATIONID %in% get_survey_stations("nbs"))
+    
+    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-160, -176.5), 
+                                                                   y = c(60, 66)),  
+                                                        out.crs = set.crs)
+    lon.breaks <- seq(-180, -154, 5)
+    lat.breaks <- seq(60, 66, by = 2)
+  }    
   
   # Chukchi---------------------------------------------------------------------------------------
   if(select.region == "ecs") {
