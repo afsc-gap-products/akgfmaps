@@ -2,7 +2,7 @@
 #' 
 #' Returns a character vector of station id codes in a region.
 #' 
-#' @param select.region Choice of region. Options are "ebs", "bs.all", "sebs", "bs.south" 
+#' @param select.region Choice of region. Options are "ebs", "bs.all", "sebs", "bs.south", "nbs", "bs.north"
 #' @return A chracter vector of RACE station ID codes.
 #' @export
 
