@@ -21,6 +21,8 @@ get_base_layers <- function(select.region,
       "+proj=aea +lat_1=55 +lat_2=60 +lat_0=57.5 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=68.1 +lat_2=70.7 +lat_0=69.4 +lon_0=-162.6 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=60.8 +lat_2=67 +lat_0=63.9 +lon_0=-167 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=50.83 +lat_2=52.67 +lat_0=51.75 +lon_0=-179 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
@@ -84,19 +86,14 @@ get_base_layers <- function(select.region,
     
   # NBS---------------------------------------------------------------------------------------
   if (select.region %in% c("bs.north", "nbs")) {
-    survey.area <- sf::st_read(system.file("data", 
-                                           "ebs_survey_boundary.shp", package = "akgfmaps"), 
-                               quiet = TRUE)  %>% 
+    survey.area <- sf::st_read(system.file("data", "ebs_survey_boundary.shp", package = "akgfmaps"), 
+                               quiet = TRUE) %>% 
       dplyr::filter(SURVEY %in% "NBS_SHELF")
     
-    survey.strata <- sf::st_read(system.file("data", 
-                                             "ebs_strata.shp", package = "akgfmaps"), 
-                                 quiet = TRUE) %>% 
-      dplyr::filter(Stratum %in% c(81,70,71))
+    survey.strata <- sf::st_read(system.file("data", "ebs_strata.shp", package = "akgfmaps"), 
+                                 quiet = TRUE) %>% dplyr::filter(Stratum %in% c(81,70,71))
     
-    survey.grid <- sf::st_read(system.file("data", 
-                                           "bs_grid_w_corners.shp", package = "akgfmaps"), 
-                               quiet = TRUE)%>% 
+    survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"),  quiet = TRUE) %>% 
       dplyr::filter(STATIONID %in% get_survey_stations("nbs"))
     
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-160, -176.5), 
