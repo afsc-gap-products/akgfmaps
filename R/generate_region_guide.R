@@ -13,7 +13,7 @@ generate_region_guide <- function(out_loc = "akgfmaps_region_layers.pdf",
   }
   
   if(is.na(select.regions)) {
-    select.regions <- c("ecs", "ebs", "ebs.ecs", "sebs", "ai", "ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")
+    select.regions <- c("ecs", "ebs", "ebs.ecs", "sebs", "nbs", "ai", "ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")
   }
   pdf(file = out_loc, width = 8, height = 8, onefile = TRUE)
   for(i in 1:length(select.regions)) {
