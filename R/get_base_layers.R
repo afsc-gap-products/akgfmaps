@@ -50,7 +50,7 @@ get_base_layers <- function(select.region,
   }
 
   # Bathymetry and land shapefiles ---------------------------------------------------------------  
-  if(select.region %in% c("bs.south", "sebs", "bs.all", "ebs", "ecs", "ebs.ecs")) {
+  if(select.region %in% c("bs.south", "sebs", "bs.all", "ebs", "nbs", "bs.north", "ecs", "ebs.ecs")) {
     akland <- sf::st_read(system.file("data", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE)
     bathymetry <- sf::st_read(system.file("data", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
     
