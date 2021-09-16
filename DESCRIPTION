@@ -1,7 +1,7 @@
 Package: akgfmaps
 Type: Package
 Title: Alaska groundfish mapping
-Version: 1.6.2
+Version: 1.6.3
 Authors@R: person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre"))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 4.0.0),
