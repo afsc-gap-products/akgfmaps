@@ -24,12 +24,12 @@ add_map_labels <- function(x,
     in.dat <- x
     
     # Load labels and plotting locations--------------------------------------------------------------
-    placenames <- read.csv(file = system.file("data", 
+    placenames <- utils::read.csv(file = system.file("data", 
                                               file = "placenames.csv", 
                                               package = "akgfmaps", 
                                               mustWork = TRUE), 
                            stringsAsFactors = FALSE) %>% 
-      transform_data_frame_crs(out.crs = sf::st_crs(in.dat$crs)) # Transform placenames based on extrapolation grid CRS
+      akgfmaps::transform_data_frame_crs(out.crs = sf::st_crs(in.dat$crs)) # Transform placenames based on extrapolation grid CRS
     
     # Find new and default place names----------------------------------------------------------------
     if(!is.null(new.places)) {
@@ -50,16 +50,29 @@ add_map_labels <- function(x,
     # Make plot
     if(in.dat$region %in% c("bs.all", "ebs")) {
       in.dat$plot <- in.dat$plot + 
-        geom_text(data = subset(placenames, type == "mainland"), aes(x = x, y = y, label = lab), size = 14, group = 99) +
-        geom_shadowtext(data = subset(placenames, type == "peninsula"), 
-                        aes(x = x, y = y, label = lab), size = 8, 
-                        angle = 28, bg.color = "white", color = "black", group = 99) +
-        geom_shadowtext(data = subset(placenames, type %in% c("bathymetry", "islands")), 
+        ggplot2::geom_text(data = subset(placenames, type == "mainland"), 
+                           aes(x = x, y = y, label = lab), 
+                           size = 14, 
+                           group = 99) +
+        shadowtext::geom_shadowtext(data = subset(placenames, type == "peninsula"), 
                         aes(x = x, y = y, label = lab), 
+                        size = 8, 
+                        angle = 28, 
+                        bg.color = "white", 
+                        color = "black", 
+                        group = 99) +
+        shadowtext::geom_shadowtext(data = subset(placenames, type %in% c("bathymetry", "islands")), 
+                        aes(x = x, 
+                            y = y, 
+                            label = lab), 
                         bg.color = "white", color = "black", size = 3.88, group = 99) +
-        geom_shadowtext(data = subset(placenames, type == "convention line"), aes(x = x, y = y, label = lab), 
-                        angle = 29.5, size = 3,
-                        bg.color = "white", color = "black", group = 99)
+        shadowtext::geom_shadowtext(data = subset(placenames, type == "convention line"), 
+                                    aes(x = x, y = y, label = lab), 
+                                    angle = 29.5, 
+                                    size = 3,
+                                    bg.color = "white", 
+                                    color = "black", 
+                                    group = 99)
     }
     
     if(!is.na(add.scale.bar)) {
@@ -70,16 +83,30 @@ add_map_labels <- function(x,
     placenames <- subset(new.places, region == region & type %in% lab.select)
     if(region %in% c("bs.all", "bs.south", "sebs")) {
       in.dat <- x + 
-        geom_text(data = subset(placenames, type == "mainland"), aes(x = x, y = y, label = lab), size = 14, group = 99) +
-        geom_shadowtext(data = subset(placenames, type == "peninsula"), 
-                        aes(x = x, y = y, label = lab), size = 8, 
-                        angle = 40, bg.color = "white", color = "black", group = 99) +
-        geom_shadowtext(data = subset(placenames, type %in% c("bathymetry", "islands")), 
-                        aes(x = x, y = y, label = lab), 
-                        bg.color = "white", color = "black", size = 3.88, group = 99) +
-        geom_shadowtext(data = subset(placenames, type == "convention line"), aes(x = x, y = y, label = lab), 
-                        angle = 42, size = 3,
-                        bg.color = "white", color = "black", group = 99)
+        ggplot2::geom_text(data = subset(placenames, type == "mainland"), 
+                           aes(x = x, y = y, label = lab), 
+                           size = 14, 
+                           group = 99) +
+        shadowtext::geom_shadowtext(data = subset(placenames, type == "peninsula"), 
+                                    aes(x = x, y = y, label = lab), 
+                                    size = 8, 
+                                    angle = 40, 
+                                    bg.color = "white", 
+                                    color = "black", 
+                                    group = 99) +
+        shadowtext::geom_shadowtext(data = subset(placenames, type %in% c("bathymetry", "islands")), 
+                                    aes(x = x, y = y, label = lab), 
+                                    bg.color = "white", 
+                                    color = "black", 
+                                    size = 3.88, 
+                                    group = 99) +
+        shadowtext::geom_shadowtext(data = subset(placenames, type == "convention line"), 
+                                    aes(x = x, y = y, label = lab), 
+                                    angle = 42, 
+                                    size = 3,
+                                    bg.color = "white", 
+                                    color = "black", 
+                                    group = 99)
     }
   }
   return(in.dat)
