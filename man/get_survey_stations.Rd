@@ -7,7 +7,7 @@
 get_survey_stations(select.region)
 }
 \arguments{
-\item{select.region}{Choice of region. Options are "ebs", "bs.all", "sebs", "bs.south"}
+\item{select.region}{Choice of region. Options are "ebs", "bs.all", "sebs", "bs.south", "nbs", "bs.north"}
 }
 \value{
 A chracter vector of RACE station ID codes.
