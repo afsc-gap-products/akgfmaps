@@ -48,8 +48,8 @@ make_idw_map <- function(x = NA,
                          use.survey.bathymetry = TRUE, 
                          return.continuous.grid = TRUE) {
   
-  # Convert vectors to data fram if x is NA---------------------------------------------------------
-  if(is.na(x)) {
+  # Convert vectors to data frame if x is not a data.frame or tbl-----------------------------------
+  if(!is.data.frame(x)) {
     x <- data.frame(COMMON_NAME = COMMON_NAME,
                     LATITUDE = LATITUDE,
                     LONGITUDE = LONGITUDE,
@@ -62,7 +62,7 @@ make_idw_map <- function(x = NA,
   }
   
   # Set up mapping region---------------------------------------------------------------------------
-  if(is.na(extrap.box)) {
+  if(is.na(extrap.box)[1]) {
     if(region %in% c("bs.south", "sebs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 63)}
     if(region %in% c("bs.all", "ebs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 68)}
   }
@@ -75,11 +75,13 @@ make_idw_map <- function(x = NA,
   
   # Use survey bathymetry---------------------------------------------------------------------------
   if(use.survey.bathymetry) {
-    map_layers$bathymetry <- get_survey_bathymetry(select.region = region, set.crs = out.crs)
+    map_layers$bathymetry <- akgfmaps::get_survey_bathymetry(select.region = region, set.crs = out.crs)
   }
   
   # Assign CRS to input data------------------------------------------------------------------------
-  x <- sf::st_as_sf(x, coords = c(x = "LONGITUDE", y = "LATITUDE"), crs = sf::st_crs(in.crs)) %>% 
+  x <- sf::st_as_sf(x, 
+                    coords = c(x = "LONGITUDE", y = "LATITUDE"), 
+                    crs = sf::st_crs(in.crs)) %>% 
     sf::st_transform(crs = map_layers$crs)
   
   # Inverse distance weighting----------------------------------------------------------------------
@@ -95,8 +97,8 @@ make_idw_map <- function(x = NA,
                                      ymx=extrap.box['ymx'],
                                      ncol=(extrap.box['xmx']-extrap.box['xmn'])/grid.cell,
                                      nrow=(extrap.box['ymx']-extrap.box['ymn'])/grid.cell,
-                                     crs = crs(in.crs)) %>% 
-    projectRaster(crs = crs(x))
+                                     crs = raster::crs(in.crs)) %>% 
+    raster::projectRaster(crs = raster::crs(x))
   
   # Predict, rasterize, mask------------------------------------------------------------------------
   extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) %>% 
@@ -161,7 +163,6 @@ make_idw_map <- function(x = NA,
       
   # Cut extrapolation grid to support discrete scale------------------------------------------------
   extrap.grid$var1.pred <- cut(extrap.grid$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
-  # extrap.grid$discrete_layer <- cut(extrap.grid$layer, set.breaks, right = TRUE, dig.lab = dig.lab)
 
   # Which breaks need commas?-----------------------------------------------------------------------
   sig.dig <- round(set.breaks[which(nchar(round(set.breaks)) >= 4)])
@@ -182,28 +183,29 @@ make_idw_map <- function(x = NA,
   }
   
   # Assign level names to breaks for plotting-------------------------------------------------------
-  extrap.grid$var1.pred <- factor(make_level_labels(extrap.grid$var1.pred), levels = make_level_labels(levels(set.levels)))
+  extrap.grid$var1.pred <- factor(make_level_labels(extrap.grid$var1.pred), 
+                                  levels = make_level_labels(levels(set.levels)))
   
   # Number of breaks for color adjustments----------------------------------------------------------
   n.breaks <- length(levels(set.levels))
   
   # Make plot---------------------------------------------------------------------------------------
-    p1 <- ggplot() +
-    geom_sf(data = map_layers$survey.area, fill = NA) +
-    geom_stars(data = extrap.grid) +
-      geom_sf(data = map_layers$survey.area, fill = NA) +
-      geom_sf(data = map_layers$akland, fill = "grey80") +
-      geom_sf(data = map_layers$bathymetry) +
-      geom_sf(data = map_layers$graticule, color = alpha("grey70", 0.3)) +
-      scale_fill_manual(name = paste0(key.title, "\nCPUE (kg/ha)"), 
+    p1 <- ggplot2::ggplot() +
+    ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
+    stars::geom_stars(data = extrap.grid) +
+    ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
+    ggplot2::geom_sf(data = map_layers$akland, fill = "grey80") +
+    ggplot2::geom_sf(data = map_layers$bathymetry) +
+    ggplot2::geom_sf(data = map_layers$graticule, color = alpha("grey70", 0.3)) +
+    ggplot2::scale_fill_manual(name = paste0(key.title, "\nCPUE (kg/ha)"), 
                         values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]), 
                         na.translate = FALSE, # Don't use NA
                         drop = FALSE) + # Keep all levels in the plot
-      scale_x_continuous(breaks = map_layers$lon.breaks) + 
-      scale_y_continuous(breaks = map_layers$lat.breaks) + 
-      coord_sf(xlim = map_layers$plot.boundary$x,
+    ggplot2::scale_x_continuous(breaks = map_layers$lon.breaks) + 
+    ggplot2::scale_y_continuous(breaks = map_layers$lat.breaks) + 
+    ggplot2::coord_sf(xlim = map_layers$plot.boundary$x,
                ylim = map_layers$plot.boundary$y) +
-      theme(panel.border = element_rect(color = "black", fill = NA),
+    ggplot2::theme(panel.border = element_rect(color = "black", fill = NA),
             panel.background = element_rect(fill = NA, color = "black"),
             legend.key = element_rect(fill = NA, color = "grey70"),
             legend.position = c(0.12, 0.18),
