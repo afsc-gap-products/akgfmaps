@@ -227,7 +227,7 @@ get_base_layers <- function(select.region,
   }
   
   # Make graticule ---------------------------------------------------------------------------------
-  graticule <- st_graticule(lat = lat.breaks, 
+  graticule <- sf::st_graticule(lat = lat.breaks, 
                             lon = lon.breaks, 
                             margin = 1e-5)
   

@@ -5,13 +5,8 @@ Version: 1.6.3
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
     person("Emily", "Markowitz", email = "emily.markowitz@noaa.gov", role = "ctb"))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
-Depends: R (>= 4.0.0)
-Description: This package provides tools and shapefile layers to facilitation production of maps and spatial analysis in Alaska Fisheries Science Center groundfish survey regions. Tools include functions for qualitative visualization of CPUE.
-License: GPL (>=2)
-Encoding: UTF-8
-LazyData: false
-RoxygenNote: 7.1.1
-Imports: colorspace,
+Depends: R (>= 4.0.0),
+    colorspace,
     viridis,
     classInt (>= 0.4-1),
     dplyr,
@@ -29,6 +24,11 @@ Imports: colorspace,
     stars,
     stats,
     utils
+Description: This package provides tools and shapefile layers to facilitation production of maps and spatial analysis in Alaska Fisheries Science Center groundfish survey regions. Tools include functions for qualitative visualization of CPUE.
+License: GPL (>=2)
+Encoding: UTF-8
+LazyData: false
+RoxygenNote: 7.1.1
 Suggests: 
     testthat (>= 3.0.0),
     knitr,

@@ -103,7 +103,7 @@ make_idw_map <- function(x = NA,
   # Predict, rasterize, mask------------------------------------------------------------------------
   extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) %>% 
     sf::st_as_sf() %>% 
-    sf::st_transform(crs = crs(x)) %>% 
+    sf::st_transform(crs = raster::crs(x)) %>% 
     stars::st_rasterize() %>% 
     sf::st_join(map_layers$survey.area, join = st_intersects) 
   
