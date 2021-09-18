@@ -58,7 +58,7 @@ jobs:
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
         shell: bash
         
-        - name: Install macOS spatial libraries
+      - name: Install macOS spatial libraries
         if: runner.os == 'macOS'
         run: |
           # conflicts with gfortran from r-lib/actions when linking gcc
