@@ -13,7 +13,6 @@ get_base_layers <- function(select.region,
                             set.crs = "+proj=longlat +datum=NAD83", 
                             use.survey.bathymetry = TRUE,
                             return.survey.grid = FALSE) {
-  
   ## Automatically set CRS
   if(set.crs == "auto") {
     region.crs <- c(

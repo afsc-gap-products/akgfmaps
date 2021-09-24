@@ -13,17 +13,20 @@ transform_data_frame_crs <- function(x, coords = c("x", "y"),
                                      in.crs = "+proj=longlat", 
                                      out.crs = "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs", 
                                      only.new.coords = FALSE) {
-  new.coords <- sf::st_as_sf(x, coords = coords, 
-                         crs = sf::st_crs(in.crs)) %>% 
-    sf::st_transform(crs = sf::st_crs(out.crs)) %>% 
-    sf::st_coordinates() %>%
-    as.data.frame()
   
-  if(only.new.coords) {
-    return(new.coords)
-  } else {
-    x[coords[1]] <- new.coords$X
-    x[coords[2]] <- new.coords$Y
+  if(nrow(x) > 0) {
+    new.coords <- sf::st_as_sf(x, coords = coords, 
+                               crs = sf::st_crs(in.crs)) %>% 
+      sf::st_transform(crs = sf::st_crs(out.crs)) %>% 
+      sf::st_coordinates() %>%
+      as.data.frame()
+    
+    if(only.new.coords) {
+      return(new.coords)
+    } else {
+      x[coords[1]] <- new.coords$X
+      x[coords[2]] <- new.coords$Y
+    }
   }
   return(x)
 }
