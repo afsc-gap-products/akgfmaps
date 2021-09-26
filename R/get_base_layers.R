@@ -61,9 +61,15 @@ get_base_layers <- function(select.region,
   
   # SEBS--------------------------------------------------------------------------------------------
   if(select.region %in% c("bs.south", "sebs")) {
-    survey.area <- sf::st_read(system.file("data", "sebs_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.strata <- sf::st_read(system.file("data", "sebs_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.area <- sf::st_read(system.file("data", "ebs_survey_boundary.shp", package = "akgfmaps"), 
+                               quiet = TRUE) %>%
+      dplyr::filter(SURVEY == "EBS_SHELF")
+    survey.strata <- sf::st_read(system.file("data", "ebs_strata.shp", package = "akgfmaps"), 
+                                 quiet = TRUE) %>%
+      dplyr::filter(Stratum %in% c(10, 20, 31, 32, 41, 42, 43, 61, 62, 82, 90))
+    survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"), 
+                               quiet = TRUE)
+    survey.grid$STATIONID[survey.grid$STATIONID == "Z-04"] <- "AZ0504" # Divided station in SEBS
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.3, -154.3), 
                                                                    y = c(54.5, 63.15)), 
                                                         out.crs = set.crs)
@@ -73,9 +79,13 @@ get_base_layers <- function(select.region,
   
   # NEBS:NBS+SEBS---------------------------------------------------------------------------------------
   if(select.region %in% c("bs.all", "ebs")) {
-    survey.area <- sf::st_read(system.file("data", "ebs_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.strata <- sf::st_read(system.file("data", "ebs_strata.shp", package = "akgfmaps"), quiet = TRUE) 
-    survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.area <- sf::st_read(system.file("data", "ebs_survey_boundary.shp", package = "akgfmaps"), 
+                               quiet = TRUE)
+    survey.strata <- sf::st_read(system.file("data", "ebs_strata.shp", package = "akgfmaps"), 
+                                 quiet = TRUE) 
+    survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"), 
+                               quiet = TRUE) %>%
+      dplyr::filter(STATIONID %in% akgfmaps::get_survey_stations(select.region = "ebs"))
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.8, -154.7), 
                                                                    y = c(54, 65.1)), 
                                                         out.crs = set.crs)
@@ -87,13 +97,15 @@ get_base_layers <- function(select.region,
   if (select.region %in% c("bs.north", "nbs")) {
     survey.area <- sf::st_read(system.file("data", "ebs_survey_boundary.shp", package = "akgfmaps"), 
                                quiet = TRUE) %>% 
-      dplyr::filter(SURVEY %in% "NBS_SHELF")
+      dplyr::filter(SURVEY == "NBS_SHELF")
     
     survey.strata <- sf::st_read(system.file("data", "ebs_strata.shp", package = "akgfmaps"), 
-                                 quiet = TRUE) %>% dplyr::filter(Stratum %in% c(81,70,71))
+                                 quiet = TRUE) %>% 
+      dplyr::filter(Stratum %in% c(81,70,71))
     
-    survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"),  quiet = TRUE) %>% 
-      dplyr::filter(STATIONID %in% get_survey_stations("nbs"))
+    survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"),  
+                               quiet = TRUE) %>% 
+      dplyr::filter(STATIONID %in% akgfmaps::get_survey_stations("nbs"))
     
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-160, -176.5), 
                                                                    y = c(60, 66)),  
@@ -104,8 +116,10 @@ get_base_layers <- function(select.region,
   
   # Chukchi---------------------------------------------------------------------------------------
   if(select.region == "ecs") {
-    survey.area <- sf::st_read(system.file("data", "chukchi_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.strata <- sf::st_read(system.file("data", "chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE)
+    survey.area <- sf::st_read(system.file("data", "chukchi_survey_boundary.shp", package = "akgfmaps"), 
+                               quiet = TRUE)
+    survey.strata <- sf::st_read(system.file("data", "chukchi_strata.shp", package = "akgfmaps"), 
+                                 quiet = TRUE)
     survey.grid <- NULL
     plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170, -156), 
                                                                    y = c(65, 73)), 
