@@ -38,3 +38,4 @@ doc
 Meta
 *.csv
 *.png
+*.lock
