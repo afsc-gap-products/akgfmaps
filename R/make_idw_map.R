@@ -37,7 +37,7 @@ make_idw_map <- function(x = NA,
                          LONGITUDE = NA, 
                          CPUE_KGHA = NA, 
                          region = "bs.south", 
-                         extrap.box = NA, 
+                         extrap.box = NULL, 
                          set.breaks = "jenks", 
                          grid.cell = c(0.05, 0.05), 
                          in.crs = "+proj=longlat", 
@@ -62,8 +62,9 @@ make_idw_map <- function(x = NA,
   }
   
   # Set up mapping region---------------------------------------------------------------------------
-  if(is.na(extrap.box)[1]) {
+  if(is.null(extrap.box)) {
     if(region %in% c("bs.south", "sebs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 63)}
+    if(region %in% c("bs.north", "nbs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 68)}
     if(region %in% c("bs.all", "ebs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 68)}
   }
   
