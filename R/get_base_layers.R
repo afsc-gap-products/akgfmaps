@@ -66,7 +66,7 @@ get_base_layers <- function(select.region,
       dplyr::filter(SURVEY == "EBS_SHELF")
     survey.strata <- sf::st_read(system.file("data", "ebs_strata.shp", package = "akgfmaps"), 
                                  quiet = TRUE) %>%
-      dplyr::filter(Stratum %in% c(10, 20, 31, 32, 41, 42, 43, 61, 62, 82, 90))
+      dplyr::filter(Stratum %in% c(10, 20, 31, 32, 41, 42, 43, 50, 61, 62, 82, 90))
     survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"), 
                                quiet = TRUE)
     survey.grid$STATIONID[survey.grid$STATIONID == "Z-04"] <- "AZ0504" # Divided station in SEBS
