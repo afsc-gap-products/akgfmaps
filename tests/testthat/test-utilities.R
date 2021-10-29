@@ -13,4 +13,4 @@ testthat::test_that("Test normal score transformations",
 
 testthat::test_that("Check stations",
                     {expect_equal(length(get_survey_stations(select.region = "sebs")), 376);
-                      expect_equal(length(get_survey_stations(select.region = "nbs")), 143)})
+                      expect_equal(length(get_survey_stations(select.region = "nbs")), 144)})
