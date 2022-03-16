@@ -11,7 +11,7 @@ make_idw_map(
   LONGITUDE = NA,
   CPUE_KGHA = NA,
   region = "bs.south",
-  extrap.box = NA,
+  extrap.box = NULL,
   set.breaks = "jenks",
   grid.cell = c(0.05, 0.05),
   in.crs = "+proj=longlat",
