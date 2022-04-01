@@ -65,8 +65,8 @@ make_idw_map <- function(x = NA,
   if(is.null(extrap.box)) {
     if(region %in% c("bs.south", "sebs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 63)}
     if(region %in% c("bs.north", "nbs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 68)}
-    if(region %in% c("bs.all", "ebs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 50, ymx = 68)}
-    if(region %in% c("bs.southeast", "seastbs")){extrap.box=c(xmn = -168.5, xmx = -157, ymn = 54, ymx = 59.5)}
+    if(region %in% c("bs.all", "ebs")) {extrap.box = c(xmn = -168.5, xmx = -157, ymn = 54, ymx = 59.5)}
+    #if(region %in% c("bs.southeast", "seastbs")){extrap.box=c(xmn = -168.5, xmx = -157, ymn = 54, ymx = 59.5)}
   }
   
   # Load map layers---------------------------------------------------------------------------------
@@ -226,3 +226,4 @@ make_idw_map <- function(x = NA,
               key.title = key.title,
               crs = out.crs))
 }
+ 
