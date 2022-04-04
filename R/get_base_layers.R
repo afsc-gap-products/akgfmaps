@@ -70,11 +70,11 @@ get_base_layers <- function(select.region,
     survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"), 
                                quiet = TRUE)
     survey.grid$STATIONID[survey.grid$STATIONID == "Z-04"] <- "AZ0504" # Divided station in SEBS
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.3, -154.3), 
-                                                                   y = c(54.5, 63.15)), 
+    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-168.5, -157), 
+                                                                   y = c(54, 59.5)), 
                                                         out.crs = set.crs)
-    lon.breaks <- seq(-180, -154, 5)
-    lat.breaks <- seq(54,64,2)
+    lon.breaks <- seq(-170, -157, 5)
+    lat.breaks <- seq(54,60,2)
   }
   
   # NEBS:NBS+SEBS---------------------------------------------------------------------------------------
