@@ -61,9 +61,10 @@ get_base_layers <- function(select.region,
   
   # SEBS--------------------------------------------------------------------------------------------
   if(select.region %in% c("bs.south", "sebs")) {
-    survey.area <- sf::st_read(system.file("data", "BristolBay.shp", package = "akgfmaps"), 
-                               quiet = TRUE)
+    #survey.area <- sf::st_read(system.file("data", "BristolBay.shp", package = "akgfmaps"), 
+                               #quiet = TRUE)
       #dplyr::filter(SURVEY == "EBS_SHELF")
+    survey.area<-rgdal:: readOGR(dsn="./SAP_data/BristolBay.shp")
     survey.strata <- sf::st_read(system.file("data", "ebs_strata.shp", package = "akgfmaps"), 
                                  quiet = TRUE) %>%
       dplyr::filter(Stratum %in% c(10, 20, 31, 32, 41, 42, 43, 50, 61, 62, 82, 90))
