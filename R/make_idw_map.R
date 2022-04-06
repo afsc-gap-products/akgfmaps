@@ -195,7 +195,7 @@ make_idw_map <- function(x = NA,
     p1 <- ggplot2::ggplot() +
     ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
     stars::geom_stars(data = extrap.grid) +
-    ggplot2::geom_sf(data = map_layers$survey.area, fill = NA, size=0.7) + ##changed
+    ggplot2::geom_sf(data = map_layers$survey.area, fill = NA, size=1) + ##changed
     ggplot2::geom_sf(data = map_layers$akland, fill = "grey80") +
     ggplot2::geom_sf(data = map_layers$bathymetry) +
     ggplot2::geom_sf(data=map_layers$survey.grid, fill=NA)+ ##changed
