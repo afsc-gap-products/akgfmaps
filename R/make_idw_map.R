@@ -195,10 +195,10 @@ make_idw_map <- function(x = NA,
     p1 <- ggplot2::ggplot() +
     ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
     stars::geom_stars(data = extrap.grid) +
-    ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
+    ggplot2::geom_sf(data = map_layers$survey.area, fill = NA, size=0.7) + ##changed
     ggplot2::geom_sf(data = map_layers$akland, fill = "grey80") +
     ggplot2::geom_sf(data = map_layers$bathymetry) +
-    ggplot2::geom_sf(data=map_layers$survey.grid, fill=NA)+
+    ggplot2::geom_sf(data=map_layers$survey.grid, fill=NA)+ ##changed
     ggplot2::geom_sf(data = map_layers$graticule, color = alpha("grey70", 0.3)) +
     ggplot2::scale_fill_manual(name = paste0(key.title, "\nCPUE (kg/ha)"), 
                         values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]), 
