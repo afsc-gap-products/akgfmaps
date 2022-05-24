@@ -4,15 +4,13 @@
 #' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
-#' @param return.survey.grid Should a survey grid be returned (default = FALSE)
 #' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
 #' 
 #' @export
 
 get_base_layers <- function(select.region, 
                             set.crs = "+proj=longlat +datum=NAD83", 
-                            use.survey.bathymetry = TRUE,
-                            return.survey.grid = FALSE) {
+                            use.survey.bathymetry = TRUE) {
   ## Automatically set CRS
   if(set.crs == "auto") {
     region.crs <- c(
@@ -70,9 +68,7 @@ get_base_layers <- function(select.region,
     survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"), 
                                quiet = TRUE)
     survey.grid$STATIONID[survey.grid$STATIONID == "Z-04"] <- "AZ0504" # Divided station in SEBS
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.3, -154.3), 
-                                                                   y = c(54.5, 63.15)), 
-                                                        out.crs = set.crs)
+
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(54,64,2)
   }
@@ -86,9 +82,7 @@ get_base_layers <- function(select.region,
     survey.grid <- sf::st_read(system.file("data", "bs_grid_w_corners.shp", package = "akgfmaps"), 
                                quiet = TRUE) %>%
       dplyr::filter(STATIONID %in% akgfmaps::get_survey_stations(select.region = "ebs"))
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177.8, -154.7), 
-                                                                   y = c(54, 65.1)), 
-                                                        out.crs = set.crs)
+
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(54,66,2)
   }
@@ -107,9 +101,6 @@ get_base_layers <- function(select.region,
                                quiet = TRUE) %>% 
       dplyr::filter(STATIONID %in% akgfmaps::get_survey_stations("nbs"))
     
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-160, -176.5), 
-                                                                   y = c(60, 66)),  
-                                                        out.crs = set.crs)
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(60, 66, by = 2)
   }    
@@ -121,9 +112,6 @@ get_base_layers <- function(select.region,
     survey.strata <- sf::st_read(system.file("data", "chukchi_strata.shp", package = "akgfmaps"), 
                                  quiet = TRUE)
     survey.grid <- NULL
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170, -156), 
-                                                                   y = c(65, 73)), 
-                                                        out.crs = set.crs)
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(66,76,2)
   }
@@ -133,9 +121,6 @@ get_base_layers <- function(select.region,
     survey.area <- sf::st_read(system.file("data", "ebs_chukchi_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ebs_chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE)
     survey.grid <- NULL
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-177, -151), 
-                                                                   y = c(54.5, 72.5)), 
-                                                        out.crs = set.crs)
     lon.breaks <- seq(-180, -150, 5)
     lat.breaks <- seq(54,78,4)
   }
@@ -145,9 +130,7 @@ get_base_layers <- function(select.region,
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
     survey.grid <- sf::st_read(system.file("data", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(170, -160), 
-                                                                   y = c(49, 54.5)), 
-                                                        out.crs = set.crs)
+
     lon.breaks <- c(170, 175, -180, -175, -170, -165, -160)
     lat.breaks <- seq(44, 56, 2)
   }
@@ -157,9 +140,7 @@ get_base_layers <- function(select.region,
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
     survey.grid <- sf::st_read(system.file("data", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-173.5, -165.7), 
-                                                                   y = c(51.8, 54.3)), 
-                                                        out.crs = set.crs)
+
     lon.breaks <- seq(-176, -164, 2)
     lat.breaks <- seq(52, 55, 1)
   }
@@ -169,9 +150,7 @@ get_base_layers <- function(select.region,
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
     survey.grid <- sf::st_read(system.file("data", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(178.5, -173.5), 
-                                                                   y = c(50.8, 52.8)), 
-                                                        out.crs = set.crs)
+
     lon.breaks <- c(176, 178, 180, seq(-178, -170, 2))
     lat.breaks <- seq(51,55,2)
   }
@@ -181,9 +160,7 @@ get_base_layers <- function(select.region,
     survey.area <- sf::st_read(system.file("data", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
     survey.grid <- sf::st_read(system.file("data", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(171.2, 178.5), 
-                                                                   y = c(50.7, 53.75)), 
-                                                        out.crs = set.crs)
+
     lon.breaks <- seq(168, 180, 2)
     lat.breaks <- seq(50,55,2)
   }
@@ -194,9 +171,7 @@ get_base_layers <- function(select.region,
     survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
     survey.grid <- sf::st_read(system.file("data", "goa_grid.shp", package = "akgfmaps"), quiet = TRUE)
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170.5, -128), 
-                                                                   y = c(52, 60)), 
-                                                        out.crs = set.crs)
+
     lon.breaks <- seq(-175, -130, 5)
     lat.breaks <- seq(52,64,2)
   }
@@ -206,9 +181,7 @@ get_base_layers <- function(select.region,
     survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
     survey.grid <- sf::st_read(system.file("data", "goa_grid.shp", package = "akgfmaps"), quiet = TRUE)
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-170.5, -150), 
-                                                                   y = c(52.2, 60.5)), 
-                                                        out.crs = set.crs)
+
     lon.breaks <- seq(-174, -144, 2)
     lat.breaks <- seq(52, 64, 2)
   }
@@ -218,9 +191,7 @@ get_base_layers <- function(select.region,
     survey.area <- sf::st_read(system.file("data", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("data", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
     survey.grid <- sf::st_read(system.file("data", "goa_grid.shp", package = "akgfmaps"), quiet = TRUE)
-    plot.boundary <- akgfmaps::transform_data_frame_crs(data.frame(x = c(-150, -126.1), 
-                                                                   y = c(54, 60.5)), 
-                                                        out.crs = set.crs)
+
     lon.breaks <- seq(-160, -124, 2)
     lat.breaks <- seq(52, 64, 2)
   }
@@ -250,20 +221,37 @@ get_base_layers <- function(select.region,
   survey.strata <- survey.strata %>% sf::st_transform(crs = set.crs)
   bathymetry <- bathymetry %>% sf::st_transform(crs = set.crs)
   
+  plot.boundary <- sf::st_bbox(survey.area)
+  plot.boundary <- data.frame(x = c(plot.boundary['xmin'], plot.boundary['xmax']),
+                             y = c(plot.boundary['ymin'], plot.boundary['ymax']))
+  
   # Set up survey grid -----------------------------------------------------------------------------
-  if(!is.null(survey.grid) & return.survey.grid) {
+  if(!is.null(survey.grid)) {
     survey.grid <- survey.grid %>% sf::st_transform(crs = set.crs)
     
     # EBS survey grid clipping ---------------------------------------------------------------------
     if(select.region %in% c("bs.all", "ebs", "bs.south", "sebs", "bs.north", "nbs")) {
-      grid.intersects <- survey.area %>% 
+      
+      grid.intersects <- try(survey.area %>% 
         sf::st_union() %>% 
-        sf::st_intersects(survey.grid)
-      survey.grid <- survey.grid[grid.intersects[[1]],]
-      survey.grid$STATIONID[survey.grid$STATIONID == "Z-04"] <- "AZ0504" # Divided station in SEBS
-      survey.mask <- survey.area %>% sf::st_union()
-      survey.grid <- sf::st_intersection(survey.grid, survey.mask) %>%
-        filter(STATIONID %in% akgfmaps::get_survey_stations(select.region = select.region))
+        sf::st_intersects(survey.grid), silent = TRUE)
+      
+      if("try-error" %in% class(grid.intersects)) {
+        sf::sf_use_s2(FALSE)
+        grid.intersects <- try(survey.area %>% 
+                                 sf::st_union() %>% 
+                                 sf::st_intersects(survey.grid), silent = TRUE)
+      } 
+      
+      if("try-error" %in% class(grid.intersects)) {
+        warning("get_base_layers: Can't mask survey grid using sf.")
+      } else {
+        survey.grid <- survey.grid[grid.intersects[[1]],]
+        survey.grid$STATIONID[survey.grid$STATIONID == "Z-04"] <- "AZ0504" # Divided station in SEBS
+        survey.mask <- survey.area %>% sf::st_union()
+        survey.grid <- sf::st_intersection(survey.grid, survey.mask) %>%
+          filter(STATIONID %in% akgfmaps::get_survey_stations(select.region = select.region))
+      }
     }
   }
   
