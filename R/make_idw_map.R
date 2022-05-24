@@ -93,11 +93,11 @@ make_idw_map <- function(x = NA,
 
   # Generate extrapolation grid---------------------------------------------------------------------
   sp_extrap.raster <- raster::raster(xmn = extrap.box['xmin'],
-                                     xmx=extrap.box['xmax'],
-                                     ymn=extrap.box['ymin'],
-                                     ymx=extrap.box['ymax'],
-                                     ncol=(extrap.box['xmax']-extrap.box['xmin'])/grid.cell[1],
-                                     nrow=(extrap.box['ymax']-extrap.box['ymin'])/grid.cell[2],
+                                     xmx = extrap.box['xmax'],
+                                     ymn = extrap.box['ymin'],
+                                     ymx = extrap.box['ymax'],
+                                     ncol = (extrap.box['xmax']-extrap.box['xmin'])/grid.cell[1],
+                                     nrow = (extrap.box['ymax']-extrap.box['ymin'])/grid.cell[2],
                                      crs = raster::crs(out.crs))
   
   # Predict, rasterize, mask------------------------------------------------------------------------
