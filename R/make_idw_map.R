@@ -61,19 +61,19 @@ make_idw_map <- function(x = NA,
     key.title <- x$COMMON_NAME[1]
   }
   
-  # Set up mapping region---------------------------------------------------------------------------
-  if(is.null(extrap.box)) {
-    if(region %in% c("bs.south", "sebs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 63)}
-    if(region %in% c("bs.north", "nbs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 54, ymx = 68)}
-    if(region %in% c("bs.all", "ebs")) {extrap.box = c(xmn = -179.5, xmx = -157, ymn = 50, ymx = 68)}
-  }
-  
   # Load map layers---------------------------------------------------------------------------------
   map_layers <- akgfmaps::get_base_layers(select.region = region, set.crs = out.crs)
   
-  # Assign CRS to handle automatic selection--------------------------------------------------------
-  out.crs <- map_layers$crs
+  # Set up mapping region---------------------------------------------------------------------------
+  if(is.null(extrap.box)) {
+    extrap.box <- sf::st_bbox(map_layers$survey.area)
+  }
   
+  # Assign CRS to handle automatic selection--------------------------------------------------------
+  if(out.crs == "auto") {
+    out.crs <- map_layers$crs
+  }
+
   # Use survey bathymetry---------------------------------------------------------------------------
   if(use.survey.bathymetry) {
     map_layers$bathymetry <- akgfmaps::get_survey_bathymetry(select.region = region, set.crs = out.crs)
@@ -92,14 +92,13 @@ make_idw_map <- function(x = NA,
   stn.predict <- predict(idw_fit, x)
 
   # Generate extrapolation grid---------------------------------------------------------------------
-  sp_extrap.raster <- raster::raster(xmn = extrap.box['xmn'],
-                                     xmx=extrap.box['xmx'],
-                                     ymn=extrap.box['ymn'],
-                                     ymx=extrap.box['ymx'],
-                                     ncol=(extrap.box['xmx']-extrap.box['xmn'])/grid.cell,
-                                     nrow=(extrap.box['ymx']-extrap.box['ymn'])/grid.cell,
-                                     crs = raster::crs(in.crs)) %>% 
-    raster::projectRaster(crs = raster::crs(x))
+  sp_extrap.raster <- raster::raster(xmn = extrap.box['xmin'],
+                                     xmx=extrap.box['xmax'],
+                                     ymn=extrap.box['ymin'],
+                                     ymx=extrap.box['ymax'],
+                                     ncol=(extrap.box['xmax']-extrap.box['xmin'])/grid.cell[1],
+                                     nrow=(extrap.box['ymax']-extrap.box['ymin'])/grid.cell[2],
+                                     crs = raster::crs(out.crs))
   
   # Predict, rasterize, mask------------------------------------------------------------------------
   extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) %>% 
