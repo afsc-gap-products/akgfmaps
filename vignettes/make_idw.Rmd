@@ -65,6 +65,8 @@ The function for performing the IDW and making a plot is \code{make_idw_map}. Th
 opt1 <- make_idw_map(x = yfs2017, # Pass data as a data frame
              region = "bs.all", # Predefined bs.all area
              set.breaks = "jenks", # Gets Jenks breaks from classint::classIntervals()
+             in.crs = "+proj=longlat", # Set input coordinate reference system
+             out.crs = "+proj=longlat", # Set output coordinate reference system
              grid.cell = c(0.02, 0.02), # 0.2x0.2 degree grid cells
              key.title = "yellowfin sole") # Include yellowfin sole in the legend title
 

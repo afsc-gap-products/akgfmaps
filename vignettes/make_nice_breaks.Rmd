@@ -30,11 +30,15 @@ Now, let's compare kmeans and jenks using a coarse grid.
 yfs.opt1 <- make_idw_map(x = yfs2017,
              region = "bs.all",
              set.breaks = "jenks",
+             in.crs = "+proj=longlat", # Set input coordinate reference system
+             out.crs = "+proj=longlat", # Set output coordinate reference system
              grid.cell = c(0.05, 0.05), # Coarse grid
              key.title = "yellowfin sole")
 
 yfs.opt2 <- make_idw_map(x = yfs2017,
              region = "bs.all",
+             in.crs = "+proj=longlat", # Set input coordinate reference system
+             out.crs = "+proj=longlat", # Set output coordinate reference system
              set.breaks = "kmeans", 
              grid.cell = c(0.05, 0.05), # Coarse grid
              key.title = "yellowfin sole")
@@ -48,6 +52,8 @@ Now, I'll try some user-specified values based on past survey tech memos. I set 
 ```{r, message=FALSE, warning=FALSE}
 yfs.opt3 <- make_idw_map(x = yfs2017,
              region = "bs.all",
+            in.crs = "+proj=longlat", # Set input coordinate reference system
+             out.crs = "+proj=longlat", # Set output coordinate reference system
              set.breaks = c(0, 25, 100, 250, 500, 1000),
              grid.cell = c(0.05, 0.05), # Coarse grid
              key.title = "yellowfin sole")

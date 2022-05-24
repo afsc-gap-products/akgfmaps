@@ -22,6 +22,8 @@ library(akgfmaps)
 akgfmaps:::YFS2017 %>% 
   make_idw_map(region = "bs.all",
                set.breaks = "jenks",
+               in.crs = "+proj=longlat",
+               out.crs = "+proj=longlat",
                grid.cell = c(0.02, 0.02)) %>%
   add_map_labels() %>% 
   change_fill_color(new.scheme = "purple2", show.plot = TRUE) %>%

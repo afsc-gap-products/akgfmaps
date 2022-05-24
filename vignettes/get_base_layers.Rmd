@@ -16,8 +16,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 The get_base_layers() function retrieves shapefiles and other map features that are typically used to make plots of RACE survey areas. The function transforms layers to a user-specified projection based on a coordinate reference system. Alternatively, a default coordinate reference system can be assigned by the function, based on the region.
 
-As of 5/27/2020, get_base_layers has support for the SEBS shelf survey area, and SEBS+EBS shelf.
-
 ## Retrieve layers with projection automatically selected
 
 This chunk of code retrieves layers for the EBS shelf survey area and automatically assigns a projection (Albers Equal Area with standard latitudes at 55 °N and 60 °N, cetner latitude 57.5 °N, center longitude at 170 °W **...this is relevant below**). Layers are returned in a list.
