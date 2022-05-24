@@ -31,16 +31,16 @@ yfs.opt1 <- make_idw_map(x = yfs2017,
              region = "bs.all",
              set.breaks = "jenks",
              in.crs = "+proj=longlat", # Set input coordinate reference system
-             out.crs = "+proj=longlat", # Set output coordinate reference system
-             grid.cell = c(0.05, 0.05), # Coarse grid
+             out.crs = "EPSG:3338", # Set output coordinate reference system
+             grid.cell = c(20000, 20000), # 20x20km grid
              key.title = "yellowfin sole")
 
 yfs.opt2 <- make_idw_map(x = yfs2017,
              region = "bs.all",
              in.crs = "+proj=longlat", # Set input coordinate reference system
-             out.crs = "+proj=longlat", # Set output coordinate reference system
+               out.crs = "EPSG:3338", # Set output coordinate reference system
+               grid.cell = c(20000, 20000),  # 20x20km grid
              set.breaks = "kmeans", 
-             grid.cell = c(0.05, 0.05), # Coarse grid
              key.title = "yellowfin sole")
 
 yfs.opt1$plot
@@ -53,9 +53,9 @@ Now, I'll try some user-specified values based on past survey tech memos. I set 
 yfs.opt3 <- make_idw_map(x = yfs2017,
              region = "bs.all",
             in.crs = "+proj=longlat", # Set input coordinate reference system
-             out.crs = "+proj=longlat", # Set output coordinate reference system
+             out.crs = "EPSG:3338", # Set output coordinate reference system
              set.breaks = c(0, 25, 100, 250, 500, 1000),
-             grid.cell = c(0.05, 0.05), # Coarse grid
+               grid.cell = c(20000, 20000),  # 20x20km grid
              key.title = "yellowfin sole")
 yfs.opt3$plot
 

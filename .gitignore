@@ -39,3 +39,6 @@ Meta
 *.csv
 *.png
 *.lock
+
+/vignettes/*.html
+/vignettes/*.R

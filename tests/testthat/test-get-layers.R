@@ -20,11 +20,9 @@ testthat::test_that("Test Bering Sea grid filtering",
                     {bs_south <- akgfmaps::get_base_layers(select.region = "bs.south", 
                                                            set.crs = "auto");
                     bs_south_survey_grid <- suppressWarnings(akgfmaps::get_base_layers(select.region = "bs.south", 
-                                                                                       set.crs = "auto", 
-                                                                                       return.survey.grid = TRUE));
+                                                                                       set.crs = "auto"));
                     bs_north_survey_grid <- suppressWarnings(akgfmaps::get_base_layers(select.region = "nbs", 
-                                                                                       set.crs = "auto", 
-                                                                                       return.survey.grid = TRUE));
-                    expect_equal(length(bs_south$survey.grid$geometry), 1428);
-                    expect_equal(length(bs_north_survey_grid$survey.grid$geometry), 143);
+                                                                                       set.crs = "auto"));
+                    expect_equal(length(bs_south$survey.grid$geometry), 376);
+                    expect_equal(length(bs_north_survey_grid$survey.grid$geometry), 144);
                     expect_equal(length(bs_south_survey_grid$survey.grid$geometry), 376)})

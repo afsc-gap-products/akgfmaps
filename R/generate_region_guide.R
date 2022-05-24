@@ -15,36 +15,36 @@ generate_region_guide <- function(out_loc = "akgfmaps_region_layers.pdf",
   if(is.na(select.regions)) {
     select.regions <- c("ecs", "ebs", "ebs.ecs", "sebs", "nbs", "ai", "ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")
   }
-  pdf(file = out_loc, width = 8, height = 8, onefile = TRUE)
+  grDevices::pdf(file = out_loc, width = 8, height = 8, onefile = TRUE)
   for(i in 1:length(select.regions)) {
     map_layers <- akgfmaps::get_base_layers(select.region = select.regions[i], set.crs = "auto")
     
     print(
-      ggplot() +
-            geom_sf(data = map_layers$bathymetry) +
-            geom_sf(data = map_layers$akland) +
-            geom_sf(data = map_layers$survey.area, fill = NA, color = "red", size = rel(1)) +
-            geom_sf(data = map_layers$graticule, alpha = 0.3) +
-            coord_sf(xlim = map_layers$plot.boundary$x,
+      ggplot2::ggplot() +
+        ggplot2::geom_sf(data = map_layers$bathymetry) +
+        ggplot2::geom_sf(data = map_layers$akland) +
+        ggplot2::geom_sf(data = map_layers$survey.area, fill = NA, color = "red", size = ggplot2::rel(1)) +
+        ggplot2::geom_sf(data = map_layers$graticule, alpha = 0.3) +
+        ggplot2::coord_sf(xlim = map_layers$plot.boundary$x,
                      ylim = map_layers$plot.boundary$y) +
-        scale_x_continuous(breaks = map_layers$lon.breaks) +
-        scale_y_continuous(breaks = map_layers$lat.breaks) +
-        ggtitle(paste0("Region: ", select.regions[i], ", survey area")) +
-        theme_bw()
+        ggplot2::scale_x_continuous(breaks = map_layers$lon.breaks) +
+        ggplot2::scale_y_continuous(breaks = map_layers$lat.breaks) +
+        ggplot2::ggtitle(paste0("Region: ", select.regions[i], ", survey area")) +
+        ggplot2::theme_bw()
     )
     
     print(
-      ggplot() +
-        geom_sf(data = map_layers$bathymetry) +
-        geom_sf(data = map_layers$akland) +
-        geom_sf(data = map_layers$survey.strata, fill = NA, color = "red", size = rel(1)) +
-        geom_sf(data = map_layers$graticule, alpha = 0.3) +
-        coord_sf(xlim = map_layers$plot.boundary$x,
+      ggplot2::ggplot() +
+        ggplot2::geom_sf(data = map_layers$bathymetry) +
+        ggplot2::geom_sf(data = map_layers$akland) +
+        ggplot2::geom_sf(data = map_layers$survey.strata, fill = NA, color = "red", size = rel(1)) +
+        ggplot2::geom_sf(data = map_layers$graticule, alpha = 0.3) +
+        ggplot2::coord_sf(xlim = map_layers$plot.boundary$x,
                  ylim = map_layers$plot.boundary$y) +
-        scale_x_continuous(breaks = map_layers$lon.breaks) +
-        scale_y_continuous(breaks = map_layers$lat.breaks) +
-        ggtitle(paste0("Region: ", select.regions[i], ", survey strata")) +
-        theme_bw()
+        ggplot2::scale_x_continuous(breaks = map_layers$lon.breaks) +
+        ggplot2::scale_y_continuous(breaks = map_layers$lat.breaks) +
+        ggplot2::ggtitle(paste0("Region: ", select.regions[i], ", survey strata")) +
+        ggplot2::theme_bw()
     )
   }
   dev.off()

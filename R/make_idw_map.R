@@ -4,16 +4,15 @@
 #' 
 #' @param x Data frame which contains at minimum: CPUE, LATITUDE, and LONGITUDE. Can be passed as vectors instead (see below). Default value: \code{NA}
 #' @param region Character vector indicating which plotting region to use. Options: bs.south, bs.north, bs.all
-#' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in degrees c(lon, lat). Default c(0.05, 0.05)
+#' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) correponds with 5x5 km for EPSG:3338
 #' @param COMMON_NAME Common name
 #' @param LATITUDE Latitude (degrees north)
 #' @param LONGITUDE Longitude (degrees east; Western hemisphere is negative)
 #' @param CPUE_KGHA Catch per unit effort in kilograms per hectare
-#' @param extrap.box Optional. Vector specifying the dimensions of the extrapolation grid. Elements of the vector should be named to specify the minimum and maximum x and y values c(xmn, xmx, ymn, ymx). If not provided, region will be used to set the extrapolation area.
+#' @param extrap.box Optional. Vector specifying the dimensions of the extrapolation grid. Elements of the vector should be named to specify the minimum and maximum x and y values c(xmin, xmax, ymin, ymax). If not provided, the extrapolation area will be set to the extent of the survey.area bounding box with the output CRS.
 #' @param set.breaks Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"
-#' @param grid.cell Optional. Numeric vector of length two, specifying the resolution for the extrapolation grid in degrees. Default c(0.05,0.05)
 #' @param in.crs Character vector containing the coordinate reference system for projecting the extrapolation grid.
-#' @param out.crs Character vector containing the coordinate reference system for projecting the extrapolation grid.
+#' @param out.crs Character vector containing the coordinate reference system for projecting the extrapolation grid. The default is Alaska Albers Equal Area (EPSG:3338).
 #' @param key.title Character vector which will appear in the legend above CPUE (kg/ha). Default = "auto" tries to pull COMMON_NAME from input.
 #' @param log.transform Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.
 #' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 8
@@ -39,9 +38,9 @@ make_idw_map <- function(x = NA,
                          region = "bs.south", 
                          extrap.box = NULL, 
                          set.breaks = "jenks", 
-                         grid.cell = c(0.05, 0.05), 
+                         grid.cell = c(5000,5000), 
                          in.crs = "+proj=longlat", 
-                         out.crs = "auto", 
+                         out.crs = "EPSG:3338", 
                          key.title = "auto", 
                          log.transform = FALSE, 
                          idw.nmax = 4,

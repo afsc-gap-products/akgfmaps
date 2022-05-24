@@ -20,7 +20,8 @@ add_map_labels <- function(x,
                            lab.replace = FALSE, 
                            transform.new.places = TRUE, 
                            add.scale.bar = "br") {
-  if(class(x) == "list") {
+  
+  if("list" %in% class(x)) {
     in.dat <- x
     
     # Load labels and plotting locations--------------------------------------------------------------
@@ -78,7 +79,7 @@ add_map_labels <- function(x,
     if(!is.na(add.scale.bar)) {
       in.dat$plot <- in.dat$plot + ggspatial::annotation_scale(location = add.scale.bar)
     }
-  } else if(class(x) == "gg"){
+  } else if("gg" %in% class(x)){
     # Add labels to ggplot object ------------------------------------------------------------------
     placenames <- subset(new.places, region == region & type %in% lab.select)
     if(region %in% c("bs.all", "bs.south", "sebs")) {

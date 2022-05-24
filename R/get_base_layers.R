@@ -256,7 +256,7 @@ get_base_layers <- function(select.region,
   }
   
   # Get place labels--------------------------------------------------------------------------------
-  place.labels <- read.csv(file = system.file("data", "placenames.csv", package = "akgfmaps")) %>%
+  place.labels <- utils::read.csv(file = system.file("data", "placenames.csv", package = "akgfmaps")) %>%
     dplyr::filter(region == select.region) %>%
     akgfmaps::transform_data_frame_crs(out.crs = set.crs)
   

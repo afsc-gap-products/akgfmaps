@@ -50,14 +50,18 @@ add_map_labels <- function(x,
     # Make plot
     if(in.dat$region %in% c("bs.all", "ebs")) {
       in.dat$plot <- in.dat$plot + 
-        geom_text(data = subset(placenames, type == "mainland"), aes(x = x, y = y, label = lab), size = 14, group = 99) +
-        geom_shadowtext(data = subset(placenames, type == "peninsula"), 
-                        aes(x = x, y = y, label = lab), size = 8, 
+        ggplot2::geom_text(data = subset(placenames, type == "mainland"), 
+                           ggplot2::aes(x = x, y = y, label = lab), 
+                           size = 14, group = 99) +
+        shadowtext::geom_shadowtext(data = subset(placenames, type == "peninsula"), 
+                        ggplot2::aes(x = x, y = y, label = lab), 
+                        size = 8, 
                         angle = 28, bg.color = "white", color = "black", group = 99) +
-        geom_shadowtext(data = subset(placenames, type %in% c("bathymetry", "islands")), 
-                        aes(x = x, y = y, label = lab), 
+        shadowtext::geom_shadowtext(data = subset(placenames, type %in% c("bathymetry", "islands")), 
+                        ggplot2::aes(x = x, y = y, label = lab), 
                         bg.color = "white", color = "black", size = 3.88, group = 99) +
-        geom_shadowtext(data = subset(placenames, type == "convention line"), aes(x = x, y = y, label = lab), 
+        shadowtext::geom_shadowtext(data = subset(placenames, type == "convention line"), 
+                        ggplot2::aes(x = x, y = y, label = lab), 
                         angle = 29.5, size = 3,
                         bg.color = "white", color = "black", group = 99)
     }
@@ -65,19 +69,21 @@ add_map_labels <- function(x,
     if(!is.na(add.scale.bar)) {
       in.dat$plot <- in.dat$plot + ggspatial::annotation_scale(location = add.scale.bar)
     }
-  } else if(class(x) == "gg"){
+  } else if("gg" %in% class(x)){
     # Add labels to ggplot object ------------------------------------------------------------------
     placenames <- subset(new.places, region == region & type %in% lab.select)
     if(region %in% c("bs.all", "bs.south", "sebs")) {
       in.dat <- x + 
-        geom_text(data = subset(placenames, type == "mainland"), aes(x = x, y = y, label = lab), size = 14, group = 99) +
-        geom_shadowtext(data = subset(placenames, type == "peninsula"), 
-                        aes(x = x, y = y, label = lab), size = 8, 
+        ggplot2::geom_text(data = subset(placenames, type == "mainland"), 
+                           ggplot2::aes(x = x, y = y, label = lab), size = 14, group = 99) +
+        shadowtext::geom_shadowtext(data = subset(placenames, type == "peninsula"), 
+                                    ggplot2::aes(x = x, y = y, label = lab), size = 8, 
                         angle = 40, bg.color = "white", color = "black", group = 99) +
-        geom_shadowtext(data = subset(placenames, type %in% c("bathymetry", "islands")), 
-                        aes(x = x, y = y, label = lab), 
+        shadowtext::geom_shadowtext(data = subset(placenames, type %in% c("bathymetry", "islands")), 
+                                    ggplot2::aes(x = x, y = y, label = lab), 
                         bg.color = "white", color = "black", size = 3.88, group = 99) +
-        geom_shadowtext(data = subset(placenames, type == "convention line"), aes(x = x, y = y, label = lab), 
+        shadowtext::geom_shadowtext(data = subset(placenames, type == "convention line"), 
+                                    ggplot2::aes(x = x, y = y, label = lab), 
                         angle = 42, size = 3,
                         bg.color = "white", color = "black", group = 99)
     }

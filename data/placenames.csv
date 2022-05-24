@@ -13,8 +13,8 @@ islands,bs.south,St. Lawrence,-170.3,63.4
 bathymetry,bs.south,200 m,-173.5,58
 bathymetry,bs.south,100 m,-171.7,58
 bathymetry,bs.south,50 m,-165.5,58
-convention line,bs.south,U.S.–Russia Maritime Boundary,-177.6,61.6
-convention line,bs.all,U.S.–Russia Maritime Boundary,-175,63.25
+convention line,bs.south,U.S.-Russia Maritime Boundary,-177.6,61.6
+convention line,bs.all,U.S.-Russia Maritime Boundary,-175,63.25
 mainland,bs.south,Alaska,-160,61.7
 mainland,bs.all,Alaska,-160,61.7
 peninsula,bs.all,Alaska Peninsula,-160.4,56.2
@@ -33,8 +33,8 @@ islands,sebs,St. Lawrence,-170.3,63.4
 bathymetry,sebs,200 m,-173.5,58
 bathymetry,sebs,100 m,-171.7,58
 bathymetry,sebs,50 m,-165.5,58
-convention line,sebs,U.S.–Russia Maritime Boundary,-177.6,61.6
-convention line,nebs,U.S.–Russia Maritime Boundary,-175,63.25
+convention line,sebs,U.S.-Russia Maritime Boundary,-177.6,61.6
+convention line,nebs,U.S.-Russia Maritime Boundary,-175,63.25
 mainland,sebs,Alaska,-160,61.7
 mainland,nebs,Alaska,-160,61.7
 peninsula,nebs,Alaska Peninsula,-160.4,56.2
