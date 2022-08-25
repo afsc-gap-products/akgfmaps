@@ -29,6 +29,7 @@
 /cache/
 /archive/
 /output/
+/paper/
 
 # Temporary files created by R markdown
 *.utf8.md
