@@ -6,7 +6,7 @@
 \usage{
 generate_region_guide(
   out_loc = "akgfmaps_region_layers.pdf",
-  select.regions = NA
+  select.regions = NULL
 )
 }
 \arguments{

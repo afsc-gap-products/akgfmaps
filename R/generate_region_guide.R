@@ -6,13 +6,13 @@
 #' @export
 
 generate_region_guide <- function(out_loc = "akgfmaps_region_layers.pdf", 
-                                  select.regions = NA) {
+                                  select.regions = NULL) {
   
   if(!grepl(".pdf", out_loc)) {
     stop("out_loc must be a .pdf file!")
   }
   
-  if(is.na(select.regions)) {
+  if(is.null(select.regions)) {
     select.regions <- c("ecs", "ebs", "ebs.ecs", "sebs", "nbs", "ai", "ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")
   }
   grDevices::pdf(file = out_loc, width = 8, height = 8, onefile = TRUE)
@@ -47,5 +47,5 @@ generate_region_guide <- function(out_loc = "akgfmaps_region_layers.pdf",
         ggplot2::theme_bw()
     )
   }
-  dev.off()
+  grDevices::dev.off()
 }
