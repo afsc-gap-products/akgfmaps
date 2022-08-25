@@ -14,9 +14,9 @@ eval_plot_breaks(
 \arguments{
 \item{CPUE}{Vector of CPUE data}
 
-\item{styles}{Character vector with names, or names of methods to try.}
+\item{n.breaks}{Number of breaks to use}
 
-\item{n.break}{Number of breaks to use}
+\item{styles}{Character vector with names, or names of methods to try.}
 }
 \value{
 Returns a data frame showing breaks for each style.

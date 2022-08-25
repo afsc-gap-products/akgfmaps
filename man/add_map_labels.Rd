@@ -51,6 +51,4 @@ Select which place labels should be included on the map based on category and re
 }
 \author{
 Sean Rohan \email{sean.rohan@noaa.gov}
-
-Sean Rohan \email{sean.rohan@noaa.gov}
 }
