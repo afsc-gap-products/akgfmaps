@@ -4,7 +4,7 @@ author: "Sean Rohan"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Make maps quickly}
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -19,7 +19,7 @@ The following code shows how to use akgfmaps to quickly and efficiently make map
 ```{r, message=FALSE, warning=FALSE, fig.width=12, fig.height = 9}
 library(akgfmaps)
 
-akgfmaps:::YFS2017 %>% 
+akgfmaps::YFS2017 %>% 
   make_idw_map(region = "bs.all",
                set.breaks = "jenks",
                in.crs = "+proj=longlat",

@@ -40,4 +40,6 @@ Meta
 *.png
 *.lock
 
-/vignettes/*.Rmd
+/vignettes/*.html
+/vignettes/*.R
+/vignettes/*.md
