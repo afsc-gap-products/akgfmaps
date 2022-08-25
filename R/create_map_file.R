@@ -49,12 +49,12 @@ create_map_file <- function(x,
   
   print(paste("Creating map", paste0(file.path, file.prefix, "_", width, "x", height, ".png" )))
   
-  png(file = paste0(file.path, file.prefix, "_", width, "x", height, ".png" ), 
+  grDevices::png(file = paste0(file.path, file.prefix, "_", width, "x", height, ".png" ), 
       width = width, 
       height = height, 
       units = units, 
       res = res, 
       bg = bg)
   print(in.dat$plot)
-  dev.off()
+  grDevices::dev.off()
 }
