@@ -16,7 +16,6 @@
 #' @param key.title Character vector which will appear in the legend above CPUE (kg/ha). Default = "auto" tries to pull COMMON_NAME from input.
 #' @param log.transform Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.
 #' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 8
-#' @param idp Inverse distance weighting power. Default = 2 
 #' @param use.survey.bathymetry Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE
 #' @param return.continuous.grid If TRUE, also returns an extrapolation grid on a continuous scale.
 #' @return Returns a list containing: 

@@ -2,6 +2,7 @@
 #' 
 #' @param x ggplot object that requires text resizing
 #' @param size.mult Size multiplier for rescaling text.
+#' @param scale.theme Size multiplier for axis text, legend text, legend title
 #' @author Sean K. Rohan, \email{sean.rohan@@noaa.gov}
 #' @export
 

@@ -55,8 +55,6 @@ make_idw_map(
 \item{use.survey.bathymetry}{Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE}
 
 \item{return.continuous.grid}{If TRUE, also returns an extrapolation grid on a continuous scale.}
-
-\item{idp}{Inverse distance weighting power. Default = 2}
 }
 \value{
 Returns a list containing: 

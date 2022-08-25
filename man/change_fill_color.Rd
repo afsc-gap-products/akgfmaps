@@ -11,6 +11,8 @@ change_fill_color(x, new.scheme, show.plot = TRUE, ...)
 
 \item{new.scheme}{Fill scale to use for plotting. Can pass a palette. Default = NA opens colorspace selector}
 
+\item{show.plot}{Should the plot be shown in the device?}
+
 \item{...}{Pass additional arguments to ggplot2::scale_fill_xx functions.}
 }
 \value{
