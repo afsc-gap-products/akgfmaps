@@ -25,7 +25,7 @@ Imports: terra, colorspace, reshape, RColorBrewer, here, forecast, cowplot, ggth
 Description: This package provides tools and shapefile layers to facilitation production of maps and spatial analysis in Alaska Fisheries Science Center groundfish survey regions. Tools include functions for qualitative visualization of CPUE.
 License: GPL (>=2)
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 RoxygenNote: 7.2.1
 Suggests: 
     testthat (>= 3.0.0),
