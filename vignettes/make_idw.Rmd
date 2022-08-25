@@ -36,7 +36,7 @@ Start by loading and inspecting the 2017 EBS and NBS yellowfin sole CPUE data th
 
 ```{r}
 # Load 2017 EBS and NBS yellowfin sole data
-yfs2017 <- akgfmaps::YFS2017
+yfs2017 <- YFS2017
 head(yfs2017)
 ```
 
