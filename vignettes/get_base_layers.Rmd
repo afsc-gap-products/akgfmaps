@@ -22,7 +22,7 @@ This chunk of code retrieves layers for the EBS shelf survey area and automatica
 ```{r}
 library(akgfmaps)
 
-SEBS <- get_base_layers(select.region = "bs.south", set.crs = "auto")
+SEBS <- akgfmaps::get_base_layers(select.region = "bs.south", set.crs = "auto")
 class(SEBS)
 names(SEBS)
 
