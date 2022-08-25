@@ -24,7 +24,7 @@ add_map_labels <- function(x,
     in.dat <- x
     
     # Load labels and plotting locations--------------------------------------------------------------
-    placenames <- read.csv(file = system.file("data", 
+    placenames <- read.csv(file = system.file("extdata", 
                                               file = "placenames.csv", 
                                               package = "akgfmaps", 
                                               mustWork = TRUE), 

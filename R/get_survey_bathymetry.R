@@ -25,11 +25,11 @@ get_survey_bathymetry <- function(select.region,
   }
   
   if(select.region %in% c("bs.all", "ebs", "nbs", "bs.north")) {
-    bathymetry <- sf::st_read(system.file("data", "ebs_survey_bathymetry.shp", package = "akgfmaps"), 
+    bathymetry <- sf::st_read(system.file("extdata", "ebs_survey_bathymetry.shp", package = "akgfmaps"), 
                               quiet = TRUE) %>%
       sf::st_transform(crs = set.crs)
   } else if(select.region %in% c("bs.south", "sebs")) {
-    bathymetry <- sf::st_read(system.file("data", "ebs_survey_bathymetry.shp", package = "akgfmaps"), 
+    bathymetry <- sf::st_read(system.file("extdata", "ebs_survey_bathymetry.shp", package = "akgfmaps"), 
                               quiet = TRUE) %>%
       sf::st_transform(crs = set.crs) %>% 
       dplyr::filter(FNODE_ != 5)
