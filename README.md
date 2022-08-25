@@ -1,5 +1,5 @@
 # akgfmaps
-An R package for retrieving shapefiles used by NOAA/NMFS/AFSC and producing publication-ready catch-per-unit-effort maps from bottom-trawl survey catch data from Alaska. Current support for the eastern Bering Sea continental shelf, northern Bering Sea, and Chukchi Sea. The package includes shapefile data with North American Datum 1983 (NAD 83) projection. Coordinate reference system (CRS) and CRS transformations use the PROJ 6 library. The package supports PROJ4 and PROJ6 ('WKT2_2019') strings but some PROJ4 transformations are no longer supported due to [deprecation in PROJ 6](https://proj.org/development/migration.html).
+An R package for retrieving shapefiles used by NOAA/NMFS/AFSC and producing publication-ready catch-per-unit-effort maps from bottom-trawl survey catch data from Alaska. Current support for the eastern Bering Sea continental shelf, northern Bering Sea, Chukchi Sea, Gulf of Alaska, and Aleutian Islands.
 
 Build requires that dependencies are compatible with GEOS > 3.0.0, GDAL >3.0.0, and PROJ > 6.0.0.
 
@@ -11,7 +11,7 @@ akgfmaps can be installed using the following code:
 devtools::install_github("afsc-gap-products/akgfmaps", build_vignettes = TRUE)
 ```
 
-The automatic installer may terminate with errors . If errors occur, try to install dependencies individually, then try to install the akgfmaps package. 
+If errors occur during installation, try to install dependencies separately then install the akgfmaps package. 
 
 Installation errors can occur when packages were built using different versions of R, which may result in non-zero exit status errors that will no affect functionality. Errors can sometimes be suppressed using:
 
@@ -29,7 +29,7 @@ browseVignettes('akgfmaps')
 
 # Troubleshooting Installation: Compatibility with PROJ 6
 
-akgfmaps has limited backwards compatibility with old versions of dependencies that do not include support for PROJ 6 strings (i.e., many versions of sp, sf, gstat, raster, and stars that were released before June 2020). To determine if you have the necessary dependencies installed, run the following in a new session:
+akgfmaps has limited backwards compatibility with old dependencies that do not include support for PROJ 6 strings (i.e., many versions of sp, sf, gstat, raster, and stars that were released before June 2020). To determine if you have the necessary dependencies installed, run the following in a new session:
 
 ```{r}
 library(sf)
