@@ -1,6 +1,6 @@
 # R-CMD-Check
 
-on: [pull_request]
+on: [pull_request, push]
 
 name: r-cmd-check
 
