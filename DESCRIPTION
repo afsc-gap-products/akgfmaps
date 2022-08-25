@@ -1,11 +1,12 @@
 Package: akgfmaps
 Type: Package
 Title: Alaska groundfish mapping
-Version: 1.9.1
+Version: 2.0.0
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
     person("Emily", "Markowitz", email = "emily.markowitz@noaa.gov", role = "ctb"),
     person("Jason", "Conner", email = "jason.conner@noaa.gov", role = "ctb"),
-    person("Ned", "Laman", email = "ned.laman@noaa.gov", role = "ctb"))
+    person("Ned", "Laman", email = "ned.laman@noaa.gov", role = "ctb"),
+    person("Liz", "Dawson", email = "liz.dawson@noaa.gov", role = "ctb"))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>
 Depends: R (>= 4.0.0),
     classInt (>= 0.4-1),
@@ -24,8 +25,8 @@ Imports: terra, colorspace, reshape, RColorBrewer, here, forecast, cowplot, ggth
 Description: This package provides tools and shapefile layers to facilitation production of maps and spatial analysis in Alaska Fisheries Science Center groundfish survey regions. Tools include functions for qualitative visualization of CPUE.
 License: GPL (>=2)
 Encoding: UTF-8
-LazyData: false
-RoxygenNote: 7.1.2
+LazyData: true
+RoxygenNote: 7.2.1
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
