@@ -41,5 +41,4 @@ Meta
 *.png
 *.lock
 
-/vignettes/*.html
-/vignettes/*.R
+/vignettes/*.Rmd
