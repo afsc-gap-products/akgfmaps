@@ -17,6 +17,8 @@ Installation errors can occur when packages were built using different versions 
 
 ```{r}
 devtools::install_github("afsc-gap-products/akgfmaps", build_vignettes = TRUE, R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
+# or 
+withr::with_envvar(c(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true"), remotes::install_github('sean-rohan-NOAA/akgfmaps'))  
 ```
 
 # Vignettes
