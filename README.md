@@ -39,7 +39,7 @@ Installation errors can occur when packages were built using different versions 
 devtools::install_github("afsc-gap-products/akgfmaps", build_vignettes = TRUE, R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
 ```
 
-or by temporarily changing system environment variables for installation, as:
+or by temporarily changing system environment variables and installing:
 
 ```{r}
 withr::with_envvar(c(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true"), remotes::install_github('afsc-gap-products/akgfmaps'))
