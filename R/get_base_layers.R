@@ -67,7 +67,6 @@ get_base_layers <- function(select.region,
       dplyr::filter(Stratum %in% c(10, 20, 31, 32, 41, 42, 43, 50, 61, 62, 82, 90))
     survey.grid <- sf::st_read(system.file("extdata", "bs_grid_w_corners.shp", package = "akgfmaps"), 
                                quiet = TRUE)
-    survey.grid$STATIONID[survey.grid$STATIONID == "Z-04"] <- "AZ0504" # Divided station in SEBS
 
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(54,64,2)
@@ -80,8 +79,7 @@ get_base_layers <- function(select.region,
     survey.strata <- sf::st_read(system.file("extdata", "ebs_strata.shp", package = "akgfmaps"), 
                                  quiet = TRUE) 
     survey.grid <- sf::st_read(system.file("extdata", "bs_grid_w_corners.shp", package = "akgfmaps"), 
-                               quiet = TRUE) %>%
-      dplyr::filter(STATIONID %in% akgfmaps::get_survey_stations(select.region = "ebs"))
+                               quiet = TRUE)
 
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(54,66,2)
@@ -98,8 +96,7 @@ get_base_layers <- function(select.region,
       dplyr::filter(Stratum %in% c(81,70,71))
     
     survey.grid <- sf::st_read(system.file("extdata", "bs_grid_w_corners.shp", package = "akgfmaps"),  
-                               quiet = TRUE) %>% 
-      dplyr::filter(STATIONID %in% akgfmaps::get_survey_stations("nbs"))
+                               quiet = TRUE)
     
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(60, 66, by = 2)
@@ -224,27 +221,33 @@ get_base_layers <- function(select.region,
   
   # Set up survey grid -----------------------------------------------------------------------------
   if(!is.null(survey.grid)) {
+    
+    if(select.region %in% c("bs.all", "ebs", "bs.south", "sebs", "bs.north", "nbs")) {
+      survey.grid$STATIONID[survey.grid$STATIONID == "Z-04"] <- "AZ0504" # Divided station in SEBS
+      survey.grid <- dplyr::filter(survey.grid,
+                                   STATIONID %in% akgfmaps::get_survey_stations(select.region = select.region))
+    }
+    
     survey.grid <- survey.grid %>% sf::st_transform(crs = set.crs)
     
     # EBS survey grid clipping ---------------------------------------------------------------------
     if(select.region %in% c("bs.all", "ebs", "bs.south", "sebs", "bs.north", "nbs")) {
-      
-      grid.intersects <- try(survey.area %>% 
-        sf::st_union() %>% 
-        sf::st_intersects(survey.grid), silent = TRUE)
-      
+
+      grid.intersects <- try(survey.area %>%
+                               sf::st_union() %>%
+                               sf::st_intersects(survey.grid), silent = TRUE)
+
       if("try-error" %in% class(grid.intersects)) {
         sf::sf_use_s2(FALSE)
-        grid.intersects <- try(survey.area %>% 
-                                 sf::st_union() %>% 
+        grid.intersects <- try(survey.area %>%
+                                 sf::st_union() %>%
                                  sf::st_intersects(survey.grid), silent = TRUE)
-      } 
-      
+      }
+
       if("try-error" %in% class(grid.intersects)) {
         warning("get_base_layers: Can't mask survey grid using sf.")
       } else {
         survey.grid <- survey.grid[grid.intersects[[1]],]
-        survey.grid$STATIONID[survey.grid$STATIONID == "Z-04"] <- "AZ0504" # Divided station in SEBS
         survey.mask <- survey.area %>% sf::st_union()
         survey.grid <- sf::st_intersection(survey.grid, survey.mask) %>%
           dplyr::filter(STATIONID %in% akgfmaps::get_survey_stations(select.region = select.region))
