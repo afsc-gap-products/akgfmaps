@@ -1,7 +1,7 @@
 #' Function to get base layers for plotting
 #' 
 #' This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
-#' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east
+#' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ebs.slope, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
 #' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
@@ -28,7 +28,8 @@ get_base_layers <- function(select.region,
       "+proj=aea +lat_1=50.83 +lat_2=52.67 +lat_0=51.75 +lon_0=-179 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
+      "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
     set.crs <- region.crs[match(select.region, c("bs.south", 
                                                  "sebs", 
                                                  "bs.all", 
@@ -43,7 +44,8 @@ get_base_layers <- function(select.region,
                                                  "ai.east",
                                                  "goa",
                                                  "goa.west",
-                                                 "goa.east"))]
+                                                 "goa.east",
+                                                 "ebs.slope"))]
   }
 
   # Bathymetry and land shapefiles ---------------------------------------------------------------  
@@ -51,10 +53,14 @@ get_base_layers <- function(select.region,
     akland <- sf::st_read(system.file("extdata", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE)
     bathymetry <- sf::st_read(system.file("extdata", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
     
-  } else if(select.region %in% c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")) {
+  } else if(select.region %in% c("ebs.slope")) {
+    akland <- sf::st_read(system.file("extdata", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE)
+    bathymetry <- sf::st_read(system.file("extdata", "npac_0-1000_meters.shp", package = "akgfmaps"), quiet = TRUE)
+  }
+    else if(select.region %in% c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")) {
     akland <- sf::st_read(system.file("extdata", "alaska_canada_dcw.shp", package = "akgfmaps"), quiet = TRUE)
     bathymetry <- sf::st_read(system.file("extdata", "alaska_race.shp", package = "akgfmaps"), quiet = TRUE)
-  }
+  } 
 
   
   # SEBS--------------------------------------------------------------------------------------------
@@ -69,7 +75,7 @@ get_base_layers <- function(select.region,
                                quiet = TRUE)
 
     lon.breaks <- seq(-180, -154, 5)
-    lat.breaks <- seq(54,64,2)
+    lat.breaks <- seq(54, 64, 2)
   }
   
   # NEBS:NBS+SEBS---------------------------------------------------------------------------------------
@@ -82,10 +88,10 @@ get_base_layers <- function(select.region,
                                quiet = TRUE)
 
     lon.breaks <- seq(-180, -154, 5)
-    lat.breaks <- seq(54,66,2)
+    lat.breaks <- seq(54, 66, 2)
   }
     
-  # NBS---------------------------------------------------------------------------------------
+  # NBS --------------------------------------------------------------------------------------------
   if (select.region %in% c("bs.north", "nbs")) {
     survey.area <- sf::st_read(system.file("extdata", "ebs_survey_boundary.shp", package = "akgfmaps"), 
                                quiet = TRUE) %>% 
@@ -99,10 +105,23 @@ get_base_layers <- function(select.region,
                                quiet = TRUE)
     
     lon.breaks <- seq(-180, -154, 5)
-    lat.breaks <- seq(60, 66, by = 2)
+    lat.breaks <- seq(60, 66, 2)
   }    
   
-  # Chukchi---------------------------------------------------------------------------------------
+  # EBS Slope --------------------------------------------------------------------------------------
+  if(select.region %in% c("ebs.slope")) {
+    survey.area <- sf::st_read(system.file("extdata", "bssa_survey_boundary_2022.shp", package = "akgfmaps"), 
+                               quiet = TRUE)
+    survey.strata <- sf::st_read(system.file("extdata", "bssa1to6_2022.shp", package = "akgfmaps"), 
+                                 quiet = TRUE) 
+    survey.grid <- NULL
+    
+    lon.breaks <- seq(-180, -155, 5)
+    lat.breaks <- seq(52, 64, 2)
+  }
+  
+  
+  # Chukchi-----------------------------------------------------------------------------------------
   if(select.region == "ecs") {
     survey.area <- sf::st_read(system.file("extdata", "chukchi_survey_boundary.shp", package = "akgfmaps"), 
                                quiet = TRUE)
@@ -110,7 +129,7 @@ get_base_layers <- function(select.region,
                                  quiet = TRUE)
     survey.grid <- NULL
     lon.breaks <- seq(-180, -154, 5)
-    lat.breaks <- seq(66,76,2)
+    lat.breaks <- seq(66, 76, 2)
   }
   
   # Chukchi+EBS ------------------------------------------------------------------------------------
