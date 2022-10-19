@@ -1,5 +1,5 @@
 # akgfmaps
-An R package for retrieving shapefiles used by NOAA/NMFS/AFSC and producing publication-ready catch-per-unit-effort maps from bottom-trawl survey catch data from Alaska. Current support for the eastern Bering Sea continental shelf, northern Bering Sea, Chukchi Sea, Gulf of Alaska, and Aleutian Islands.
+An R package for retrieving shapefiles used by NOAA/NMFS/AFSC and producing catch-per-unit-effort maps from bottom-trawl survey catch data from Alaska. Current support for the eastern Bering Sea continental shelf, northern Bering Sea, Chukchi Sea, Gulf of Alaska, and Aleutian Islands.
 
 Build requires that dependencies are compatible with GEOS > 3.0.0, GDAL >3.0.0, and PROJ > 6.0.0.
 
