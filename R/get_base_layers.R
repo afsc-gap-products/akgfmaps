@@ -1,7 +1,7 @@
 #' Function to get base layers for plotting
 #' 
 #' This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
-#' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east
+#' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ebs.slope, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
 #' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
