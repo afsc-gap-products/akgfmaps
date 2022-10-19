@@ -4,7 +4,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## ---- message=FALSE, warning=FALSE, fig.width=12, fig.height = 9--------------
 library(akgfmaps)
 
-akgfmaps:::YFS2017 %>% 
+akgfmaps::YFS2017 %>% 
   make_idw_map(region = "bs.all",
                set.breaks = "jenks",
                in.crs = "+proj=longlat",

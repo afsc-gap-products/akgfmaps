@@ -3,7 +3,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## ----echo=TRUE, message=FALSE, warning=FALSE----------------------------------
 library(akgfmaps)
-yfs2017 <- akgfmaps:::YFS2017
+yfs2017 <- akgfmaps::YFS2017
 eval_plot_breaks(CPUE = yfs2017$CPUE_KGHA, n.breaks = 5)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------

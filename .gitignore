@@ -30,6 +30,7 @@
 /archive/
 /output/
 /paper/
+/analysis/
 
 # Temporary files created by R markdown
 *.utf8.md

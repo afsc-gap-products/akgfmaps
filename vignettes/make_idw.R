@@ -9,7 +9,7 @@ library(akgfmaps)
 
 ## -----------------------------------------------------------------------------
 # Load 2017 EBS and NBS yellowfin sole data
-yfs2017 <- akgfmaps:::YFS2017
+yfs2017 <- akgfmaps::YFS2017
 head(yfs2017)
 
 ## ---- message=FALSE, warning=FALSE, fig.width=8, fig.height = 6---------------
