@@ -18,7 +18,7 @@ The following code shows how to use akgfmaps to quickly and efficiently make map
 ```r
 library(akgfmaps)
 
-akgfmaps:::YFS2017 %>% 
+akgfmaps::YFS2017 %>% 
   make_idw_map(region = "bs.all",
                set.breaks = "jenks",
                in.crs = "+proj=longlat",
