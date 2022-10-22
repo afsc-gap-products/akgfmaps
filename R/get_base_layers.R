@@ -1,7 +1,7 @@
 #' Function to get base layers for plotting
 #' 
 #' This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
-#' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ebs.slope, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east
+#' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
 #' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
@@ -29,6 +29,12 @@ get_base_layers <- function(select.region,
       "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
     set.crs <- region.crs[match(select.region, c("bs.south", 
                                                  "sebs", 
@@ -45,7 +51,13 @@ get_base_layers <- function(select.region,
                                                  "goa",
                                                  "goa.west",
                                                  "goa.east",
-                                                 "ebs.slope"))]
+                                                 "ebs.slope",
+                                                 "bssa1",
+                                                 "bssa2",
+                                                 "bssa3",
+                                                 "bssa4",
+                                                 "bssa5",
+                                                 "bssa6"))]
   }
 
   # Bathymetry and land shapefiles ---------------------------------------------------------------  
@@ -53,7 +65,7 @@ get_base_layers <- function(select.region,
     akland <- sf::st_read(system.file("extdata", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE)
     bathymetry <- sf::st_read(system.file("extdata", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
     
-  } else if(select.region %in% c("ebs.slope")) {
+  } else if(select.region %in% c("ebs.slope", "bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6")) {
     akland <- sf::st_read(system.file("extdata", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE)
     bathymetry <- sf::st_read(system.file("extdata", "npac_0-1000_meters.shp", package = "akgfmaps"), quiet = TRUE)
   }
@@ -109,15 +121,28 @@ get_base_layers <- function(select.region,
   }    
   
   # EBS Slope --------------------------------------------------------------------------------------
-  if(select.region %in% c("ebs.slope")) {
+  if(select.region %in% c("ebs.slope", "bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6")) {
     survey.area <- sf::st_read(system.file("extdata", "bssa_survey_boundary_2022.shp", package = "akgfmaps"), 
                                quiet = TRUE)
     survey.strata <- sf::st_read(system.file("extdata", "bssa1to6_2022.shp", package = "akgfmaps"), 
                                  quiet = TRUE) 
-    survey.grid <- NULL
     
+    survey.grid <- NULL
     lon.breaks <- seq(-180, -155, 5)
     lat.breaks <- seq(52, 64, 2)
+    
+    if(select.region %in% c("bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6")) {
+      strata.temp <- survey.strata
+      subarea <- c(1,2,3,4,5,6)[match(select.region,  c("bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6"))]
+      
+      survey.strata <- dplyr::filter(strata.temp, floor(STRATUM/10) %in% (subarea + c(-1,0,1)))
+      stratum.extent <- dplyr::filter(strata.temp, floor(STRATUM/10) == subarea)
+        
+      lon.breaks <- seq(-180, -155, 1)
+      lat.breaks <- seq(52, 64, 0.5) 
+    }
+    
+
   }
   
   
@@ -236,6 +261,10 @@ get_base_layers <- function(select.region,
   survey.area <- survey.area %>% sf::st_transform(crs = set.crs)
   survey.strata <- survey.strata %>% sf::st_transform(crs = set.crs)
   bathymetry <- bathymetry %>% sf::st_transform(crs = set.crs)
+  
+  if(exists("stratum.extent")) {
+    stratum.extent <- stratum.extent %>% sf::st_transform(crs = set.crs)
+  }
 
   
   # Set up survey grid -----------------------------------------------------------------------------
@@ -312,7 +341,12 @@ get_base_layers <- function(select.region,
                                 y = c(plot.boundary['ymin'], plot.boundary['ymax']))  
     
     
-  } else {
+  } else if(select.region %in% c("bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6")) {
+    plot.boundary <- sf::st_bbox(stratum.extent)
+    plot.boundary <- data.frame(x = c(plot.boundary['xmin'], plot.boundary['xmax']),
+                                y = c(plot.boundary['ymin'], plot.boundary['ymax']))
+    
+    } else {
     plot.boundary <- sf::st_bbox(survey.area)
     plot.boundary <- data.frame(x = c(plot.boundary['xmin'], plot.boundary['xmax']),
                                 y = c(plot.boundary['ymin'], plot.boundary['ymax']))
