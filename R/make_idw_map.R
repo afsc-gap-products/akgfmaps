@@ -48,6 +48,11 @@ make_idw_map <- function(x = NA,
   
   # Convert vectors to data frame if x is not a data.frame or tbl-----------------------------------
   if(!is.data.frame(x)) {
+    
+    stopifnot("make_idw_map: LATITUDE must be a numeric vector." = is.numeric(LATITUDE))
+    stopifnot("make_idw_map: LONGITUDE must be a numeric vector." = is.numeric(LONGITUDE))
+    stopifnot("make_idw_map: CPUE_KGHA must be a numeric vector." = is.numeric(CPUE_KGHA))
+    
     x <- data.frame(COMMON_NAME = COMMON_NAME,
                     LATITUDE = LATITUDE,
                     LONGITUDE = LONGITUDE,
