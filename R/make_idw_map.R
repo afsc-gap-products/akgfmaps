@@ -10,6 +10,7 @@
 #' @param LONGITUDE Longitude (degrees east; Western hemisphere is negative)
 #' @param CPUE_KGHA Catch per unit effort in kilograms per hectare
 #' @param extrap.box Optional. Vector specifying the dimensions of the extrapolation grid. Elements of the vector should be named to specify the minimum and maximum x and y values c(xmin, xmax, ymin, ymax). If not provided, the extrapolation area will be set to the extent of the survey.area bounding box with the output CRS.
+#' @param extrapolation.grid.type Type of object to use for the extrapolation grid, default = "stars". "stars" = returns a 'stars' object; "sf" = sf object with layer masked to survey area extent and converted to collection of sf POLYGON and MULTIPOLYGON geometries; "sf.simple" = same as "sf", but with polygons vertices smoothed using rmapshaper::ms_simplify
 #' @param set.breaks Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"
 #' @param in.crs Character vector containing the coordinate reference system for projecting the extrapolation grid.
 #' @param out.crs Character vector containing the coordinate reference system for projecting the extrapolation grid. The default is Alaska Albers Equal Area (EPSG:3338).
@@ -20,7 +21,7 @@
 #' @param return.continuous.grid If TRUE, also returns an extrapolation grid on a continuous scale.
 #' @return Returns a list containing: 
 #' (1) plot: a ggplot IDW map;
-#' (2) extrapolation.grid: the extrapolation grid with estimated values on a discrete scale;
+#' (2) extrapolation.grid: the extrapolation grid with estimated values on a discrete scale as a 'stars' (when extrapolation.grid.type is "stars") or 'sf' (when extrapolation.grid.type is "sf" or "sf.simple") object;
 #' (3) continuous.grid: extrapolation grid with estimates on a continuous scale;
 #' (4) region: the region;
 #' (5) n.breaks: the number of level breaks;
@@ -36,6 +37,7 @@ make_idw_map <- function(x = NA,
                          CPUE_KGHA = NA, 
                          region = "bs.south", 
                          extrap.box = NULL, 
+                         extrapolation.grid.type = "stars",
                          set.breaks = "jenks", 
                          grid.cell = c(5000,5000), 
                          in.crs = "+proj=longlat", 
@@ -45,6 +47,8 @@ make_idw_map <- function(x = NA,
                          idw.nmax = 4,
                          use.survey.bathymetry = TRUE, 
                          return.continuous.grid = TRUE) {
+  
+  stopifnot("make_idw_map: extra.grid.type must be 'stars', 'sf', or 'sf.simple'" = extrapolation.grid.type %in% c("stars", "sf", "sf.simple"))
   
   # Convert vectors to data frame if x is not a data.frame or tbl-----------------------------------
   if(!is.data.frame(x)) {
@@ -193,30 +197,77 @@ make_idw_map <- function(x = NA,
   n.breaks <- length(levels(set.levels))
   
   # Make plot---------------------------------------------------------------------------------------
+  
+  if(extrapolation.grid.type %in% c("sf", "sf.simple")) {
+    extrap.grid <- extrap.grid |>
+      sf::st_as_sf() |>
+      dplyr::select(-var1.var) |>
+      dplyr::group_by(var1.pred) |>
+      dplyr::summarise(n = n()) |>
+      sf::st_intersection(map_layers$survey.area)
+    
+    extrap.grid <- extrap.grid |>
+      dplyr::select(which(names(extrap.grid) %in% c("var1.pred", "n", "SURVEY", "geometry")))
+    
+    # Simplify geometry using ms_simplify function from the rmapshaper package
+    if(extrapolation.grid.type == "sf.simple") {
+      extrap.grid <- extrap.grid |>
+        rmapshaper::ms_simplify(keep_shapes = TRUE,
+                                keep = 0.04)
+    }
+    
     p1 <- ggplot2::ggplot() +
-    ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
-    stars::geom_stars(data = extrap.grid) +
-    ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
-    ggplot2::geom_sf(data = map_layers$akland, fill = "grey80") +
-    ggplot2::geom_sf(data = map_layers$bathymetry) +
-    ggplot2::geom_sf(data = map_layers$graticule, color = alpha("grey70", 0.3)) +
-    ggplot2::scale_fill_manual(name = paste0(key.title, "\nCPUE (kg/ha)"), 
-                        values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]), 
-                        na.translate = FALSE, # Don't use NA
-                        drop = FALSE) + # Keep all levels in the plot
-    ggplot2::scale_x_continuous(breaks = map_layers$lon.breaks) + 
-    ggplot2::scale_y_continuous(breaks = map_layers$lat.breaks) + 
-    ggplot2::coord_sf(xlim = map_layers$plot.boundary$x,
-               ylim = map_layers$plot.boundary$y) +
-    ggplot2::theme(panel.border = element_rect(color = "black", fill = NA),
-            panel.background = element_rect(fill = NA, color = "black"),
-            legend.key = element_rect(fill = NA, color = "grey70"),
-            legend.position = c(0.12, 0.18),
-            axis.title = element_blank(),
-            axis.text = element_text(size = 10),
-            legend.text = element_text(size = 10),
-            legend.title = element_text(size = 10),
-            plot.background = element_rect(fill = NA, color = NA))
+      ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
+      ggplot2::geom_sf(data = extrap.grid,
+                       aes(fill = var1.pred),
+                       color = NA) +
+      ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
+      ggplot2::geom_sf(data = map_layers$akland, fill = "grey80") +
+      ggplot2::geom_sf(data = map_layers$bathymetry) +
+      ggplot2::geom_sf(data = map_layers$graticule, color = alpha("grey70", 0.3)) +
+      ggplot2::scale_fill_manual(name = paste0(key.title, "\nCPUE (kg/ha)"), 
+                                 values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]), 
+                                 na.translate = FALSE, # Don't use NA
+                                 drop = FALSE) + # Keep all levels in the plot
+      ggplot2::scale_x_continuous(breaks = map_layers$lon.breaks) + 
+      ggplot2::scale_y_continuous(breaks = map_layers$lat.breaks) + 
+      ggplot2::coord_sf(xlim = map_layers$plot.boundary$x,
+                        ylim = map_layers$plot.boundary$y) +
+      ggplot2::theme(panel.border = element_rect(color = "black", fill = NA),
+                     panel.background = element_rect(fill = NA, color = "black"),
+                     legend.key = element_rect(fill = NA, color = "grey70"),
+                     legend.position = c(0.12, 0.18),
+                     axis.title = element_blank(),
+                     axis.text = element_text(size = 10),
+                     legend.text = element_text(size = 10),
+                     legend.title = element_text(size = 10),
+                     plot.background = element_rect(fill = NA, color = NA))
+  } else {
+    p1 <- ggplot2::ggplot() +
+      ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
+      stars::geom_stars(data = extrap.grid) +
+      ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
+      ggplot2::geom_sf(data = map_layers$akland, fill = "grey80") +
+      ggplot2::geom_sf(data = map_layers$bathymetry) +
+      ggplot2::geom_sf(data = map_layers$graticule, color = alpha("grey70", 0.3)) +
+      ggplot2::scale_fill_manual(name = paste0(key.title, "\nCPUE (kg/ha)"), 
+                                 values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]), 
+                                 na.translate = FALSE, # Don't use NA
+                                 drop = FALSE) + # Keep all levels in the plot
+      ggplot2::scale_x_continuous(breaks = map_layers$lon.breaks) + 
+      ggplot2::scale_y_continuous(breaks = map_layers$lat.breaks) + 
+      ggplot2::coord_sf(xlim = map_layers$plot.boundary$x,
+                        ylim = map_layers$plot.boundary$y) +
+      ggplot2::theme(panel.border = element_rect(color = "black", fill = NA),
+                     panel.background = element_rect(fill = NA, color = "black"),
+                     legend.key = element_rect(fill = NA, color = "grey70"),
+                     legend.position = c(0.12, 0.18),
+                     axis.title = element_blank(),
+                     axis.text = element_text(size = 10),
+                     legend.text = element_text(size = 10),
+                     legend.title = element_text(size = 10),
+                     plot.background = element_rect(fill = NA, color = NA))
+  }
   
   return(list(plot = p1,
               map_layers = map_layers,
