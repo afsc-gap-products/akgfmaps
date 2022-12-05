@@ -12,6 +12,7 @@ make_idw_map(
   CPUE_KGHA = NA,
   region = "bs.south",
   extrap.box = NULL,
+  extrapolation.grid.type = "stars",
   set.breaks = "jenks",
   grid.cell = c(5000, 5000),
   in.crs = "+proj=longlat",
@@ -38,6 +39,8 @@ make_idw_map(
 
 \item{extrap.box}{Optional. Vector specifying the dimensions of the extrapolation grid. Elements of the vector should be named to specify the minimum and maximum x and y values c(xmin, xmax, ymin, ymax). If not provided, the extrapolation area will be set to the extent of the survey.area bounding box with the output CRS.}
 
+\item{extrapolation.grid.type}{Type of object to use for the extrapolation grid, default = "stars". "stars" = returns a 'stars' object; "sf" = sf object with layer masked to survey area extent and converted to collection of sf POLYGON and MULTIPOLYGON geometries; "sf.simple" = same as "sf", but with polygons vertices smoothed using rmapshaper::ms_simplify}
+
 \item{set.breaks}{Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"}
 
 \item{grid.cell}{Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) correponds with 5x5 km for EPSG:3338}
@@ -59,7 +62,7 @@ make_idw_map(
 \value{
 Returns a list containing: 
 (1) plot: a ggplot IDW map;
-(2) extrapolation.grid: the extrapolation grid with estimated values on a discrete scale;
+(2) extrapolation.grid: the extrapolation grid with estimated values on a discrete scale as a 'stars' (when extrapolation.grid.type is "stars") or 'sf' (when extrapolation.grid.type is "sf" or "sf.simple") object;
 (3) continuous.grid: extrapolation grid with estimates on a continuous scale;
 (4) region: the region;
 (5) n.breaks: the number of level breaks;
