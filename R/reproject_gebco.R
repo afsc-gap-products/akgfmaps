@@ -57,7 +57,7 @@ reproject_gebco <- function(x,
   if(class(x) == "character") {
     x <- raster::raster(x, 
                         varname = z_varname, # Elevation (up = positive)
-                        crs = "EPSG:4269") # WGS84
+                        crs = "EPSG:4326") # WGS84
   }
   
   # Project GEBCO to raster template extent, resolution, and coordinate reference system
