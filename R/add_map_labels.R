@@ -53,7 +53,7 @@ add_map_labels <- function(x,
       in.dat$plot <- in.dat$plot + 
         ggplot2::geom_text(data = subset(placenames, type == "mainland"), 
                            aes(x = x, y = y, label = lab), 
-                           size = 14, 
+                           size = 12, 
                            group = 99) +
         shadowtext::geom_shadowtext(data = subset(placenames, type == "peninsula"), 
                         aes(x = x, y = y, label = lab), 
@@ -86,7 +86,7 @@ add_map_labels <- function(x,
       in.dat <- x + 
         ggplot2::geom_text(data = subset(placenames, type == "mainland"), 
                            aes(x = x, y = y, label = lab), 
-                           size = 14, 
+                           size = 12, 
                            group = 99) +
         shadowtext::geom_shadowtext(data = subset(placenames, type == "peninsula"), 
                                     aes(x = x, y = y, label = lab), 
