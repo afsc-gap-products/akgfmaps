@@ -60,6 +60,12 @@ reproject_gebco <- function(x,
                         crs = "EPSG:4326") # WGS84
   }
   
+  if(any(c(x@extent['xmin'], x@extent['xmax']) > 180)) {
+    message("reproject_gebco: Raster longitudes greater than 180 degrees detected. Rotating raster from 0 to 360 coordinates to -180 to 180 coordinates.")
+    x <- raster::rotate(x)
+  }
+  
+  
   # Project GEBCO to raster template extent, resolution, and coordinate reference system
   output <- raster::projectRaster(from = x, 
                                   to = raster_template, 
