@@ -25,9 +25,9 @@ reproject_gebco(
 
 \item{z_direction}{Direction for depth (negative one if positive depth is down)}
 
-\item{raster_template}{Raster that is used as the template for projecting the gebco_raster. In other words, the GEBCO bathymetry will be projected to the extent, resolution, and coordinate reference system of raster_template. Must provide raster_template OR extent, resolution, and CRS.}
+\item{raster_template}{A terra SpatRaster that is used as the template for projecting the gebco_raster. In other words, the GEBCO bathymetry will be projected to the extent, resolution, and coordinate reference system of raster_template. Must provide raster_template OR extent, resolution, and CRS.}
 
-\item{extent}{Extent of for a raster_template as 4L named numeric vector with names xmn, xmx, ymn, ymx (e.g. extent = c(xmn = -2075672, xmx = -149672.2, ymn = 427321.3, ymx = 2027321)). Must be provided if raster_template is not provided.}
+\item{extent}{Extent of for a raster_template as an sf object or 4L named numeric vector with names xmin, xmax, ymin, ymax (e.g. extent = c(xmn = -2075672, xmx = -149672.2, ymn = 427321.3, ymx = 2027321)). Must be provided if raster_template is not provided.}
 
 \item{resolution}{Resolution for a raster_template as a 2L numeric vector where values denote the x and y grid cell resolution. Must be provided if raster_template is not provided}
 

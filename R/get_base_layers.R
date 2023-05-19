@@ -5,7 +5,6 @@
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
 #' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
-#' 
 #' @export
 
 get_base_layers <- function(select.region, 

@@ -16,9 +16,9 @@ transform_data_frame_crs <- function(x, coords = c("x", "y"),
   
   if(nrow(x) > 0) {
     new.coords <- sf::st_as_sf(x, coords = coords, 
-                               crs = sf::st_crs(in.crs)) %>% 
-      sf::st_transform(crs = sf::st_crs(out.crs)) %>% 
-      sf::st_coordinates() %>%
+                               crs = sf::st_crs(in.crs)) |> 
+      sf::st_transform(crs = sf::st_crs(out.crs)) |> 
+      sf::st_coordinates() |>
       as.data.frame()
     
     if(only.new.coords) {

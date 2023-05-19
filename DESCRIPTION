@@ -12,17 +12,13 @@ Depends: R (>= 4.0.0),
     classInt (>= 0.4-1),
     dplyr,
     ggplot2,
-    ggspatial,
     gstat (>= 2.0-1),
-    rmapshaper,
-    raster (>= 3.2-1),
     sf,
-    shadowtext,
     stars,
     stats,
     utils,
     terra
-Imports: colorspace, reshape, RColorBrewer, here, forecast, cowplot, ggthemes
+Imports: colorspace, reshape, RColorBrewer, here, forecast, cowplot, ggspatial, rmapshaper, shadowtext, ggthemes, raster (>= 3.2-1)
 Description: This package provides tools and shapefile layers to facilitation production of maps and spatial analysis in Alaska Fisheries Science Center groundfish survey regions. Tools include functions for qualitative visualization of CPUE.
 License: GPL (>=2)
 Encoding: UTF-8

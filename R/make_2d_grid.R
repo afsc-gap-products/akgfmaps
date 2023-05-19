@@ -61,8 +61,8 @@ make_2d_grid <- function(obj, resolution = c(3704, 3704), output_type = "point",
   }
   
   # Convert to polygon and find intersection with obj
-  interp_polygons <- terra::as.polygons(interp_grid) %>% 
-    sf::st_as_sf(crs = obj_srid) %>% 
+  interp_polygons <- terra::as.polygons(interp_grid) |> 
+    sf::st_as_sf(crs = obj_srid) |> 
     sf::st_intersection(obj, model = model)
   
   # Convert to square kilometers

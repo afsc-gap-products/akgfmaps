@@ -117,9 +117,9 @@ interp_2d_grid <- function(x,
   # Generate 2d_grid ----
   output_2d_grid <- sf::st_as_sf(output_2d_grid)
   
-  output_2d_grid2 <- cbind(as.data.frame(output_2d_grid) %>%
+  output_2d_grid2 <- cbind(as.data.frame(output_2d_grid) |>
                              dplyr::select(-geometry), 
-                           as.data.frame(st_coordinates(output_2d_grid))) %>%
+                           as.data.frame(st_coordinates(output_2d_grid))) |>
     dplyr::rename(longitude = X,
                   latitude = Y)
   
@@ -242,16 +242,16 @@ interp_3d_grid <- function(x,
   coordinates(dat) <- ~longitude + latitude + tdepth
   
   # Fit variogram ----
-  bes_variogram <- variogram(trans_var ~ 1, dat)
-  bes_variogram <- variogram(trans_var ~ 1, dat, 
+  bes_variogram <- gstat::variogram(trans_var ~ 1, dat)
+  bes_variogram <- gstat::variogram(trans_var ~ 1, dat, 
                              cutoff = max(bes_variogram$dist), 
                              width = max(bes_variogram$dist)/50)
   
-  bes_mod <- vgm(psill = vgm_init$psill, 
+  bes_mod <- gstat::vgm(psill = vgm_init$psill, 
                  model = "Bes",
                  range = bes_variogram$dist[10], 
                  nugget = vgm_init$nugget)
-  bes_mod <- fit.variogram(bes_variogram, 
+  bes_mod <- gstat::fit.variogram(bes_variogram, 
                            bes_mod, 
                            fit.sills = TRUE, 
                            fit.ranges = TRUE, 
@@ -259,7 +259,7 @@ interp_3d_grid <- function(x,
   
   # Krige ----
   start_time <- Sys.time()
-  krige_bes <- gstat(formula = trans_var ~ 1, 
+  krige_bes <- gstat::gstat(formula = trans_var ~ 1, 
                      locations = dat, 
                      model = bes_mod, 
                      nmax = nmax)
@@ -296,12 +296,12 @@ interp_3d_grid <- function(x,
   # Generate 3d_grid ----
   output_3d_grid <- sf::st_as_sf(output_3d_grid)
   
-  output_3d_grid2 <- cbind(as.data.frame(output_3d_grid) %>%
+  output_3d_grid2 <- cbind(as.data.frame(output_3d_grid) |>
                              dplyr::select(-geometry), 
-                           as.data.frame(st_coordinates(output_3d_grid))) %>%
+                           as.data.frame(st_coordinates(output_3d_grid))) |>
     dplyr::rename(longitude = X,
                   latitude = Y,
-                  tdepth = Z) %>%
+                  tdepth = Z) |>
     dplyr::mutate(cdepth = tdepth / z_expansion)
   
   # Histogram of output distribution ---------------------------------------------------------------
@@ -412,7 +412,7 @@ backtransform_normal <- function(scores,
   }
   
   # Estimate backtransformation function transform function
-  backtrans <- approxfun(nsc,x) 
+  backtrans <- stats::approxfun(nsc,x) 
   val <- backtrans(scores)
   
   return(val)
@@ -427,7 +427,7 @@ backtransform_normal <- function(scores,
 #' @noRd
 
 normal_transform <- function(x) {
-  z_score <- qqnorm(x, plot.it = FALSE)$x
+  z_score <- stats::qqnorm(x, plot.it = FALSE)$x
   transform_df <- data.frame(x = sort(x),
                              z = sort(z_score))
   return(list(z_score = z_score, 

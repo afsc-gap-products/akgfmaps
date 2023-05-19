@@ -60,7 +60,7 @@ head(akgfmaps::YFS2017)
 
 # Slide 13-14 ----
 # Using make_idw_map() to interpolate YFS CPUE at 5x5 km resolution and return the results as a stars object
-yfs_stars <- akgfmaps::YFS2017 %>%
+yfs_stars <- akgfmaps::YFS2017 |>
   make_idw_map(region = "ebs",
                set.breaks = c(0, 25, 50, 100, 300),
                grid.cell = c(10000, 10000))
@@ -72,7 +72,7 @@ yfs_stars$plot +
 
 # Slide 15-16 ----
 # Using make_idw_map() to interpolate YFS CPUE at 5x5 km resolution and return the results as sf objects
-yfs_sf <- akgfmaps::YFS2017 %>% 
+yfs_sf <- akgfmaps::YFS2017 |> 
   make_idw_map(region = "ebs",
                set.breaks = "jenks",
                in.crs = "+proj=longlat",
@@ -81,7 +81,7 @@ yfs_sf <- akgfmaps::YFS2017 %>%
                grid.cell = c(10000, 10000))
 
 # sf.simple converts extrapolation grid to a POLYGON/MULTIPOLYGON geometry, masks sf to the survey area extent, then reduces the number of polygon vertices to simplify the shapes.
-yfs_sf_simple <- akgfmaps::YFS2017 %>% 
+yfs_sf_simple <- akgfmaps::YFS2017 |> 
   make_idw_map(region = "ebs",
                set.breaks = "jenks",
                in.crs = "+proj=longlat",
@@ -101,17 +101,17 @@ yfs_sf_simple$plot +
 
 # Slide 17 ----
 # Make a map with jenks breaks, a purple color scheme, labels, and scale bar and write it to a file
-akgfmaps::YFS2017 %>%
+akgfmaps::YFS2017 |>
   make_idw_map(region = "bs.all", 
                set.breaks = "jenks",
                extrapolation.grid.type = "sf",
                out.crs = "EPSG:3338",
-               grid.cell = c(10000, 10000)) %>%
+               grid.cell = c(10000, 10000)) |>
   add_map_labels(lab.select = c("islands", 
                                 "bathymetry", 
-                                "mainland")) %>%  
+                                "mainland")) |>  
   change_fill_color(new.scheme = "purple2", 
-                    show.plot = TRUE) %>% 
+                    show.plot = TRUE) |> 
   create_map_file(file.prefix = "purple2_yfs",
                   file.path = NA, 
                   try.change_text_size = TRUE,
@@ -188,7 +188,7 @@ head(akgfmaps::YFS2017)
 
 # Slide 13-14 ----
 # Using make_idw_map() to interpolate YFS CPUE at 5x5 km resolution and return the results as a stars object
-yfs_stars <- akgfmaps::YFS2017 %>%
+yfs_stars <- akgfmaps::YFS2017 |>
   make_idw_map(region = "ebs",
                set.breaks = c(0, 25, 50, 100, 300),
                grid.cell = c(10000, 10000))
@@ -200,7 +200,7 @@ yfs_stars$plot +
 
 # Slide 15-16 ----
 # Using make_idw_map() to interpolate YFS CPUE at 5x5 km resolution and return the results as sf objects
-yfs_sf <- akgfmaps::YFS2017 %>% 
+yfs_sf <- akgfmaps::YFS2017 |> 
   make_idw_map(region = "ebs",
                set.breaks = "jenks",
                in.crs = "+proj=longlat",
@@ -209,7 +209,7 @@ yfs_sf <- akgfmaps::YFS2017 %>%
                grid.cell = c(10000, 10000))
 
 # sf.simple converts extrapolation grid to a POLYGON/MULTIPOLYGON geometry, masks sf to the survey area extent, then reduces the number of polygon vertices to simplify the shapes.
-yfs_sf_simple <- akgfmaps::YFS2017 %>% 
+yfs_sf_simple <- akgfmaps::YFS2017 |> 
   make_idw_map(region = "ebs",
                set.breaks = "jenks",
                in.crs = "+proj=longlat",
@@ -229,17 +229,17 @@ yfs_sf_simple$plot +
 
 # Slide 17 ----
 # Make a map with jenks breaks, a purple color scheme, labels, and scale bar and write it to a file
-akgfmaps::YFS2017 %>%
+akgfmaps::YFS2017 |>
   make_idw_map(region = "bs.all", 
                set.breaks = "jenks",
                extrapolation.grid.type = "sf",
                out.crs = "EPSG:3338",
-               grid.cell = c(10000, 10000)) %>%
+               grid.cell = c(10000, 10000)) |>
   add_map_labels(lab.select = c("islands", 
                                 "bathymetry", 
-                                "mainland")) %>%  
+                                "mainland")) |>  
   change_fill_color(new.scheme = "purple2", 
-                    show.plot = TRUE) %>% 
+                    show.plot = TRUE) |> 
   create_map_file(file.prefix = "purple2_yfs",
                   file.path = NA, 
                   try.change_text_size = TRUE,
@@ -284,13 +284,12 @@ ggplot() +
 
 # Plot a temperature raster from the coldpool package
 
-bt_2022 <- raster::subset(coldpool::ebs_bottom_temperature,
-                          subset = "sebs_ste_2022_gear_temperature")
+bt_2022 <- terra::subset(terra::rast(coldpool::ebs_bottom_temperature),
+                          subset = "2022")
 
 
 bt_2022_df <- bt_2022 |>
-  raster::rasterToPoints() |>
-  as.data.frame()
+  terra::as.data.frame(xy = TRUE)
 
 ggplot() +
   geom_sf(data = sebs_layers$bathymetry) +

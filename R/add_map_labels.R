@@ -29,14 +29,14 @@ add_map_labels <- function(x,
                                               file = "placenames.csv", 
                                               package = "akgfmaps", 
                                               mustWork = TRUE), 
-                           stringsAsFactors = FALSE) %>% 
+                           stringsAsFactors = FALSE) |> 
       akgfmaps::transform_data_frame_crs(out.crs = sf::st_crs(in.dat$crs)) # Transform placenames based on extrapolation grid CRS
     
     # Find new and default place names----------------------------------------------------------------
     if(!is.null(new.places)) {
       if(!all(c("x", "y") %in% names(new.places))) {stop("new.places must include a longitude column named 'x' and latitude column named 'y'")}
       
-      if(transform.new.places) {new.places <- new.places %>% 
+      if(transform.new.places) {new.places <- new.places |> 
         transform_data_frame_crs(out.crs = sf::st_crs(in.dat$crs))}
       
       if(lab.replace) {

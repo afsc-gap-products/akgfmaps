@@ -3,12 +3,13 @@
 #' This function can be used to make inverse-distance-weighted plots for the eastern Bering Sea and northern Bering Sea
 #' 
 #' @param x Data frame which contains at minimum: CPUE, LATITUDE, and LONGITUDE. Can be passed as vectors instead (see below). Default value: \code{NA}
-#' @param region Character vector indicating which plotting region to use. Options: bs.south, bs.north, bs.all
-#' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) correponds with 5x5 km for EPSG:3338
 #' @param COMMON_NAME Common name
 #' @param LATITUDE Latitude (degrees north)
 #' @param LONGITUDE Longitude (degrees east; Western hemisphere is negative)
 #' @param CPUE_KGHA Catch per unit effort in kilograms per hectare
+#' @param region Character vector indicating which plotting region to use. Options: bs.south, bs.north, bs.all
+#' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) correponds with 5x5 km for EPSG:3338
+#' @param grouping.vars Character vector indicating of columns in the input data frame to use for grouping input variable layers.
 #' @param extrap.box Optional. Vector specifying the dimensions of the extrapolation grid. Elements of the vector should be named to specify the minimum and maximum x and y values c(xmin, xmax, ymin, ymax). If not provided, the extrapolation area will be set to the extent of the survey.area bounding box with the output CRS.
 #' @param extrapolation.grid.type Type of object to use for the extrapolation grid, default = "stars". "stars" = returns a 'stars' object; "sf" = sf object with layer masked to survey area extent and converted to collection of sf POLYGON and MULTIPOLYGON geometries; "sf.simple" = same as "sf", but with polygons vertices smoothed using rmapshaper::ms_simplify
 #' @param set.breaks Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"
@@ -24,6 +25,7 @@
 #' (4) region: the region;
 #' (5) crs: coordinate reference system as a PROJ6 (WKT2:2019) string; 
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
+#' @importFrom classInt classIntervals
 #' @export
 
 make_idw_stack <- function(x = NA, 
@@ -42,23 +44,6 @@ make_idw_stack <- function(x = NA,
                            log.transform = FALSE, 
                            idw.nmax = 4,
                            use.survey.bathymetry = TRUE) {
-  
-  # x = test_input
-  # COMMON_NAME = NA
-  # LATITUDE = NA
-  # LONGITUDE = NA
-  # CPUE_KGHA = NA
-  # region = "bs.south"
-  # extrap.box = NULL
-  # extrapolation.grid.type = "stars"
-  # set.breaks = "jenks"
-  # grouping.vars = "YEAR"
-  # grid.cell = c(5000,5000)
-  # in.crs = "+proj=longlat"
-  # out.crs = "EPSG:3338"
-  # log.transform = FALSE
-  # idw.nmax = 4
-  # use.survey.bathymetry = TRUE
   
   stopifnot("make_idw_map: extra.grid.type must be 'stars', 'sf', or 'sf.simple'" = extrapolation.grid.type %in% c("stars", "sf", "sf.simple"))
   
@@ -136,15 +121,9 @@ make_idw_stack <- function(x = NA,
     # Predict, rasterize, mask------------------------------------------------------------------------
 
     extrap.grid <- predict(idw_fit, loc_df) |> 
-      sf::st_transform(crs = raster::crs(x)) |> 
+      sf::st_transform(crs = sf::st_crs(x)) |> 
       stars::st_rasterize() |>
       sf::st_join(map_layers$survey.area, join = st_intersects) 
-    
-    # extrap.grid <- predict(idw_fit, as(extrap_raster, "SpatialPoints")) |> 
-    #   sf::st_as_sf() |> 
-    #   sf::st_transform(crs = raster::crs(x_sub)) |>
-    #   stars::st_rasterize() |>
-    #   sf::st_join(map_layers$survey.area, join = sf::st_intersects) 
     
     # Format breaks for plotting----------------------------------------------------------------------
     # Automatic break selection based on character vector.

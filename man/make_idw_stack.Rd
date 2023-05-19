@@ -42,6 +42,8 @@ make_idw_stack(
 
 \item{set.breaks}{Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"}
 
+\item{grouping.vars}{Character vector indicating of columns in the input data frame to use for grouping input variable layers.}
+
 \item{grid.cell}{Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) correponds with 5x5 km for EPSG:3338}
 
 \item{in.crs}{Character vector containing the coordinate reference system for projecting the extrapolation grid.}

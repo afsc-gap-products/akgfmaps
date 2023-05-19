@@ -9,7 +9,7 @@
 
 rasterize_and_mask <- function(sgrid, amask, touches = FALSE) {
   
-  if(c("RasterLayer", "RasterBrick") %in% class(sgrid)){
+  if(any(c("RasterLayer", "RasterBrick") %in% class(sgrid))) {
     return(raster::mask(sgrid, amask))
   }
   
