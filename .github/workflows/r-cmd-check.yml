@@ -58,13 +58,10 @@ jobs:
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
         shell: bash
         
-      - name: Install macOS spatial libraries
+      - name: Install macOS system dependencies
         if: runner.os == 'macOS'
-        run: |
-          # conflicts with gfortran from r-lib/actions when linking gcc
-          rm '/usr/local/bin/gfortran'
-          brew install pkg-config gdal proj geos
-#dummy
+        run: brew install gdal proj
+
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
