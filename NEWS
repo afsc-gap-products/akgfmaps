@@ -1,0 +1,336 @@
+akgfmaps 3.0.0
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Added a make_idw_stack() function that creates multilayer 
+  SpatRaster objects where interpolations are conducted by 
+  grouping variables (such as YEAR). Intended to reduce 
+  unnecessary run-times and post-hoc manipulation when 
+  generating maps for multiple years.
+  
+FUNCTIONALITY CHANGES
+
+- Removed raster and sp as dependencies and replaced raster 
+  functions with terra functions ahead of the 2023 retirement 
+  of rgdal and sp. Functions that previously generated 
+  RasterLayer and RasterBrick objects (raster package) now 
+  produce SpatRaster objects (terra package). Updated 
+  vignettes and demos to reflect changes.
+  
+- To expedite transition away from sp and raster, 
+  interp_2d_grid() and interp_3d_grid() are temporarily 
+  removed pending redevelopment.
+
+
+akgfmaps 2.3.0 (December 5, 2022)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- New option to return extrapolation.grid as an sf or stars 
+  object using the extrapolation.grid.type argument in 
+  make_idw_map(), where make_idw_map(extrapolation.grid.type = 'stars') 
+  returns the extrapolation.grid as a stars object (default), 
+  make_idw_map(extrapolation.grid.type = 'sf') returns an sf 
+  object containing POLYGON/MULTIPOLYGON geometries that are 
+  masked to the survey area extent, and 
+  make_idw_map(extrapolation.grid.type = 'sf.simple') returns 
+  an sf object containing POLYGON/MULTIPOLYGON geometries that 
+  are maxed to the survey area extent and with lines simplified 
+  using ms_simplify from the rmapshaper package.
+
+- Added reproject_gebco() function to reproject GEBCO bathymetry 
+  (netCDF file) to a new raster and calculate slope and aspect 
+  rasters from the new bathymetry raster.
+  
+  
+akgfmaps 2.2.0 (October 27, 2022)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+  Add plotting options for EBS Slope subareas 1-6 ("bssa1", 
+  "bssa2", etc.). For example, EBS slope subarea 1 layers and 
+  default plot extents can be retrieved using:
+  
+  get_base_layers(select.region = "bssa1")
+
+
+akgfmaps 2.1.0 (October 19, 2022)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Added EBS slope survey area and stratum shapefiles. Stratum 
+  shapefiles use stratum codes that match racebase.stratum.
+
+- EBS slope layers can be accessed using:
+  get_base_layers(select.region = "ebs.slope")
+  
+  
+akgfmaps 2.0.0 (August 25, 2022)
+----------------------------------------------------------------
+
+FUNCTIONALITY CHANGES
+
+- Shapefiles moved from /data/ to /inst/extdata/ to follow best 
+  practices for R packages.
+- Change AI and GOA subarea plot boundary method in get_base_layers() 
+  to improve boundary delineation.
+- Replaced Aleutian Islands survey grid shapefile with a file 
+  that includes more grid cell data (ai_grid.shp)
+  
+akgfmaps 1.9.0 (May 24, 2022)
+----------------------------------------------------------------
+
+BUG FIXES
+
+- Fix error in survey grid handling by get_base_layers. Previous-
+  ly, get_base_layers() had an argument return.survey.grid that 
+  had a default = FALSE. The function was only supposed to 
+  return a survey grid when return.survey.grid = TRUE, but it 
+  was returning the grid in the default CRS for the shapefile 
+  when return.survey.grid = FALSE. The return.survey.grid 
+  argument has been removed from the get_base_layers function 
+  so the function returns a survey.grid object no matter what.
+
+IMPROVEMENTS
+
+- make_idw_map() extrapolation grid now uses the survey.area 
+  bounding box to set the extent for the extrapolation grid, 
+  replacing hard-coded presets.
+- The default plot boundary (plot.boundary) returned by 
+  make_idw_map() is now based on the survey.area bounding box, 
+  replacing hard-coded presets.
+  
+  
+akgfmaps 1.8.0 (March 16, 2022)
+----------------------------------------------------------------
+
+
+- Added a make_2d_grid() function to replicate a workflow for 
+  producing interpolation grids in ArcMap using fishnet.
+- Made functions that were designed for a specific project 
+  internal functions and moved to utils.R (e.g. interp_2d_grid, 
+  interp_3d_grid, normal_transformation, backtransform_normal.
+  
+  
+akgfmaps 1.7.4 (November 4, 2021)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fix EBS shelf station Y-01 selection.
+
+
+akgfmaps 1.7.3 (October 29, 2021)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fix bug where Y-23 was missing from the NBS survey grid.
+
+
+akgfmaps 1.7.2 (September 29, 2021)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fix EBS shelf stratum retrieval in akgfmaps::get_base_layers()
+- Update NBS bounding box for interpolation.
+
+
+akgfmaps 1.7.0 (September 26, 2021)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fixed incorrect stratum naming for EBS shelf stratum 31.
+
+IMPROVEMENTS
+
+- Removed shapefiles that were only used for the SEBS; updated 
+  get_base_layers() to account for the change.
+- Updated SEBS survey area in ebs_survey_boundary.shp to omit 
+  boundaries in order to be consistent with old OFIS boundaries.
+- Updated survey area calculations in sbs_survey_boundary.shp
+- Updated tests to account for changes in survey area calculated 
+  from pixels after St. Matthew, St. George, St. Paul, Hall 
+  Island were removed from the survey area.
+  
+  
+akgfmaps 1.6.4-1.6.5 (September 24, 2021)
+----------------------------------------------------------------
+
+DOCUMENTATION
+
+- Minor tweaks to functions and documentation to provide NBS 
+  support.
+  
+  
+akgfmaps 1.6.3 (September 16, 2021)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fixed NBS land retrieval in get_base_layers()
+
+NEW FEATURES
+
+- Added automatic NBS layer generation to generate_region_guide()
+
+
+akgfmaps 1.6.2 (September 15, 2021)
+----------------------------------------------------------------
+
+- Add NBS CRS and default plotting options to get_base_layers()
+
+
+akgfmaps 1.6.1 (May 17, 2021)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Added survey grids for the EBS/NBS shelf, Gulf of Alaska, and 
+  Aleutian Islands, which can be accessed using 
+  get_base_layers(return.survey.grid = TRUE).
+  
+  
+akgfmaps 1.6.0 (May 13, 2021)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Added standard shapefiles for plotting for the Aleutian Islands 
+  and Gulf of Alaska, including subareas (Western, Central, Eastern 
+  Aleutian Islands; Western and Eastern Gulf of Alaska).
+- Set up automatic layer retrieval using the get_base_layers(), 
+  including defining new automatic default projections for newly 
+  supported regions.
+- New regions for get_base_layers(select.region = [region])
+    - "ai": Aleutian Islands
+    - "ai.west": Western Aleutian Islands
+    - "ai.central": Central Aleutian Islands
+    - "ai.east": Eastern Aleutian Islands
+    - "goa": Gulf of Alaska
+    - "goa.west": Western Gulf of Alaska
+    - "goa.east": Eastern Gulf of Alaska
+
+
+FUNCTIONALITY CHANGES
+
+- Changed default use.survey.bathymetry argument in 
+  get_base_layers() from FALSE to TRUE 
+  (i.e., default get_base_layers(use.survey.bathymetry = TRUE)).
+  
+  
+akgfmaps 1.5.1 (February 9, 2021)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fixed bug with manual breaks.
+
+
+akgfmaps 1.5.0 (February 8, 2021)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Added make_2d_grid() and make_3d_grid() functions for making 
+  extrpolation grids (2d and 3d)
+
+BUG FIXES
+
+- Fixed labeling bugs for small CPUE
+- Updated and repaired vignettes from redesign
+
+
+akgfmaps 1.4.0 (January 4, 2021)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Added functions for normal score transformation and back-transformation.
+
+
+akgfmaps 1.3.0 (October 27, 2020)
+----------------------------------------------------------------
+
+BUG FIXES
+
+- Fixed remaining error in make_idw_map vignette after switch 
+  back to stars following raster/stars PROJ6 update.
+- In make_idw_map, changed default option for return.continuous.grid 
+  to TRUE.
+  
+  
+akgfmaps 1.2.0 (July 29, 2020)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Added option to use EBS stratum bathymetry instead of regional 
+  bathymetry in make_idw_plot.
+
+FUNCTIONALITY CHANGES
+
+- Undid various workarounds that had been set up to deal with 
+  inconsistent compatibility with PROJ6 among dependencies. 
+  All dependencies are now PROJ6 compliant.
+  
+
+akgfmaps 1.1.0 (July 15, 2020)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Updated make_idw_map() to facilitate use of 'survey' bathymetry 
+  for inverse distance weighted interpolation maps.
+- Added generate_layer_guide() to allow users to produce a pdf 
+  catalog of layers that are included in the package by default.
+  
+  
+akgfmaps 1.0.0 (July 13, 2020)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Added support for SEBS and NEBS strata (with calculated areas)
+- Added support for Chukchi Sea
+- Initial support for contiguous Chukchi Sea-Bering Sea mapping.
+
+FUNCTIONALITY CHANGES
+
+- Updated shapefiles to have consistent file naming conventions.
+
+
+akgfmaps 1.0.0 (June 5, 2020)
+----------------------------------------------------------------
+
+BUG FIXES/FUNCTIONALITY CHANGES
+
+- Numerous changes to functions to ensure compliance with 
+  PROJ6/GDAL3.
+  
+  
+akgfmaps 0.4.0 (May 25, 2020)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Added get_base_layers() function to retrieve and project shape-
+  files for EBS and NBS survey regions.
+  
+  
+akgfmaps 0.3.0 (March 4, 2020)
+----------------------------------------------------------------
+
+- Update documentation to help troubleshoot installation errors.
+
+
+akgfmaps 0.2.0 (February 25, 2020)
+----------------------------------------------------------------
+
+- Basic IDW functions for tech memos and presentations.
