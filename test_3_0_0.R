@@ -214,3 +214,8 @@ ggplot() +
   ggtitle(label = "terra::mask(touches = TRUE)") +
   scale_fill_distiller(palette = "Spectral", na.value = NA)
 
+
+# Generate region guide pdfs
+generate_layer_guide()
+generate_region_guide()
+
