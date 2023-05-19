@@ -28,6 +28,7 @@
 #' (6) key.title: title for the legend;
 #' (7) crs: coordinate reference system as a PROJ6 (WKT2:2019) string; 
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
+#' @importFrom classInt classIntervals
 #' @export
 
 make_idw_map <- function(x = NA, 
@@ -89,7 +90,7 @@ make_idw_map <- function(x = NA,
   # Assign CRS to input data------------------------------------------------------------------------
   x <- sf::st_as_sf(x, 
                     coords = c(x = "LONGITUDE", y = "LATITUDE"), 
-                    crs = sf::st_crs(in.crs)) %>% 
+                    crs = sf::st_crs(in.crs)) |> 
     sf::st_transform(crs = map_layers$crs)
   
   # Inverse distance weighting----------------------------------------------------------------------
@@ -98,20 +99,23 @@ make_idw_map <- function(x = NA,
   # Predict station points--------------------------------------------------------------------------
   stn.predict <- predict(idw_fit, x)
 
-  # Generate extrapolation grid---------------------------------------------------------------------
-  sp_extrap.raster <- raster::raster(xmn = extrap.box['xmin'],
-                                     xmx = extrap.box['xmax'],
-                                     ymn = extrap.box['ymin'],
-                                     ymx = extrap.box['ymax'],
+  # Generate interpolation grid---------------------------------------------------------------------
+  extrap_raster <- terra::rast(xmin = extrap.box['xmin'],
+                                     xmax = extrap.box['xmax'],
+                                     ymin = extrap.box['ymin'],
+                                     ymax = extrap.box['ymax'],
                                      ncol = (extrap.box['xmax']-extrap.box['xmin'])/grid.cell[1],
                                      nrow = (extrap.box['ymax']-extrap.box['ymin'])/grid.cell[2],
-                                     crs = raster::crs(out.crs))
+                                     crs = out.crs)
   
   # Predict, rasterize, mask------------------------------------------------------------------------
-  extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) %>% 
-    sf::st_as_sf() %>% 
-    sf::st_transform(crs = raster::crs(x)) %>% 
-    stars::st_rasterize() %>% 
+  loc_df <- suppressWarnings(terra::crds(extrap_raster, df = TRUE, na.rm = FALSE)) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = out.crs)
+  
+  extrap.grid <- predict(idw_fit, loc_df) |> 
+    sf::st_transform(crs = sf::st_crs(x)) |> 
+    stars::st_rasterize() |>
     sf::st_join(map_layers$survey.area, join = st_intersects) 
   
   # Return continuous grid if return.continuous.grid is TRUE ---------------------------------------

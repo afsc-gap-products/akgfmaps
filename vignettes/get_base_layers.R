@@ -36,7 +36,7 @@ SEBS_plot + geom_text(data = my_label,
 
 
 ## ----fig.width=8, fig.height = 6----------------------------------------------
-my_label <- data.frame(x = -165, y = 58, label = "Thar be\ndragons") %>% 
+my_label <- data.frame(x = -165, y = 58, label = "Thar be\ndragons") |> 
   akgfmaps::transform_data_frame_crs(in.crs = "+proj=longlat", out.crs = SEBS$crs)
 
 SEBS_plot + geom_text(data = my_label, 
@@ -47,6 +47,6 @@ SEBS_plot + geom_text(data = my_label,
 
 
 ## ----fig.width=8, fig.height = 6----------------------------------------------
-(SEBS_plot %>% add_map_labels(region = "bs.south", new.places = SEBS$place.labels))
+(SEBS_plot |> add_map_labels(region = "bs.south", new.places = SEBS$place.labels))
 
 

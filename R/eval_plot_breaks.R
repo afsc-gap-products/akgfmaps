@@ -7,6 +7,7 @@
 #' @param styles Character vector with names, or names of methods to try.
 #' @return Returns a data frame showing breaks for each style.
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
+#' @importFrom classInt classIntervals
 #' @export
 
 eval_plot_breaks <- function(CPUE, 
@@ -23,7 +24,7 @@ eval_plot_breaks <- function(CPUE,
   
   
   eval.style.plot <- reshape::melt(eval.style)
-  eval.style.plot$variable <- sub("V", "",eval.style.plot$variable)
+  eval.style.plot$variable <- sub("V", "", eval.style.plot$variable)
   
   return(eval.style)
 }
