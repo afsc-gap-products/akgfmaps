@@ -23,7 +23,7 @@ eval_plot_breaks <- function(CPUE,
   
   
   eval.style.plot <- reshape::melt(eval.style)
-  eval.style.plot$variable <- sub("V", "",eval.style.plot$variable)
+  eval.style.plot$variable <- sub("V", "", eval.style.plot$variable)
   
   return(eval.style)
 }

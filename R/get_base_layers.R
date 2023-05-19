@@ -78,10 +78,10 @@ get_base_layers <- function(select.region,
   # SEBS--------------------------------------------------------------------------------------------
   if(select.region %in% c("bs.south", "sebs")) {
     survey.area <- sf::st_read(system.file("extdata", "ebs_survey_boundary.shp", package = "akgfmaps"), 
-                               quiet = TRUE) %>%
+                               quiet = TRUE) |>
       dplyr::filter(SURVEY == "EBS_SHELF")
     survey.strata <- sf::st_read(system.file("extdata", "ebs_strata.shp", package = "akgfmaps"), 
-                                 quiet = TRUE) %>%
+                                 quiet = TRUE) |>
       dplyr::filter(Stratum %in% c(10, 20, 31, 32, 41, 42, 43, 50, 61, 62, 82, 90))
     survey.grid <- sf::st_read(system.file("extdata", "bs_grid_w_corners.shp", package = "akgfmaps"), 
                                quiet = TRUE)
@@ -106,11 +106,11 @@ get_base_layers <- function(select.region,
   # NBS --------------------------------------------------------------------------------------------
   if (select.region %in% c("bs.north", "nbs")) {
     survey.area <- sf::st_read(system.file("extdata", "ebs_survey_boundary.shp", package = "akgfmaps"), 
-                               quiet = TRUE) %>% 
+                               quiet = TRUE) |> 
       dplyr::filter(SURVEY == "NBS_SHELF")
     
     survey.strata <- sf::st_read(system.file("extdata", "ebs_strata.shp", package = "akgfmaps"), 
-                                 quiet = TRUE) %>% 
+                                 quiet = TRUE) |> 
       dplyr::filter(Stratum %in% c(81,70,71))
     
     survey.grid <- sf::st_read(system.file("extdata", "bs_grid_w_corners.shp", package = "akgfmaps"),  
@@ -257,13 +257,13 @@ get_base_layers <- function(select.region,
                             margin = 1e-5)
   
   # Set CRS for layers -----------------------------------------------------------------------------
-  akland <- akland %>% sf::st_transform(crs = set.crs)
-  survey.area <- survey.area %>% sf::st_transform(crs = set.crs)
-  survey.strata <- survey.strata %>% sf::st_transform(crs = set.crs)
-  bathymetry <- bathymetry %>% sf::st_transform(crs = set.crs)
+  akland <- akland |> sf::st_transform(crs = set.crs)
+  survey.area <- survey.area |> sf::st_transform(crs = set.crs)
+  survey.strata <- survey.strata |> sf::st_transform(crs = set.crs)
+  bathymetry <- bathymetry |> sf::st_transform(crs = set.crs)
   
   if(exists("stratum.extent")) {
-    stratum.extent <- stratum.extent %>% sf::st_transform(crs = set.crs)
+    stratum.extent <- stratum.extent |> sf::st_transform(crs = set.crs)
   }
 
   
@@ -276,19 +276,19 @@ get_base_layers <- function(select.region,
                                    STATIONID %in% akgfmaps::get_survey_stations(select.region = select.region))
     }
     
-    survey.grid <- survey.grid %>% sf::st_transform(crs = set.crs)
+    survey.grid <- survey.grid |> sf::st_transform(crs = set.crs)
     
     # EBS survey grid clipping ---------------------------------------------------------------------
     if(select.region %in% c("bs.all", "ebs", "bs.south", "sebs", "bs.north", "nbs")) {
 
-      grid.intersects <- try(survey.area %>%
-                               sf::st_union() %>%
+      grid.intersects <- try(survey.area |>
+                               sf::st_union() |>
                                sf::st_intersects(survey.grid), silent = TRUE)
 
       if("try-error" %in% class(grid.intersects)) {
         sf::sf_use_s2(FALSE)
-        grid.intersects <- try(survey.area %>%
-                                 sf::st_union() %>%
+        grid.intersects <- try(survey.area |>
+                                 sf::st_union() |>
                                  sf::st_intersects(survey.grid), silent = TRUE)
       }
 
@@ -296,8 +296,8 @@ get_base_layers <- function(select.region,
         warning("get_base_layers: Can't mask survey grid using sf.")
       } else {
         survey.grid <- survey.grid[grid.intersects[[1]],]
-        survey.mask <- survey.area %>% sf::st_union()
-        survey.grid <- sf::st_intersection(survey.grid, survey.mask) %>%
+        survey.mask <- survey.area |> sf::st_union()
+        survey.grid <- sf::st_intersection(survey.grid, survey.mask) |>
           dplyr::filter(STATIONID %in% akgfmaps::get_survey_stations(select.region = select.region))
       }
     }
@@ -353,8 +353,8 @@ get_base_layers <- function(select.region,
   }
   
   # Get place labels--------------------------------------------------------------------------------
-  place.labels <- utils::read.csv(file = system.file("extdata", "placenames.csv", package = "akgfmaps")) %>%
-    dplyr::filter(region == select.region) %>%
+  place.labels <- utils::read.csv(file = system.file("extdata", "placenames.csv", package = "akgfmaps")) |>
+    dplyr::filter(region == select.region) |>
     akgfmaps::transform_data_frame_crs(out.crs = set.crs)
   
   return(list(akland = akland,

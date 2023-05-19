@@ -4,12 +4,14 @@
 \alias{rasterize_and_mask}
 \title{Convert spatial data to raster and mask using a shapefile}
 \usage{
-rasterize_and_mask(sgrid, amask)
+rasterize_and_mask(sgrid, amask, touches = FALSE)
 }
 \arguments{
 \item{sgrid}{Gridded spatial data}
 
 \item{amask}{Object to use as an area mask (simple features object or one of many sp objects)}
+
+\item{touches}{Passed to terra::mask(). Must be set to FALSE to replicate raster::mask()}
 }
 \description{
 Function converts gridded spatial data with coordinates (eg. SpatialGrid) to a raster, then applies a spatial mask.

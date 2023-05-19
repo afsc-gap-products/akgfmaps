@@ -52,6 +52,14 @@ make_2d_grid <- function(obj, resolution = c(3704, 3704), output_type = "point",
   
   names(interp_grid)[1] <- "CELL_ID"
   
+  if(output_type == "raster") {
+    
+    interp_grid <- terra::mask(interp_grid, obj, touches = FALSE)
+    
+    return(interp_grid)
+    
+  }
+  
   # Convert to polygon and find intersection with obj
   interp_polygons <- terra::as.polygons(interp_grid) %>% 
     sf::st_as_sf(crs = obj_srid) %>% 
@@ -60,15 +68,15 @@ make_2d_grid <- function(obj, resolution = c(3704, 3704), output_type = "point",
   # Convert to square kilometers
   interp_polygons$AREA <- sf::st_area(interp_polygons)
   
+  if(output_type == "polygon") {
+    
+    return(interp_polygons)
+    
+  }
+  
   # Create point object using polygon centroids
   interp_centroid <- sf::st_centroid(interp_polygons)
   
-  if(output_type == "point") {
-    return(interp_centroid)
-  } else if(output_type == "polygon") {
-    return(interp_polygons)
-  } else {
-    return(interp_grid)
-  }
-  
+  return(interp_centroid)
+
 }

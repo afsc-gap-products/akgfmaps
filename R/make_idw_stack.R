@@ -43,8 +43,7 @@ make_idw_stack <- function(x = NA,
                            idw.nmax = 4,
                            use.survey.bathymetry = TRUE) {
   
-  # x = akgfmaps::YFS2017 |>
-  #   dplyr::mutate(grp = plyr::round_any(HAUL, 100))
+  # x = test_input
   # COMMON_NAME = NA
   # LATITUDE = NA
   # LONGITUDE = NA
@@ -53,14 +52,13 @@ make_idw_stack <- function(x = NA,
   # extrap.box = NULL
   # extrapolation.grid.type = "stars"
   # set.breaks = "jenks"
-  # grouping.vars = c("grp", "YEAR")
+  # grouping.vars = "YEAR"
   # grid.cell = c(5000,5000)
   # in.crs = "+proj=longlat"
   # out.crs = "EPSG:3338"
   # log.transform = FALSE
   # idw.nmax = 4
   # use.survey.bathymetry = TRUE
-  # return.continuous.grid = TRUE
   
   stopifnot("make_idw_map: extra.grid.type must be 'stars', 'sf', or 'sf.simple'" = extrapolation.grid.type %in% c("stars", "sf", "sf.simple"))
   
@@ -96,13 +94,17 @@ make_idw_stack <- function(x = NA,
   }
   
   # Generate extrapolation grid---------------------------------------------------------------------
-  sp_extrap.raster <- raster::raster(xmn = extrap.box['xmin'],
-                                     xmx = extrap.box['xmax'],
-                                     ymn = extrap.box['ymin'],
-                                     ymx = extrap.box['ymax'],
+  extrap_raster <- terra::rast(xmin = extrap.box['xmin'],
+                                     xmax = extrap.box['xmax'],
+                                     ymin = extrap.box['ymin'],
+                                     ymax = extrap.box['ymax'],
                                      ncol = (extrap.box['xmax']-extrap.box['xmin'])/grid.cell[1],
                                      nrow = (extrap.box['ymax']-extrap.box['ymin'])/grid.cell[2],
-                                     crs = raster::crs(out.crs))
+                                     crs = out.crs)
+  
+  loc_df <- suppressWarnings(terra::crds(extrap_raster, df = TRUE, na.rm = FALSE)) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = out.crs)
   
   # Assign CRS to input data------------------------------------------------------------------------
   unique_groups <- dplyr::select(x, dplyr::all_of(grouping.vars)) |>
@@ -110,13 +112,21 @@ make_idw_stack <- function(x = NA,
   
   x <- sf::st_as_sf(x, 
                     coords = c(x = "LONGITUDE", y = "LATITUDE"), 
-                    crs = sf::st_crs(in.crs)) %>% 
+                    crs = sf::st_crs(in.crs)) |> 
     sf::st_transform(crs = map_layers$crs)
   
   for(ii in 1:nrow(unique_groups)) {
     
-    x_sub <- dplyr::inner_join(x, unique_groups[ii, ], by = grouping.vars)
-    
+    if(length(grouping.vars) > 1) {
+      
+      x_sub <- dplyr::inner_join(x, unique_groups[ii, ], by = grouping.vars)
+      
+    } else{
+      
+      x_sub <- x[which(x[[grouping.vars]] == unique_groups[ii, ]), ]
+      
+    }
+
     # Inverse distance weighting----------------------------------------------------------------------
     idw_fit <- gstat::gstat(formula = CPUE_KGHA~1, locations = x_sub, nmax = idw.nmax)
     
@@ -124,11 +134,17 @@ make_idw_stack <- function(x = NA,
     stn.predict <- predict(idw_fit, x_sub)
     
     # Predict, rasterize, mask------------------------------------------------------------------------
-    extrap.grid <- predict(idw_fit, as(sp_extrap.raster, "SpatialPoints")) |> 
-      sf::st_as_sf() |> 
-      sf::st_transform(crs = raster::crs(x_sub)) |>
+
+    extrap.grid <- predict(idw_fit, loc_df) |> 
+      sf::st_transform(crs = raster::crs(x)) |> 
       stars::st_rasterize() |>
-      sf::st_join(map_layers$survey.area, join = sf::st_intersects) 
+      sf::st_join(map_layers$survey.area, join = st_intersects) 
+    
+    # extrap.grid <- predict(idw_fit, as(extrap_raster, "SpatialPoints")) |> 
+    #   sf::st_as_sf() |> 
+    #   sf::st_transform(crs = raster::crs(x_sub)) |>
+    #   stars::st_rasterize() |>
+    #   sf::st_join(map_layers$survey.area, join = sf::st_intersects) 
     
     # Format breaks for plotting----------------------------------------------------------------------
     # Automatic break selection based on character vector.
@@ -226,7 +242,15 @@ make_idw_stack <- function(x = NA,
       extrap.grid <- extrap.grid |>
         dplyr::select(which(names(extrap.grid) %in% c("var1.pred", "n", "SURVEY", "geometry")))
       
-      extrap.grid <- dplyr::bind_cols(extrap.grid, unique_groups[ii, ])
+      if(length(grouping.vars) > 1) {
+        
+        extrap.grid <- dplyr::bind_cols(extrap.grid, unique_groups[ii, ])
+        
+      } else{
+        
+        extrap.grid[grouping.vars] <- unique_groups[ii, ]
+        
+      }
       
       # Simplify geometry using ms_simplify function from the rmapshaper package
       if(extrapolation.grid.type == "sf.simple") {
