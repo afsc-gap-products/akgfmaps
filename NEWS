@@ -1,4 +1,4 @@
-akgfmaps 3.0.0
+akgfmaps 3.0.0 (May 19, 2023)
 ----------------------------------------------------------------
 
 NEW FEATURES
@@ -21,6 +21,10 @@ FUNCTIONALITY CHANGES
 - To expedite transition away from sp and raster, 
   interp_2d_grid() and interp_3d_grid() are temporarily 
   removed pending redevelopment.
+  
+- Restructured imports and dependencies to account for changes
+  since the release of R 4.0.
+  
 
 
 akgfmaps 2.3.0 (December 5, 2022)
@@ -76,8 +80,10 @@ FUNCTIONALITY CHANGES
 
 - Shapefiles moved from /data/ to /inst/extdata/ to follow best 
   practices for R packages.
+  
 - Change AI and GOA subarea plot boundary method in get_base_layers() 
   to improve boundary delineation.
+  
 - Replaced Aleutian Islands survey grid shapefile with a file 
   that includes more grid cell data (ai_grid.shp)
   
@@ -100,6 +106,7 @@ IMPROVEMENTS
 - make_idw_map() extrapolation grid now uses the survey.area 
   bounding box to set the extent for the extrapolation grid, 
   replacing hard-coded presets.
+  
 - The default plot boundary (plot.boundary) returned by 
   make_idw_map() is now based on the survey.area bounding box, 
   replacing hard-coded presets.
@@ -111,6 +118,7 @@ akgfmaps 1.8.0 (March 16, 2022)
 
 - Added a make_2d_grid() function to replicate a workflow for 
   producing interpolation grids in ArcMap using fishnet.
+  
 - Made functions that were designed for a specific project 
   internal functions and moved to utils.R (e.g. interp_2d_grid, 
   interp_3d_grid, normal_transformation, backtransform_normal.
@@ -152,9 +160,12 @@ IMPROVEMENTS
 
 - Removed shapefiles that were only used for the SEBS; updated 
   get_base_layers() to account for the change.
+  
 - Updated SEBS survey area in ebs_survey_boundary.shp to omit 
   boundaries in order to be consistent with old OFIS boundaries.
+  
 - Updated survey area calculations in sbs_survey_boundary.shp
+
 - Updated tests to account for changes in survey area calculated 
   from pixels after St. Matthew, St. George, St. Paul, Hall 
   Island were removed from the survey area.
@@ -205,9 +216,11 @@ NEW FEATURES
 - Added standard shapefiles for plotting for the Aleutian Islands 
   and Gulf of Alaska, including subareas (Western, Central, Eastern 
   Aleutian Islands; Western and Eastern Gulf of Alaska).
+  
 - Set up automatic layer retrieval using the get_base_layers(), 
   including defining new automatic default projections for newly 
   supported regions.
+  
 - New regions for get_base_layers(select.region = [region])
     - "ai": Aleutian Islands
     - "ai.west": Western Aleutian Islands
@@ -244,6 +257,7 @@ NEW FEATURES
 BUG FIXES
 
 - Fixed labeling bugs for small CPUE
+
 - Updated and repaired vignettes from redesign
 
 
@@ -262,6 +276,7 @@ BUG FIXES
 
 - Fixed remaining error in make_idw_map vignette after switch 
   back to stars following raster/stars PROJ6 update.
+  
 - In make_idw_map, changed default option for return.continuous.grid 
   to TRUE.
   
@@ -288,6 +303,7 @@ NEW FEATURES
 
 - Updated make_idw_map() to facilitate use of 'survey' bathymetry 
   for inverse distance weighted interpolation maps.
+  
 - Added generate_layer_guide() to allow users to produce a pdf 
   catalog of layers that are included in the package by default.
   
@@ -298,7 +314,9 @@ akgfmaps 1.0.0 (July 13, 2020)
 NEW FEATURES
 
 - Added support for SEBS and NEBS strata (with calculated areas)
+
 - Added support for Chukchi Sea
+
 - Initial support for contiguous Chukchi Sea-Bering Sea mapping.
 
 FUNCTIONALITY CHANGES
