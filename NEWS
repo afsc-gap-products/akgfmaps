@@ -1,5 +1,6 @@
 akgfmaps 3.1.0 (August 31, 2023)
 ----------------------------------------------------------------
+
 NEW FEATURES
 
 - Added a get_inpfc_strata() function that uses survey stratum
