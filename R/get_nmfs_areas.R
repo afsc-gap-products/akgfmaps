@@ -17,7 +17,7 @@ get_nmfs_areas <- function(set.crs) {
                 "nmfs_stat_areas.shp", 
                 package = "akgfmaps"), 
     quiet = TRUE) |>
-    dplyr::filter(NMFS_AREA > 0 & NMFS_AREA < 651) |> # Alaska only, no land
+    dplyr::filter(NMFS_AREA > 0 & NMFS_AREA < 651) |> # Select Alaska regions only and exclude land
     sf::st_transform(crs = set.crs)
   
   return(nmfs_areas)

@@ -1,3 +1,22 @@
+akgfmaps 3.1.0 (August 31, 2023)
+----------------------------------------------------------------
+NEW FEATURES
+
+- Added a get_inpfc_strata() function that uses survey stratum
+  shapefiles to create an INPFC stratum sf POLYGON for the goa
+  or ai. The function can be called directly or through the
+  get_base_layers() function. Code examples:
+    - get_base_layers(select.region = "inpfc.goa")
+    - get_base_layers(select.region = "inpfc.ai")
+    - get_inpfc_strata(select.region = "goa")
+    - get_inpfc_strata(select.region = "ai")
+
+- Added a NMFS statistical area shapefile that can be accessed
+  using a new get_nmfs_areas() function. The NMFS areas are also
+  accessible using the get_base_layers function. Code examples:
+    - get_base_layers(select.region = "nmfs")
+    - get_nmfs_areas()
+
 akgfmaps 3.0.0 (May 19, 2023)
 ----------------------------------------------------------------
 

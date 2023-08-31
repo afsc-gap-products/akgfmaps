@@ -38,7 +38,9 @@ get_base_layers <- function(select.region,
       "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
+      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+      "+proj=aea +lat_1=50.83 +lat_2=52.67 +lat_0=51.75 +lon_0=-179 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
     set.crs <- region.crs[match(select.region, c("bs.south", 
                                                  "sebs", 
                                                  "bs.all", 
@@ -61,7 +63,9 @@ get_base_layers <- function(select.region,
                                                  "bssa4",
                                                  "bssa5",
                                                  "bssa6",
-                                                 "nmfs"))]
+                                                 "nmfs", 
+                                                 "inpfc.goa",
+                                                 "inpfc.ai"))]
   }
   
   # SPECIAL CASES ----------------------------------------------------------------------------------
@@ -69,6 +73,10 @@ get_base_layers <- function(select.region,
   # NMFS Areas shapefile
   if(select.region == "nmfs") {
       return(akgfmaps::get_nmfs_areas(set.crs = set.crs))
+  }
+  
+  if(select.region %in% c("inpfc.goa", "inpfc.ai")) {
+    return(akgfmaps::get_inpfc_strata(select.region = select.region, set.crs = set.crs))
   }
 
   # Bathymetry and land shapefiles ---------------------------------------------------------------  
