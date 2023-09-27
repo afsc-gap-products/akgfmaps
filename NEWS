@@ -1,3 +1,12 @@
+akgfmaps 3.1.1 (September 27, 2023)
+----------------------------------------------------------------
+
+BUG FIX
+
+Corrected INPFC_STRATUM name returned by get_inpfc_strata()  
+from 'Southeast' to 'Southeastern'
+
+
 akgfmaps 3.1.0 (August 31, 2023)
 ----------------------------------------------------------------
 
