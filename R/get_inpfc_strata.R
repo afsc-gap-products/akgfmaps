@@ -14,7 +14,7 @@ get_inpfc_strata <- function(select.region, set.crs) {
   
   if(select.region %in% c("goa", "inpfc.goa")) {
     path <- "goa_strata.shp"
-    stratum_names <- c("Shumagin", "Chirikof", "Kodiak", "Yakutat", "Southeast")
+    stratum_names <- c("Shumagin", "Chirikof", "Kodiak", "Yakutat", "Southeastern")
     stratum_index <- 2
     offset <- 0
     
