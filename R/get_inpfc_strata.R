@@ -10,7 +10,7 @@ get_inpfc_strata <- function(select.region, set.crs) {
   
   select.region <- tolower(select.region)
   
-  stopifnot("get_inpfc_strata: Invalid region! Must be one of 'goa', 'inpfc.goa', 'ai', 'inpfc.ai'" = select.region %in% c("goa", "inpfc.goa", "ai", "inpfc.ai"))
+  .check_region(select.region = select.region, type = "inpfc")
   
   if(select.region %in% c("goa", "inpfc.goa")) {
     path <- "goa_strata.shp"

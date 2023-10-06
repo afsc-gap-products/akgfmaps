@@ -18,6 +18,7 @@ make_idw_map(
   in.crs = "+proj=longlat",
   out.crs = "EPSG:3338",
   key.title = "auto",
+  key.title.units = "CPUE (kg/ha)",
   log.transform = FALSE,
   idw.nmax = 4,
   use.survey.bathymetry = TRUE,
@@ -49,7 +50,9 @@ make_idw_map(
 
 \item{out.crs}{Character vector containing the coordinate reference system for projecting the extrapolation grid. The default is Alaska Albers Equal Area (EPSG:3338).}
 
-\item{key.title}{Character vector which will appear in the legend above CPUE (kg/ha). Default = "auto" tries to pull COMMON_NAME from input.}
+\item{key.title}{Character vector which will appear in the legend above key.title.units. Default = "auto" tries to pull COMMON_NAME from input.}
+
+\item{key.title.units}{Character vector which will appear in the legend below key title. Default = "CPUE (kg/ha)"}
 
 \item{log.transform}{Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.}
 

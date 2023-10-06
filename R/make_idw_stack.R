@@ -45,6 +45,8 @@ make_idw_stack <- function(x = NA,
                            idw.nmax = 4,
                            use.survey.bathymetry = TRUE) {
   
+  .check_region(select.region = region, type = "survey")
+  
   stopifnot("make_idw_map: extra.grid.type must be 'stars', 'sf', or 'sf.simple'" = extrapolation.grid.type %in% c("stars", "sf", "sf.simple"))
   
   # Convert vectors to data frame if x is not a data.frame or tbl-----------------------------------

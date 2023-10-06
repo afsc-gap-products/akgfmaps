@@ -14,7 +14,8 @@
 #' @param set.breaks Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"
 #' @param in.crs Character vector containing the coordinate reference system for projecting the extrapolation grid.
 #' @param out.crs Character vector containing the coordinate reference system for projecting the extrapolation grid. The default is Alaska Albers Equal Area (EPSG:3338).
-#' @param key.title Character vector which will appear in the legend above CPUE (kg/ha). Default = "auto" tries to pull COMMON_NAME from input.
+#' @param key.title Character vector which will appear in the legend above key.title.units. Default = "auto" tries to pull COMMON_NAME from input.
+#' @param key.title.units Character vector which will appear in the legend below key title. Default = "CPUE (kg/ha)"
 #' @param log.transform Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.
 #' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 8
 #' @param use.survey.bathymetry Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE
@@ -44,10 +45,13 @@ make_idw_map <- function(x = NA,
                          in.crs = "+proj=longlat", 
                          out.crs = "EPSG:3338", 
                          key.title = "auto", 
+                         key.title.units = "CPUE (kg/ha)",
                          log.transform = FALSE, 
                          idw.nmax = 4,
                          use.survey.bathymetry = TRUE, 
                          return.continuous.grid = TRUE) {
+  
+  .check_region(select.region = region, type = "survey")
   
   stopifnot("make_idw_map: extra.grid.type must be 'stars', 'sf', or 'sf.simple'" = extrapolation.grid.type %in% c("stars", "sf", "sf.simple"))
   
@@ -229,7 +233,7 @@ make_idw_map <- function(x = NA,
       ggplot2::geom_sf(data = map_layers$akland, fill = "grey80") +
       ggplot2::geom_sf(data = map_layers$bathymetry) +
       ggplot2::geom_sf(data = map_layers$graticule, color = alpha("grey70", 0.3)) +
-      ggplot2::scale_fill_manual(name = paste0(key.title, "\nCPUE (kg/ha)"), 
+      ggplot2::scale_fill_manual(name = paste0(key.title, "\n", key.title.units), 
                                  values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]), 
                                  na.translate = FALSE, # Don't use NA
                                  drop = FALSE) + # Keep all levels in the plot
@@ -254,7 +258,7 @@ make_idw_map <- function(x = NA,
       ggplot2::geom_sf(data = map_layers$akland, fill = "grey80") +
       ggplot2::geom_sf(data = map_layers$bathymetry) +
       ggplot2::geom_sf(data = map_layers$graticule, color = alpha("grey70", 0.3)) +
-      ggplot2::scale_fill_manual(name = paste0(key.title, "\nCPUE (kg/ha)"), 
+      ggplot2::scale_fill_manual(name = paste0(key.title, "\n",  "key.title.units"), 
                                  values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]), 
                                  na.translate = FALSE, # Don't use NA
                                  drop = FALSE) + # Keep all levels in the plot
