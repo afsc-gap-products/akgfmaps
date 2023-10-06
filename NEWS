@@ -1,3 +1,47 @@
+akgfmaps 3.2.0 (October 6, 2023)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Replaced Aleutian Islands survey grid shapefile 
+  (inst/extdata/ai_grid.shp) with a new version that corrects 
+  mislabeled stratum IDs. New shapefile provided by Ned Laman 
+  (NOAA/AFSC).
+
+- Replaced Aleutian Islands survey area shapefile 
+  (inst/extdata/ai_area.shp) with a version that excludes 
+  Bowers Ridge. 
+
+FUNCTIONALITY CHANGES
+
+- Modified get_base_layers() to filters out Aleutian Islands 
+  survey.grid cells with STRATUM >= 800 (Bowers Ridge). This 
+  change was made because Bowers Ridge stations are not part 
+  of the standard survey grid, are not included in stratum area 
+  calculations, are not used for index production and have not 
+  been sampled by a RACE Aleutian Islands bottom trawl survey 
+  since 1986. Bowers Ridge grid cells are still included in the 
+  Aleutian Islands survey grid shapefile (/inst/extdata/ai_grid.shp).
+  
+- get_base_layers() now filters out Aleutian Islands and Gulf
+  of Alaska survey.grid cells with STRATUM=0 (land). STRATUM 0 
+  cells are still included in the survey grid shapefiles for 
+  the Aleutian Islands (/inst/extdata/ai_grid.shp) and Gulf of 
+  Alaska (/inst/extdata/goa_grid.shp).
+
+    
+NEW FEATURES 
+
+- Added key.title.units argument to make_idw_map() that allows
+  users to use their own unit label instead of the default 
+  'CPUE (kg/ha)'. Example usage:
+    - make_idw_map(key.title.units = 'CPUE (#/ha)')
+    
+- Added internal .check_region() function to check that user-
+  specified region choices are valid and avoid cryptic error
+  messages.
+
+
 akgfmaps 3.1.1 (September 27, 2023)
 ----------------------------------------------------------------
 

@@ -8,14 +8,21 @@
 generate_region_guide <- function(out_loc = "akgfmaps_region_layers.pdf", 
                                   select.regions = NULL) {
   
-  .check_region(select.region = select.region, type = "nmfs")
+  if(!is.null(select.regions)) {
+    for(ii in 1:length(select_regions)) {
+      .check_region(select.region = select.regions[ii], type = "survey")
+    }
+  }
   
   if(!grepl(".pdf", out_loc)) {
     stop("out_loc must be a .pdf file!")
   }
   
   if(is.null(select.regions)) {
-    select.regions <- c("ecs", "ebs", "ebs.ecs", "sebs", "nbs", "ai", "ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")
+    select.regions <- c(
+      "bs.south", "sebs", "bs.all", "ebs", "bs.north", "nbs", "ecs", "ebs.ecs", "ai", "ai.west", 
+      "ai.central", "ai.east", "goa", "goa.west", "goa.east", "ebs.slope", "bssa1", "bssa2",
+      "bssa3", "bssa4", "bssa5", "bssa6")
   }
   grDevices::pdf(file = out_loc, width = 8, height = 8, onefile = TRUE)
   for(i in 1:length(select.regions)) {
