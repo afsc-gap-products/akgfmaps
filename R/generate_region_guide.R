@@ -8,6 +8,8 @@
 generate_region_guide <- function(out_loc = "akgfmaps_region_layers.pdf", 
                                   select.regions = NULL) {
   
+  .check_region(select.region = select.region, type = "nmfs")
+  
   if(!grepl(".pdf", out_loc)) {
     stop("out_loc must be a .pdf file!")
   }

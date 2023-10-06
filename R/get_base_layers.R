@@ -13,6 +13,8 @@ get_base_layers <- function(select.region,
   
   select.region <- tolower(select.region)
   
+  .check_region(select.region = select.region, type = "all")
+  
   ## Automatically set CRS
   if(set.crs == "auto") {
     region.crs <- c(
