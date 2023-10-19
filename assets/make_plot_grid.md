@@ -1,6 +1,6 @@
 # Return coordinates for plotting gridded data using make_2d_grid()
 
-__Added in 3.3.0 (see [NEWS](/NEWS))_
+### _Feature added in 3.3.0 (see [NEWS](/NEWS))_
 
 This example show how to use the make_2d_grid() function to produce grid cell centroid
 coordinates that facilitate plotting data from 2d grids that are used for spatial

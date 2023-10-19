@@ -47,6 +47,10 @@ NEW FEATURE
                 |       /   |           |
                 |      /    |           |
                 +-----------+-----------+
+                
+  USAGE
+  
+  See [Return coordinates for plotting gridded data using make_2d_grid()](/assets/make_plot_grid.md)
 
 
 akgfmaps 3.2.0 (October 6, 2023)
