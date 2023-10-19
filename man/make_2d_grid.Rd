@@ -9,7 +9,8 @@ make_2d_grid(
   resolution = c(3704, 3704),
   output_type = "point",
   bbox = NULL,
-  model = "semi-open"
+  model = "semi-open",
+  include_tile_center = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ make_2d_grid(
 \item{bbox}{Optional. A 4L numeric vector to define the edges of the interpolation grid c(xmin, ymin, xmax, ymax).}
 
 \item{model}{Character vector indicating the geometry model to use for st_intersection boundaries. Default = "semi-open"; for details see ?s2::s2_options}
+
+\item{include_tile_center}{Should the center point of each tile be included in the output? This helps with plotting data because the center point for grid locations after intesecting with the stratum shapefile is not always the center of a grid cell since intersected cells are not always squares.}
 }
 \description{
 Creates a raster (terra 'SpatRaster'), point grid (sf 'POINT'), or polygon mesh/'fishnet' (sf 'POLYGON') from an sf polygon.
