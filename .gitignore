@@ -38,9 +38,11 @@
 inst/doc
 doc
 Meta
-*.png
 *.lock
 
 /vignettes/*.html
 /vignettes/*.R
 /vignettes/*.md
+/vignettes/*.png
+/vignettes/figure
+/plots/

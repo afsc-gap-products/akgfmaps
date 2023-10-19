@@ -1,3 +1,58 @@
+akgfmaps 3.3.0 (October 19, 2023)
+----------------------------------------------------------------
+
+NEW FEATURE
+
+- Added an include_grid_cell argument to make_2d_grid() that
+  makes the function return columns with the center coordinates
+  (lon_plot, lat_plot) of each grid cell prior to intersecting 
+  with the user-provided sf object (passed to obj argument). 
+  Centroids for intersected grid polygons are still returned by 
+  the function for use in spatial analyses and index production 
+  (e.g. VAST, sdmTMB) because they are the center of grid cells 
+  after intersecting with stratum shapefiles. The centroid prior
+  to intersection is more useful for plotting gridded data with-
+  out prior transformation.
+  
+  EXAMPLE
+  
+  Grid cell centroids before intersection (regularly-spaced):
+  
+                +-----------+-----------+
+                |           |           | 
+                |           |           |
+                |     x     |     x     |
+                |           |           |
+                |           |           |
+                +-----------+-----------+
+
+  Grid cell centroids after intersection (irregularly-spaced;
+  useful for analyses that require accurate distances):
+
+                +-----------+-----------+
+                |          /|           |        
+                |    x    / |           |
+                |        /  |     x     |
+                |       / x |           |
+                |      /    |           |
+                +-----------+-----------+
+                
+  Grid cell centroids for plotting after intersection (still 
+  regularly-spaced):
+  
+                +-----------+-----------+
+                |          /|           |        
+                |         / |           |
+                |     X  /  |     x     |
+                |       /   |           |
+                |      /    |           |
+                +-----------+-----------+
+                
+  USAGE
+  
+  See https://github.com/afsc-gap-products/akgfmaps/blob/main/assets/make_plot_grid.md
+
+
 akgfmaps 3.2.0 (October 6, 2023)
 ----------------------------------------------------------------
 

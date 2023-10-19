@@ -7,9 +7,10 @@
 #' @param output_type Type of output as a 1L character vector ("point", "raster", "polygon).
 #' @param bbox Optional. A 4L numeric vector to define the edges of the interpolation grid c(xmin, ymin, xmax, ymax).
 #' @param model Character vector indicating the geometry model to use for st_intersection boundaries. Default = "semi-open"; for details see ?s2::s2_options
+#' @param include_tile_center Should the center point of each tile be included in the output? This helps with plotting data because the center point for grid locations after intesecting with the stratum shapefile is not always the center of a grid cell since intersected cells are not always squares.
 #' @export
 
-make_2d_grid <- function(obj, resolution = c(3704, 3704), output_type = "point", bbox = NULL, model = "semi-open") {
+make_2d_grid <- function(obj, resolution = c(3704, 3704), output_type = "point", bbox = NULL, model = "semi-open", include_tile_center = FALSE) {
   
   # Extract CRS
   obj_srid <- sf::st_crs(obj, parameters = TRUE)$srid
@@ -62,7 +63,22 @@ make_2d_grid <- function(obj, resolution = c(3704, 3704), output_type = "point",
   
   # Convert to polygon and find intersection with obj
   interp_polygons <- terra::as.polygons(interp_grid) |> 
-    sf::st_as_sf(crs = obj_srid) |> 
+    sf::st_as_sf(crs = obj_srid)
+  
+  # Add tile center coordinates for plotting
+  if(include_tile_center) {
+    
+    coords_for_plots <- sf::st_centroid(interp_polygons) |>
+      sf::st_coordinates() |>
+      as.data.frame() |>
+      dplyr::rename(lon_plot = X, lat_plot = Y)
+    
+    interp_polygons <- interp_polygons |>
+      dplyr::bind_cols(coords_for_plots)
+
+  }
+  
+  interp_polygons <- interp_polygons |>
     sf::st_intersection(obj, model = model)
   
   # Convert to square kilometers
