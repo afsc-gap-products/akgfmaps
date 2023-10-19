@@ -13,6 +13,15 @@ visualization.
 ``` r
 library(akgfmaps)
 
+# Bounding box used for the EBS
+vast_bbox <- c(xmin = -2846314.206900,
+              ymin = 251495.775400,
+              xmax = 2128157.793100,
+              ymax = 2859111.775400)
+
+# Grid cell resolution in meters (equivalent to 2 nautical miles)
+res <- c(3704, 3704)
+
 ebs_layers <- akgfmaps::get_base_layers(select.region = "sebs",
                                         set.crs = "EPSG:3338")
 
