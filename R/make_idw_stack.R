@@ -229,7 +229,7 @@ make_idw_stack <- function(x = NA,
         
       } else{
         
-        extrap.grid[grouping.vars] <- unique_groups[ii, ]
+        extrap.grid[grouping.vars] <- unlist(unique_groups)[ii]) # changed from unique_groups[ii, ]
         
       }
       
