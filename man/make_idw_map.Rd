@@ -42,9 +42,9 @@ make_idw_map(
 
 \item{extrapolation.grid.type}{Type of object to use for the extrapolation grid, default = "stars". "stars" = returns a 'stars' object; "sf" = sf object with layer masked to survey area extent and converted to collection of sf POLYGON and MULTIPOLYGON geometries; "sf.simple" = same as "sf", but with polygons vertices smoothed using rmapshaper::ms_simplify}
 
-\item{set.breaks}{Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"}
+\item{set.breaks}{Either a numeric vector of breaks to use for plotting or a character vector indicating which classIntervals() algorithm to use for break selection. See Description for information about break selection.  Users are strongly encouraged to specify their own numeric vector of breaks based on the properties of their data.}
 
-\item{grid.cell}{Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) correponds with 5x5 km for EPSG:3338}
+\item{grid.cell}{Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) corresponds with 5x5 km for EPSG:3338}
 
 \item{in.crs}{Character vector containing the coordinate reference system for projecting the extrapolation grid.}
 
@@ -74,6 +74,9 @@ Returns a list containing:
 }
 \description{
 This function can be used to make inverse-distance-weighted plots for the eastern Bering Sea and northern Bering Sea
+}
+\details{
+This function include an argument for algorithmic break selection using the `set.breaks` argument. However, algorithmic break selection is provided for convenience purposes and **users are strongly encouraged to select their own breaks based on the properties of their data**. No single algorithm in the package can be expected to perform well in all cases. See ?classInt::classIntervals for a algorithmic break selection method options.
 }
 \author{
 Sean Rohan \email{sean.rohan@noaa.gov}

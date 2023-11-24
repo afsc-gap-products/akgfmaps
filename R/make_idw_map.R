@@ -4,14 +4,14 @@
 #' 
 #' @param x Data frame which contains at minimum: CPUE, LATITUDE, and LONGITUDE. Can be passed as vectors instead (see below). Default value: \code{NA}
 #' @param region Character vector indicating which plotting region to use. Options: bs.south, bs.north, bs.all
-#' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) correponds with 5x5 km for EPSG:3338
+#' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) corresponds with 5x5 km for EPSG:3338
 #' @param COMMON_NAME Common name
 #' @param LATITUDE Latitude (degrees north)
 #' @param LONGITUDE Longitude (degrees east; Western hemisphere is negative)
 #' @param CPUE_KGHA Catch per unit effort in kilograms per hectare
 #' @param extrap.box Optional. Vector specifying the dimensions of the extrapolation grid. Elements of the vector should be named to specify the minimum and maximum x and y values c(xmin, xmax, ymin, ymax). If not provided, the extrapolation area will be set to the extent of the survey.area bounding box with the output CRS.
 #' @param extrapolation.grid.type Type of object to use for the extrapolation grid, default = "stars". "stars" = returns a 'stars' object; "sf" = sf object with layer masked to survey area extent and converted to collection of sf POLYGON and MULTIPOLYGON geometries; "sf.simple" = same as "sf", but with polygons vertices smoothed using rmapshaper::ms_simplify
-#' @param set.breaks Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"
+#' @param set.breaks Either a numeric vector of breaks to use for plotting or a character vector indicating which classIntervals() algorithm to use for break selection. See Description for information about break selection.  Users are strongly encouraged to specify their own numeric vector of breaks based on the properties of their data.
 #' @param in.crs Character vector containing the coordinate reference system for projecting the extrapolation grid.
 #' @param out.crs Character vector containing the coordinate reference system for projecting the extrapolation grid. The default is Alaska Albers Equal Area (EPSG:3338).
 #' @param key.title Character vector which will appear in the legend above key.title.units. Default = "auto" tries to pull COMMON_NAME from input.
@@ -20,6 +20,8 @@
 #' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 8
 #' @param use.survey.bathymetry Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE
 #' @param return.continuous.grid If TRUE, also returns an extrapolation grid on a continuous scale.
+#' @details
+#' This function include an argument for algorithmic break selection using the `set.breaks` argument. However, algorithmic break selection is provided for convenience purposes and **users are strongly encouraged to select their own breaks based on the properties of their data**. No single algorithm in the package can be expected to perform well in all cases. See ?classInt::classIntervals for a algorithmic break selection method options.
 #' @return Returns a list containing: 
 #' (1) plot: a ggplot IDW map;
 #' (2) extrapolation.grid: the extrapolation grid with estimated values on a discrete scale as a 'stars' (when extrapolation.grid.type is "stars") or 'sf' (when extrapolation.grid.type is "sf" or "sf.simple") object;
