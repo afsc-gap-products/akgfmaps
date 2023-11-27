@@ -35,7 +35,6 @@
 #' @export
 
 make_idw_map <- function(x = NA, 
-                         formula = NULL,
                          COMMON_NAME = NA, 
                          LATITUDE = NA, 
                          LONGITUDE = NA, 
@@ -69,9 +68,10 @@ make_idw_map <- function(x = NA,
                     LATITUDE = LATITUDE,
                     LONGITUDE = LONGITUDE,
                     CPUE_KGHA = CPUE_KGHA)
-  } else {
-    x <- as.data.frame(x)
-  }
+  } 
+    
+  x <- as.data.frame(x)
+
   
   # Set legend title--------------------------------------------------------------------------------
   if(key.title == "auto") {
