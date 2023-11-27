@@ -12,12 +12,14 @@
 #' @param grouping.vars Character vector indicating of columns in the input data frame to use for grouping input variable layers.
 #' @param extrap.box Optional. Vector specifying the dimensions of the extrapolation grid. Elements of the vector should be named to specify the minimum and maximum x and y values c(xmin, xmax, ymin, ymax). If not provided, the extrapolation area will be set to the extent of the survey.area bounding box with the output CRS.
 #' @param extrapolation.grid.type Type of object to use for the extrapolation grid, default = "stars". "stars" = returns a 'stars' object; "sf" = sf object with layer masked to survey area extent and converted to collection of sf POLYGON and MULTIPOLYGON geometries; "sf.simple" = same as "sf", but with polygons vertices smoothed using rmapshaper::ms_simplify
-#' @param set.breaks Suggested. Vector of break points to use for plotting. Alternatively, a character vector indicating which break method to use. Default = "jenks"
+#' @param set.breaks Either a numeric vector of breaks to use for plotting or a character vector indicating which classIntervals() algorithm to use for break selection. See Description for information about break selection.  Users are strongly encouraged to specify their own numeric vector of breaks based on the properties of their data.
 #' @param in.crs Character vector containing the coordinate reference system for projecting the extrapolation grid.
 #' @param out.crs Character vector containing the coordinate reference system for projecting the extrapolation grid. The default is Alaska Albers Equal Area (EPSG:3338).
 #' @param log.transform Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.
 #' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 8
 #' @param use.survey.bathymetry Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE
+#' @details
+#' This function include an argument for algorithmic break selection using the `set.breaks` argument. However, algorithmic break selection is provided for convenience purposes and **users are strongly encouraged to select their own breaks based on the properties of their data**. No single algorithm in the package can be expected to perform well in all cases. See ?classInt::classIntervals for a algorithmic break selection method options.
 #' @return Returns a list containing: 
 #' (1) map_layers: Layer of shapefiles returned by akgfmaps::get_base_layers()
 #' (2) extrapolation.stack: a stack of extrapolated spatial objects with estimated values on a discrete scale as a 'stars' (when extrapolation.grid.type is "stars") or 'sf' (when extrapolation.grid.type is "sf" or "sf.simple") object;

@@ -4,7 +4,7 @@ Title: Alaska Groundfish and Ecosystem Survey Area Mapping
 Version: 3.3.0
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
     person("Jason", "Conner", email = "jason.conner@noaa.gov", role = "ctb"),
-    person("Liz", "Dawson", email = "liz.dawson@noaa.gov", role = "ctb"),
+    person("Liz", "Dawson", role = "ctb"),
     person("Ned", "Laman", email = "ned.laman@noaa.gov", role = "ctb"),
     person("Emily", "Markowitz", email = "emily.markowitz@noaa.gov", role = "ctb"),
     person("Zack", "Oyafuso", email = "zack.oyafuso@noaa.gov", role = "ctb"))
