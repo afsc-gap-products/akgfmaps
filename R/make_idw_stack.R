@@ -30,7 +30,7 @@
 #' @importFrom classInt classIntervals
 #' @export
 
-make_idw_stack <- function(x = NA, 
+make_idw_stack <- function(x = NULL, 
                            COMMON_NAME = NA, 
                            LATITUDE = NA, 
                            LONGITUDE = NA, 
@@ -62,6 +62,8 @@ make_idw_stack <- function(x = NA,
                     LATITUDE = LATITUDE,
                     LONGITUDE = LONGITUDE,
                     CPUE_KGHA = CPUE_KGHA)
+  } else {
+    x <- as.data.frame(x)
   }
   
   # Load map layers---------------------------------------------------------------------------------
