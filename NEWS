@@ -1,3 +1,11 @@
+akgfmaps 3.3.1 (November 27, 2023)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Convert x to a data.frame in make_idw_map() and make_idw_stack()
+  to prevent indexing errors when argument to x is a tibble.
+
 akgfmaps 3.3.0 (October 19, 2023)
 ----------------------------------------------------------------
 

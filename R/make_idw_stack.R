@@ -64,6 +64,8 @@ make_idw_stack <- function(x = NA,
                     CPUE_KGHA = CPUE_KGHA)
   }
   
+  x <- as.data.frame(x)
+  
   # Load map layers---------------------------------------------------------------------------------
   map_layers <- akgfmaps::get_base_layers(select.region = region, set.crs = out.crs)
   

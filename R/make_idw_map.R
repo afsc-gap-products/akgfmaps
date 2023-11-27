@@ -68,7 +68,10 @@ make_idw_map <- function(x = NA,
                     LATITUDE = LATITUDE,
                     LONGITUDE = LONGITUDE,
                     CPUE_KGHA = CPUE_KGHA)
-  }
+  } 
+    
+  x <- as.data.frame(x)
+
   
   # Set legend title--------------------------------------------------------------------------------
   if(key.title == "auto") {
@@ -90,7 +93,8 @@ make_idw_map <- function(x = NA,
 
   # Use survey bathymetry---------------------------------------------------------------------------
   if(use.survey.bathymetry) {
-    map_layers$bathymetry <- akgfmaps::get_survey_bathymetry(select.region = region, set.crs = out.crs)
+    map_layers$bathymetry <- akgfmaps::get_survey_bathymetry(select.region = region, 
+                                                             set.crs = out.crs)
   }
   
   # Assign CRS to input data------------------------------------------------------------------------
@@ -100,7 +104,9 @@ make_idw_map <- function(x = NA,
     sf::st_transform(crs = map_layers$crs)
   
   # Inverse distance weighting----------------------------------------------------------------------
-  idw_fit <- gstat::gstat(formula = CPUE_KGHA~1, locations = x, nmax = idw.nmax)
+  idw_fit <- gstat::gstat(formula = CPUE_KGHA~1, 
+                          locations = x, 
+                          nmax = idw.nmax)
   
   # Predict station points--------------------------------------------------------------------------
   stn.predict <- predict(idw_fit, x)
