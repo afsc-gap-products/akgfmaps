@@ -17,7 +17,7 @@ jobs:
         config:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
-          - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-23.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -60,7 +60,9 @@ jobs:
         
       - name: Install macOS system dependencies
         if: runner.os == 'macOS'
-        run: brew install gdal proj
+        run: | 
+          brew link --overwrite python@3.11 &&
+          brew install gdal proj
 
       - name: Install dependencies
         run: |
