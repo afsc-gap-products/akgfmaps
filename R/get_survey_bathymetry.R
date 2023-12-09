@@ -31,8 +31,10 @@ get_survey_bathymetry <- function(select.region,
   } else if(select.region %in% c("bs.south", "sebs")) {
     bathymetry <- sf::st_read(system.file("extdata", "ebs_survey_bathymetry.shp", package = "akgfmaps"), 
                               quiet = TRUE) |>
-      sf::st_transform(crs = set.crs) |> 
-      dplyr::filter(FNODE_ != 5)
+      sf::st_transform(crs = set.crs)
+    
+    bathymetry <- bathymetry[bathymetry$FNODE_ != 5, ]
+
   } else {
     stop(paste0("No survey-specific bathymetry available for ", select.region, ". If using make_idw_map, set use.survey.bathymetry = FALSE."))
   }
