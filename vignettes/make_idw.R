@@ -9,11 +9,10 @@ library(akgfmaps)
 
 ## -----------------------------------------------------------------------------
 # Load 2017 EBS and NBS yellowfin sole data
-yfs2017 <- akgfmaps::YFS2017
-head(yfs2017)
+head(YFS2017)
 
 ## ---- message=FALSE, warning=FALSE, fig.width=8, fig.height = 6---------------
-opt1 <- make_idw_map(x = yfs2017, # Pass data as a data frame
+opt1 <- make_idw_map(x = YFS2017, # Pass data as a data frame
              region = "bs.all", # Predefined bs.all area
              set.breaks = "jenks", # Gets Jenks breaks from classint::classIntervals()
              in.crs = "+proj=longlat", # Set input coordinate reference system

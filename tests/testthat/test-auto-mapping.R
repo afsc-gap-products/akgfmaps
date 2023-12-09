@@ -1,7 +1,7 @@
 library(akgfmaps)
 
 testthat::test_that("Test auto-mapping functions interpolation", 
-                    {test_map <- suppressWarnings(make_idw_map(x = akgfmaps::YFS2017, grid.cell = c(5000, 5000)));
+                    {test_map <- suppressWarnings(make_idw_map(x = akgfmaps::yfs2017, grid.cell = c(5000, 5000)));
                     test_labs <- suppressWarnings(add_map_labels(x = test_map));
                     test_resize <- suppressWarnings(akgfmaps::change_text_size(x = test_map, size.mult = 2));
                     test_raster_mask <- rasterize_and_mask(terra::rast(nrows = 100, 
