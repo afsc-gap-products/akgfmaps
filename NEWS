@@ -5,9 +5,10 @@ FUNCTIONALITY CHANGES
 
 - Removed unused NMFS_stat_areas.shp from inst/extdata. The file
   had been included for testing purposes.
-- When Inf is provided to set.breaks for make_idw_map() or make_idw_stack(),
-  the upper break now removes it. For example, if the upper break
-  was '>500-Inf', the label will now read >500.
+- When Inf is the upper break for set.breaks in make_idw_map()
+  or make_idw_stack(), it will be ommitted from the upper break
+  label. For example, if the upper break was '>500-Inf', the label
+  will now read >500.
 
 NEW FEATURES
 
