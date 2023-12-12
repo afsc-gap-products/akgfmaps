@@ -9,7 +9,7 @@
 #' @return Returns a data frame showing breaks for each style.
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 #' @export
-#' @@importFrom stats reshape
+#' @importFrom stats reshape
 
 eval_plot_breaks <- function(CPUE,
                              n.breaks,
@@ -49,6 +49,10 @@ eval_plot_breaks <- function(CPUE,
     x_label <- "CPUE"
   }
 
+  print(eval_style)
+
+  CPUE <- CPUE[CPUE > 0]
+
   cpue_df <- as.data.frame(CPUE)
 
   print(ggplot() +
@@ -58,10 +62,12 @@ eval_plot_breaks <- function(CPUE,
                      mapping = aes(xintercept = value,
                                    color = name)) +
           facet_wrap(~style, ncol = n_panels) +
+          scale_x_continuous(name = x_label) +
+          scale_y_continuous(name = "ECDF (non-zero values)") +
           scale_color_viridis_d(name = "Break", option = "H") +
           theme_bw())
 
-  readline(prompt = "Press 'Enter' to view next plot.")
+  readline(prompt = "Press 'Enter' to view next plot")
 
   print(ggplot() +
           geom_density(data = cpue_df,
@@ -70,6 +76,8 @@ eval_plot_breaks <- function(CPUE,
                      mapping = aes(xintercept = value,
                                    color = name)) +
           facet_wrap(~style, ncol = n_panels) +
+          scale_x_continuous(name = x_label) +
+          scale_y_continuous(name = "Density (non-zero values)") +
           scale_color_viridis_d(name = "Break", option = "H") +
           theme_bw())
 
