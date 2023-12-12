@@ -5,7 +5,7 @@
 \alias{NOODLES}
 \title{NBS noodle bryozoan CPUE data from 2017-2023}
 \format{
-A data frame with 832 rows and 7 columns:
+A data frame with 691 rows and 7 columns:
 \describe{
   \item{COMMON_NAME}{Species common name}
   \item{YEAR}{Survey year}

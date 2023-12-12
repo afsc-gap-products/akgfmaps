@@ -1,15 +1,26 @@
-akgfmaps 3.3.2 (December 9, 2023)
+akgfmaps 3.4.0 (December 11, 2023)
 ----------------------------------------------------------------
+
+FUNCTIONALITY CHANGES
+
+- Removed unused NMFS_stat_areas.shp from inst/extdata. The file
+  had been included for testing purposes.
+- When Inf is provided to set.breaks for make_idw_map() or make_idw_stack(),
+  the upper break now removes it. For example, if the upper break
+  was '>500-Inf', the label will now read >500.
 
 NEW FEATURES
 
+- Added a new generate_region_zip() function that creates a
+  zip file with regional shapefiles from the outputs of
+  get_base_layers().
+
+IMPROVEMENTS
+
 - Added plot outputs to eval_plot_breaks() function to facilitate
-  visual exploration of breaks to use for inverse distance
-  weighted mapping.
+  visual exploration of breaks for mapping.
 - Added NBS noodle bryozoan (NOODLES) and 2018 EBS yellowfin sole
-  (YFS2018) example data sets to facilitate demonstration of
-  recently added functions.
-- Minor changes to documentation.
+  (YFS2018) example data sets for demos.
 
 BUG FIX
 
@@ -17,11 +28,7 @@ BUG FIX
   with new files that correct a degenerate vertex for cell L-15.
 - Added temporary fix (st_make_valid()) to fix ring intersections
   for REP_AREA 630 and 650 polygons.
-
-FUNCTIONALITY CHANGES
-
-- Removed unused NMFS_stat_areas.shp from inst/extdata. The file
-  had been included for testing purposes.
+- Fixed non-functional set.crs argument in get_inpfc_strata().
 
 
 akgfmaps 3.3.1 (November 27, 2023)

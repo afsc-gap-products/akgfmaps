@@ -38,7 +38,7 @@
 #'
 #' Noodle bryozoan (Alcyonidium enteromorpha) CPUE data from the NOAA/AFSC 2017, 2019, and 2021-2023 summer bottom trawl survey of the northern Bering Sea.
 #'
-#' @format A data frame with 832 rows and 7 columns:
+#' @format A data frame with 691 rows and 7 columns:
 #' \describe{
 #'   \item{COMMON_NAME}{Species common name}
 #'   \item{YEAR}{Survey year}
