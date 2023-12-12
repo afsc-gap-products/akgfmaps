@@ -1,7 +1,7 @@
 #' Make IDW maps of CPUE for the EBS/NBS
-#' 
+#'
 #' This function can be used to make inverse-distance-weighted plots for the eastern Bering Sea and northern Bering Sea
-#' 
+#'
 #' @param x Data frame which contains at minimum: CPUE, LATITUDE, and LONGITUDE. Can be passed as vectors instead (see below). Default value: \code{NA}
 #' @param region Character vector indicating which plotting region to use. Options: bs.south, bs.north, bs.all
 #' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) corresponds with 5x5 km for EPSG:3338
@@ -22,70 +22,70 @@
 #' @param return.continuous.grid If TRUE, also returns an extrapolation grid on a continuous scale.
 #' @details
 #' This function include an argument for algorithmic break selection using the `set.breaks` argument. However, algorithmic break selection is provided for convenience purposes and **users are strongly encouraged to select their own breaks based on the properties of their data**. No single algorithm in the package can be expected to perform well in all cases. See ?classInt::classIntervals for a algorithmic break selection method options.
-#' @return Returns a list containing: 
+#' @return Returns a list containing:
 #' (1) plot: a ggplot IDW map;
 #' (2) extrapolation.grid: the extrapolation grid with estimated values on a discrete scale as a 'stars' (when extrapolation.grid.type is "stars") or 'sf' (when extrapolation.grid.type is "sf" or "sf.simple") object;
 #' (3) continuous.grid: extrapolation grid with estimates on a continuous scale;
 #' (4) region: the region;
 #' (5) n.breaks: the number of level breaks;
 #' (6) key.title: title for the legend;
-#' (7) crs: coordinate reference system as a PROJ6 (WKT2:2019) string; 
+#' (7) crs: coordinate reference system as a PROJ6 (WKT2:2019) string;
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 #' @importFrom classInt classIntervals
 #' @export
 
-make_idw_map <- function(x = NA, 
-                         COMMON_NAME = NA, 
-                         LATITUDE = NA, 
-                         LONGITUDE = NA, 
-                         CPUE_KGHA = NA, 
-                         region = "bs.south", 
-                         extrap.box = NULL, 
+make_idw_map <- function(x = NA,
+                         COMMON_NAME = NA,
+                         LATITUDE = NA,
+                         LONGITUDE = NA,
+                         CPUE_KGHA = NA,
+                         region = "bs.south",
+                         extrap.box = NULL,
                          extrapolation.grid.type = "stars",
-                         set.breaks = "jenks", 
-                         grid.cell = c(5000,5000), 
-                         in.crs = "+proj=longlat", 
-                         out.crs = "EPSG:3338", 
-                         key.title = "auto", 
+                         set.breaks = "jenks",
+                         grid.cell = c(5000,5000),
+                         in.crs = "+proj=longlat",
+                         out.crs = "EPSG:3338",
+                         key.title = "auto",
                          key.title.units = "CPUE (kg/ha)",
-                         log.transform = FALSE, 
+                         log.transform = FALSE,
                          idw.nmax = 4,
-                         use.survey.bathymetry = TRUE, 
+                         use.survey.bathymetry = TRUE,
                          return.continuous.grid = TRUE) {
-  
+
   .check_region(select.region = region, type = "survey")
-  
+
   stopifnot("make_idw_map: extra.grid.type must be 'stars', 'sf', or 'sf.simple'" = extrapolation.grid.type %in% c("stars", "sf", "sf.simple"))
-  
+
   # Convert vectors to data frame if x is not a data.frame or tbl-----------------------------------
   if(!is.data.frame(x)) {
-    
+
     stopifnot("make_idw_map: LATITUDE must be a numeric vector." = is.numeric(LATITUDE))
     stopifnot("make_idw_map: LONGITUDE must be a numeric vector." = is.numeric(LONGITUDE))
     stopifnot("make_idw_map: CPUE_KGHA must be a numeric vector." = is.numeric(CPUE_KGHA))
-    
+
     x <- data.frame(COMMON_NAME = COMMON_NAME,
                     LATITUDE = LATITUDE,
                     LONGITUDE = LONGITUDE,
                     CPUE_KGHA = CPUE_KGHA)
-  } 
-    
+  }
+
   x <- as.data.frame(x)
 
-  
+
   # Set legend title--------------------------------------------------------------------------------
   if(key.title == "auto") {
     key.title <- x$COMMON_NAME[1]
   }
-  
+
   # Load map layers---------------------------------------------------------------------------------
   map_layers <- akgfmaps::get_base_layers(select.region = region, set.crs = out.crs)
-  
+
   # Set up mapping region---------------------------------------------------------------------------
   if(is.null(extrap.box)) {
     extrap.box <- sf::st_bbox(map_layers$survey.area)
   }
-  
+
   # Assign CRS to handle automatic selection--------------------------------------------------------
   if(out.crs == "auto") {
     out.crs <- map_layers$crs
@@ -93,21 +93,21 @@ make_idw_map <- function(x = NA,
 
   # Use survey bathymetry---------------------------------------------------------------------------
   if(use.survey.bathymetry) {
-    map_layers$bathymetry <- akgfmaps::get_survey_bathymetry(select.region = region, 
+    map_layers$bathymetry <- akgfmaps::get_survey_bathymetry(select.region = region,
                                                              set.crs = out.crs)
   }
-  
+
   # Assign CRS to input data------------------------------------------------------------------------
-  x <- sf::st_as_sf(x, 
-                    coords = c(x = "LONGITUDE", y = "LATITUDE"), 
-                    crs = sf::st_crs(in.crs)) |> 
+  x <- sf::st_as_sf(x,
+                    coords = c(x = "LONGITUDE", y = "LATITUDE"),
+                    crs = sf::st_crs(in.crs)) |>
     sf::st_transform(crs = map_layers$crs)
-  
+
   # Inverse distance weighting----------------------------------------------------------------------
-  idw_fit <- gstat::gstat(formula = CPUE_KGHA~1, 
-                          locations = x, 
+  idw_fit <- gstat::gstat(formula = CPUE_KGHA~1,
+                          locations = x,
                           nmax = idw.nmax)
-  
+
   # Predict station points--------------------------------------------------------------------------
   stn.predict <- predict(idw_fit, x)
 
@@ -119,17 +119,17 @@ make_idw_map <- function(x = NA,
                                      ncol = (extrap.box['xmax']-extrap.box['xmin'])/grid.cell[1],
                                      nrow = (extrap.box['ymax']-extrap.box['ymin'])/grid.cell[2],
                                      crs = out.crs)
-  
+
   # Predict, rasterize, mask------------------------------------------------------------------------
   loc_df <- suppressWarnings(terra::crds(extrap_raster, df = TRUE, na.rm = FALSE)) |>
     sf::st_as_sf(coords = c("x", "y"),
                  crs = out.crs)
-  
-  extrap.grid <- predict(idw_fit, loc_df) |> 
-    sf::st_transform(crs = sf::st_crs(x)) |> 
+
+  extrap.grid <- predict(idw_fit, loc_df) |>
+    sf::st_transform(crs = sf::st_crs(x)) |>
     stars::st_rasterize() |>
-    sf::st_join(map_layers$survey.area, join = st_intersects) 
-  
+    sf::st_join(map_layers$survey.area, join = st_intersects)
+
   # Return continuous grid if return.continuous.grid is TRUE ---------------------------------------
   if(return.continuous.grid) {
     continuous.grid <- extrap.grid
@@ -140,38 +140,38 @@ make_idw_map <- function(x = NA,
   # Format breaks for plotting----------------------------------------------------------------------
   # Automatic break selection based on character vector.
   alt.round <- 0 # Set alternative rounding factor to zero based on user-specified breaks
-  
+
   if(is.character(set.breaks[1])) {
     set.breaks <- tolower(set.breaks)
-    
+
     # Set breaks ----
     break.vals <- classInt::classIntervals(x$CPUE_KGHA, n = 5, style = set.breaks)$brks
-    
+
     # Setup rounding for small CPUE ----
     alt.round <- floor(-1*(min((log10(break.vals)-2)[abs(break.vals) > 0])))
-    
+
     set.breaks <- c(-1, round(break.vals, alt.round))
   }
-  
+
   # Ensure breaks go to zero------------------------------------------------------------------------
   if(min(set.breaks) > 0) {
     set.breaks <- c(0, set.breaks)
   }
-  
+
   if(min(set.breaks) == 0) {
     set.breaks <- c(-1, set.breaks)
   }
-  
+
   # Ensure breaks span the full range---------------------------------------------------------------
   if(max(set.breaks) < max(stn.predict$var1.pred)){
     set.breaks[length(set.breaks)] <- max(stn.predict$var1.pred) + 1
   }
-  
-  
+
+
   # Trim breaks to significant digits to account for differences in range among species-------------
   dig.lab <- 7
   set.levels <- cut(stn.predict$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
-  
+
   if(alt.round > 0) {
     while(dig.lab > alt.round) { # Rounding for small CPUE
         dig.lab <- dig.lab - 1
@@ -183,13 +183,13 @@ make_idw_map <- function(x = NA,
         set.levels <- cut(stn.predict$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
       }
     }
-      
+
   # Cut extrapolation grid to support discrete scale------------------------------------------------
   extrap.grid$var1.pred <- cut(extrap.grid$var1.pred, set.breaks, right = TRUE, dig.lab = dig.lab)
 
   # Which breaks need commas?-----------------------------------------------------------------------
   sig.dig <- round(set.breaks[which(nchar(round(set.breaks)) >= 4)])
-  
+
   # Drop brackets, add commas, create 'No catch' level to legend labels-----------------------------
   make_level_labels <- function(vec) {
     vec <- as.character(vec)
@@ -197,6 +197,7 @@ make_idw_map <- function(x = NA,
     vec <- sub("\\(", "\\>", vec)
     vec <- sub("\\,", "–", vec)
     vec <- sub("\\]", "", vec)
+    vec <- sub("-Inf", "", vec)
     if(length(sig.dig) > 3) {
       for(j in 1:length(sig.dig)) {
         vec <- sub(sig.dig[j], format(sig.dig[j], nsmall=0, big.mark=","), vec)
@@ -204,16 +205,16 @@ make_idw_map <- function(x = NA,
     }
     return(vec)
   }
-  
+
   # Assign level names to breaks for plotting-------------------------------------------------------
-  extrap.grid$var1.pred <- factor(make_level_labels(extrap.grid$var1.pred), 
+  extrap.grid$var1.pred <- factor(make_level_labels(extrap.grid$var1.pred),
                                   levels = make_level_labels(levels(set.levels)))
-  
+
   # Number of breaks for color adjustments----------------------------------------------------------
   n.breaks <- length(levels(set.levels))
-  
+
   # Make plot---------------------------------------------------------------------------------------
-  
+
   if(extrapolation.grid.type %in% c("sf", "sf.simple")) {
     extrap.grid <- extrap.grid |>
       sf::st_as_sf() |>
@@ -221,17 +222,17 @@ make_idw_map <- function(x = NA,
       dplyr::group_by(var1.pred) |>
       dplyr::summarise(n = n()) |>
       sf::st_intersection(map_layers$survey.area)
-    
+
     extrap.grid <- extrap.grid |>
       dplyr::select(which(names(extrap.grid) %in% c("var1.pred", "n", "SURVEY", "geometry")))
-    
+
     # Simplify geometry using ms_simplify function from the rmapshaper package
     if(extrapolation.grid.type == "sf.simple") {
       extrap.grid <- extrap.grid |>
         rmapshaper::ms_simplify(keep_shapes = TRUE,
                                 keep = 0.04)
     }
-    
+
     p1 <- ggplot2::ggplot() +
       ggplot2::geom_sf(data = map_layers$survey.area, fill = NA) +
       ggplot2::geom_sf(data = extrap.grid,
@@ -241,12 +242,12 @@ make_idw_map <- function(x = NA,
       ggplot2::geom_sf(data = map_layers$akland, fill = "grey80") +
       ggplot2::geom_sf(data = map_layers$bathymetry) +
       ggplot2::geom_sf(data = map_layers$graticule, color = alpha("grey70", 0.3)) +
-      ggplot2::scale_fill_manual(name = paste0(key.title, "\n", key.title.units), 
-                                 values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]), 
+      ggplot2::scale_fill_manual(name = paste0(key.title, "\n", key.title.units),
+                                 values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]),
                                  na.translate = FALSE, # Don't use NA
                                  drop = FALSE) + # Keep all levels in the plot
-      ggplot2::scale_x_continuous(breaks = map_layers$lon.breaks) + 
-      ggplot2::scale_y_continuous(breaks = map_layers$lat.breaks) + 
+      ggplot2::scale_x_continuous(breaks = map_layers$lon.breaks) +
+      ggplot2::scale_y_continuous(breaks = map_layers$lat.breaks) +
       ggplot2::coord_sf(xlim = map_layers$plot.boundary$x,
                         ylim = map_layers$plot.boundary$y) +
       ggplot2::theme(panel.border = element_rect(color = "black", fill = NA),
@@ -266,12 +267,12 @@ make_idw_map <- function(x = NA,
       ggplot2::geom_sf(data = map_layers$akland, fill = "grey80") +
       ggplot2::geom_sf(data = map_layers$bathymetry) +
       ggplot2::geom_sf(data = map_layers$graticule, color = alpha("grey70", 0.3)) +
-      ggplot2::scale_fill_manual(name = paste0(key.title, "\n",  "key.title.units"), 
-                                 values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]), 
+      ggplot2::scale_fill_manual(name = paste0(key.title, "\n",  "key.title.units"),
+                                 values = c("white", RColorBrewer::brewer.pal(9, name = "Blues")[c(2,4,6,8,9)]),
                                  na.translate = FALSE, # Don't use NA
                                  drop = FALSE) + # Keep all levels in the plot
-      ggplot2::scale_x_continuous(breaks = map_layers$lon.breaks) + 
-      ggplot2::scale_y_continuous(breaks = map_layers$lat.breaks) + 
+      ggplot2::scale_x_continuous(breaks = map_layers$lon.breaks) +
+      ggplot2::scale_y_continuous(breaks = map_layers$lat.breaks) +
       ggplot2::coord_sf(xlim = map_layers$plot.boundary$x,
                         ylim = map_layers$plot.boundary$y) +
       ggplot2::theme(panel.border = element_rect(color = "black", fill = NA),
@@ -284,7 +285,7 @@ make_idw_map <- function(x = NA,
                      legend.title = element_text(size = 10),
                      plot.background = element_rect(fill = NA, color = NA))
   }
-  
+
   return(list(plot = p1,
               map_layers = map_layers,
               extrapolation.grid = extrap.grid,

@@ -8,6 +8,8 @@ get_inpfc_strata(select.region, set.crs)
 }
 \arguments{
 \item{select.region}{Region for INPFC strata. Either GOA or AI.}
+
+\item{set.crs}{Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.}
 }
 \value{
 INPFC strata as an sf POLYGON.

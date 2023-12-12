@@ -8,7 +8,8 @@ eval_plot_breaks(
   CPUE,
   n.breaks,
   styles = c("equal", "pretty", "quantile", "kmeans", "hclust", "fisher", "jenks",
-    "dpih")
+    "dpih"),
+  log.scale.plot = FALSE
 )
 }
 \arguments{
@@ -17,6 +18,8 @@ eval_plot_breaks(
 \item{n.breaks}{Number of breaks to use}
 
 \item{styles}{Character vector with names, or names of methods to try.}
+
+\item{log.scale.plot}{If TRUE, CPUE values are transformed as log10(CPUE+1) for plotting. Default = FALSE}
 }
 \value{
 Returns a data frame showing breaks for each style.

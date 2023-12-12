@@ -63,7 +63,7 @@ make_idw_map(
 \item{return.continuous.grid}{If TRUE, also returns an extrapolation grid on a continuous scale.}
 }
 \value{
-Returns a list containing: 
+Returns a list containing:
 (1) plot: a ggplot IDW map;
 (2) extrapolation.grid: the extrapolation grid with estimated values on a discrete scale as a 'stars' (when extrapolation.grid.type is "stars") or 'sf' (when extrapolation.grid.type is "sf" or "sf.simple") object;
 (3) continuous.grid: extrapolation grid with estimates on a continuous scale;

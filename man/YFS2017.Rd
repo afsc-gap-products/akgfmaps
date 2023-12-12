@@ -3,9 +3,9 @@
 \docType{data}
 \name{YFS2017}
 \alias{YFS2017}
-\title{Yellowfin sole CPUE data}
+\title{EBS yellowfin sole CPUE data from 2017}
 \format{
-A data frame with 376 rows and y variables:
+A data frame with 376 rows  and 7 columns:
 \describe{
   \item{COMMON_NAME}{Species common name}
   \item{YEAR}{Survey year}
