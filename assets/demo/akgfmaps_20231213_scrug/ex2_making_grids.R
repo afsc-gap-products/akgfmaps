@@ -74,8 +74,6 @@ nbs_7071_wgs84 <- dplyr::select(nbs_7071_wgs84, -geometry)
 # Load the full grid
 full_ebs_grid <- sf::st_read(system.file("./extdata/bs_grid_w_corners.shp", package = "akgfmaps"))
 
-masked_grid <- sf::st_intersection()
-
 # Plot the grid
 ggplot() +
   geom_sf(data = full_ebs_grid) +
