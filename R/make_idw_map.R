@@ -4,7 +4,7 @@
 #'
 #' @param x Data frame which contains at minimum: CPUE, LATITUDE, and LONGITUDE. Can be passed as vectors instead (see below). Default value: \code{NA}
 #' @param region Character vector indicating which plotting region to use. Options: bs.south, bs.north, bs.all
-#' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) corresponds with 5x5 km for EPSG:3338
+#' @param grid.cell Numeric vector of length two specifying dimensions of grid cells for extrapolation grid, in units for the output CRS. Default = c(5000,5000) corresponds with 5x5 km for EPSG:3338
 #' @param COMMON_NAME Common name
 #' @param LATITUDE Latitude (degrees north)
 #' @param LONGITUDE Longitude (degrees east; Western hemisphere is negative)
