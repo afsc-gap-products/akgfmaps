@@ -1,3 +1,18 @@
+akgfmaps 3.4.1 (December 18, 2023)
+----------------------------------------------------------------
+
+FUNCTIONALITY CHANGES
+
+- The select.region argument in get_base_layers() no longer accepts
+  "inpfc.goa" or "inpfc.ai". Instead, the function returns an
+  inpfc.stratum layer when select.region is "ai", "ai.east",
+  "ai.west", "ai.central", "goa", "goa.east", or "goa.west".
+- Added fix.invalid.geom argument to to get_base_layers() that
+  causes the function to run fix_geometry() on sf outputs to
+  correct degenerate geometry and dateline wrapping issues that
+  can arise when spatial operations are performed in certain
+  projections.
+
 akgfmaps 3.4.0 (December 11, 2023)
 ----------------------------------------------------------------
 
