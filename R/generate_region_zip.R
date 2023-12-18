@@ -75,7 +75,7 @@ generate_region_zip <- function(select.region, set.crs = "EPSG:4326", zip.path =
 
   map_layers <- akgfmaps::get_base_layers(select.region = select.region, set.crs = set.crs)
 
-  layer_names <- c("akland", "survey.area", "survey.strata", "survey.grid", "bathymetry", "graticule")
+  layer_names <- c("akland", "survey.area", "survey.strata", "survey.grid", "bathymetry", "graticule", "inpfc.strata")
 
   keep_names <- layer_names[which(layer_names %in% names(map_layers))]
 

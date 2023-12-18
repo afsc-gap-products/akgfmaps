@@ -4,17 +4,19 @@
 #' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
+#' @param fix.invalid.geom Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?
 #' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
 #' @import sf
 #' @export
 
 get_base_layers <- function(select.region,
                             set.crs = "+proj=longlat +datum=NAD83",
-                            use.survey.bathymetry = TRUE) {
+                            use.survey.bathymetry = TRUE,
+                            fix.invalid.geom = TRUE) {
 
   select.region <- tolower(select.region)
 
-  .check_region(select.region = select.region, type = "all")
+  .check_region(select.region = select.region, type = "survey")
 
   ## Automatically set CRS
   if(set.crs == "auto") {
@@ -40,10 +42,7 @@ get_base_layers <- function(select.region,
       "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
       "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=54.4 +lat_2=57.6 +lat_0=56 +lon_0=-149.25 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=50.83 +lat_2=52.67 +lat_0=51.75 +lon_0=-179 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
+      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
     set.crs <- region.crs[match(select.region, c("bs.south",
                                                  "sebs",
                                                  "bs.all",
@@ -65,22 +64,11 @@ get_base_layers <- function(select.region,
                                                  "bssa3",
                                                  "bssa4",
                                                  "bssa5",
-                                                 "bssa6",
-                                                 "nmfs",
-                                                 "inpfc.goa",
-                                                 "inpfc.ai"))]
+                                                 "bssa6"))]
   }
 
-  # SPECIAL CASES ----------------------------------------------------------------------------------
-
-  # NMFS Areas shapefile
-  if(select.region == "nmfs") {
-      return(akgfmaps::get_nmfs_areas(set.crs = set.crs))
-  }
-
-  if(select.region %in% c("inpfc.goa", "inpfc.ai")) {
-    return(akgfmaps::get_inpfc_strata(select.region = select.region, set.crs = set.crs))
-  }
+  inpfc.strata <- NULL
+  survey.grid <- NULL
 
   # Bathymetry and land shapefiles ---------------------------------------------------------------
   if(select.region %in% c("bs.south", "sebs", "bs.all", "ebs", "nbs", "bs.north", "ecs", "ebs.ecs")) {
@@ -93,8 +81,9 @@ get_base_layers <- function(select.region,
   }
     else if(select.region %in% c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")) {
     akland <- sf::st_read(system.file("extdata", "alaska_canada_dcw.shp", package = "akgfmaps"), quiet = TRUE)
+    akland <- dplyr::filter(akland, POPYADMIN %in% c("ALBERTA", "BRITISH COLUMBIA", "YUKON TERRITORY", "NORTHWEST TERRITORIES", "ALASKA"))
     bathymetry <- sf::st_read(system.file("extdata", "alaska_race.shp", package = "akgfmaps"), quiet = TRUE)
-  }
+    }
 
 
   # SEBS--------------------------------------------------------------------------------------------
@@ -155,7 +144,6 @@ get_base_layers <- function(select.region,
     survey.strata <- sf::st_read(system.file("extdata", "bssa1to6_2022.shp", package = "akgfmaps"),
                                  quiet = TRUE)
 
-    survey.grid <- NULL
     lon.breaks <- seq(-180, -155, 5)
     lat.breaks <- seq(52, 64, 2)
 
@@ -181,7 +169,7 @@ get_base_layers <- function(select.region,
                                quiet = TRUE)
     survey.strata <- sf::st_read(system.file("extdata", "chukchi_strata.shp", package = "akgfmaps"),
                                  quiet = TRUE)
-    survey.grid <- NULL
+
     lon.breaks <- seq(-180, -154, 5)
     lat.breaks <- seq(66, 76, 2)
   }
@@ -190,7 +178,7 @@ get_base_layers <- function(select.region,
   if(select.region == "ebs.ecs") {
     survey.area <- sf::st_read(system.file("extdata", "ebs_chukchi_survey_boundary.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("extdata", "ebs_chukchi_strata.shp", package = "akgfmaps"), quiet = TRUE)
-    survey.grid <- NULL
+
     lon.breaks <- seq(-180, -150, 5)
     lat.breaks <- seq(54,78,4)
   }
@@ -203,6 +191,8 @@ get_base_layers <- function(select.region,
 
     survey.strata <- survey.strata[survey.strata$STRATUM < 800 & survey.strata$STRATUM > 0, ]
     survey.grid <- survey.grid[survey.grid$STRATUM < 800 & survey.grid$STRATUM > 0, ]
+
+    inpfc.strata <- get_inpfc_strata(select.region = "ai", set.crs = set.crs)
 
     lon.breaks <- c(170, 175, -180, -175, -170, -165, -160)
     lat.breaks <- seq(44, 56, 2)
@@ -217,6 +207,8 @@ get_base_layers <- function(select.region,
     survey.strata <- survey.strata[survey.strata$STRATUM < 800 & survey.strata$STRATUM > 0, ]
     survey.grid <- survey.grid[survey.grid$STRATUM < 800 & survey.grid$STRATUM > 0, ]
 
+    inpfc.strata <- get_inpfc_strata(select.region = "ai", set.crs = set.crs)
+
     lon.breaks <- seq(-176, -164, 2)
     lat.breaks <- seq(52, 55, 1)
   }
@@ -230,6 +222,8 @@ get_base_layers <- function(select.region,
     survey.strata <- survey.strata[survey.strata$STRATUM < 800 & survey.strata$STRATUM > 0, ]
     survey.grid <- survey.grid[survey.grid$STRATUM < 800 & survey.grid$STRATUM > 0, ]
 
+    inpfc.strata <- get_inpfc_strata(select.region = "ai", set.crs = set.crs)
+
     lon.breaks <- c(176, 178, 180, seq(-178, -170, 2))
     lat.breaks <- seq(51,55,2)
   }
@@ -242,6 +236,8 @@ get_base_layers <- function(select.region,
 
     survey.strata <- survey.strata[survey.strata$STRATUM < 800 & survey.strata$STRATUM > 0, ]
     survey.grid <- survey.grid[survey.grid$STRATUM < 800 & survey.grid$STRATUM > 0, ]
+
+    inpfc.strata <- get_inpfc_strata(select.region = "ai", set.crs = set.crs)
 
     lon.breaks <- seq(168, 180, 2)
     lat.breaks <- seq(50,55,2)
@@ -257,6 +253,8 @@ get_base_layers <- function(select.region,
     survey.strata <- survey.strata[survey.strata$STRATUM > 0, ]
     survey.grid <- survey.grid[survey.grid$STRATUM > 0, ]
 
+    inpfc.strata <- get_inpfc_strata(select.region = "goa", set.crs = set.crs)
+
     lon.breaks <- seq(-175, -130, 5)
     lat.breaks <- seq(52,64,2)
   }
@@ -270,6 +268,8 @@ get_base_layers <- function(select.region,
     survey.strata <- survey.strata[survey.strata$STRATUM > 0, ]
     survey.grid <- survey.grid[survey.grid$STRATUM > 0, ]
 
+    inpfc.strata <- get_inpfc_strata(select.region = "goa", set.crs = set.crs)
+
     lon.breaks <- seq(-174, -144, 2)
     lat.breaks <- seq(52, 64, 2)
   }
@@ -282,6 +282,8 @@ get_base_layers <- function(select.region,
 
     survey.strata <- survey.strata[survey.strata$STRATUM > 0, ]
     survey.grid <- survey.grid[survey.grid$STRATUM > 0, ]
+
+    inpfc.strata <- get_inpfc_strata(select.region = "goa", set.crs = set.crs)
 
     lon.breaks <- seq(-160, -124, 2)
     lat.breaks <- seq(52, 64, 2)
@@ -409,6 +411,18 @@ get_base_layers <- function(select.region,
   place.labels <- place.labels[place.labels$region == select.region, ]
   place.labels <- akgfmaps::transform_data_frame_crs(place.labels, out.crs = set.crs)
 
+
+  # Attempt to correct any remaining degenerate geometry and dateline wrapping issues --------------
+
+  if(fix.invalid.geom) {
+    akland <- akgfmaps:::fix_geometry(x = akland)
+    survey.area <- akgfmaps:::fix_geometry(x = survey.area)
+    survey.grid <- akgfmaps:::fix_geometry(x = survey.grid)
+    survey.strata <- akgfmaps:::fix_geometry(x = survey.strata)
+    bathymetry <- akgfmaps:::fix_geometry(x = bathymetry)
+    inpfc.strata <- akgfmaps:::fix_geometry(x = inpfc.strata)
+  }
+
   return(list(akland = akland,
               survey.area = survey.area,
               survey.strata = survey.strata,
@@ -419,5 +433,6 @@ get_base_layers <- function(select.region,
               crs = set.crs,
               plot.boundary = plot.boundary,
               lon.breaks = lon.breaks,
-              lat.breaks = lat.breaks))
+              lat.breaks = lat.breaks,
+              inpfc.strata = inpfc.strata))
 }
