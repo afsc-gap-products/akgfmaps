@@ -17,12 +17,9 @@ testthat::test_that("Test get survey bathymetry ",
                     {expect_true(class(get_survey_bathymetry(select.region = "ebs", set.crs = "auto"))[1] == "sf")})
 
 testthat::test_that("Test Bering Sea grid filtering",
-                    {bs_south <- akgfmaps::get_base_layers(select.region = "bs.south",
-                                                           set.crs = "auto");
-                    bs_south_survey_grid <- suppressWarnings(akgfmaps::get_base_layers(select.region = "bs.south",
+                    {bs_south <- suppressWarnings(akgfmaps::get_base_layers(select.region = "bs.south",
+                                                                            set.crs = "auto"));
+                    bs_north <- suppressWarnings(akgfmaps::get_base_layers(select.region = "nbs",
                                                                                        set.crs = "auto"));
-                    bs_north_survey_grid <- suppressWarnings(akgfmaps::get_base_layers(select.region = "nbs",
-                                                                                       set.crs = "auto"));
-                    expect_equal(length(bs_south$survey.grid$geometry), 376);
-                    expect_equal(length(bs_north_survey_grid$survey.grid$geometry), 144);
-                    expect_equal(length(bs_south_survey_grid$survey.grid$geometry), 376)})
+                    expect_equal(length(bs_north$survey.grid$geometry), 144);
+                    expect_equal(length(bs_south$survey.grid$geometry), 376)})
