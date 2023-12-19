@@ -14,8 +14,8 @@ generate_region_zip(select.region = "bssa1",
                     set.crs = "WGS84",
                     zip.path = NULL)
 
-# Generate a pdf showing regional shapefiles
-generate_region_guide(select.regions = c("bssa1", "bssa6"))
-
 # Generate a pdf showing individual layers
 generate_layer_guide()
+
+# Generate a pdf showing regional shapefiles
+generate_region_guide()

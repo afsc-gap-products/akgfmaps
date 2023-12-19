@@ -10,7 +10,8 @@ testthat::test_that("Test auto-mapping functions interpolation",
                                                              xmax = test_map$map_layers$plot.boundary$x[2],
                                                              ymin = test_map$map_layers$plot.boundary$y[1],
                                                              ymax = test_map$map_layers$plot.boundary$y[2],
-                                                             vals = rnorm(1e4)),
+                                                             vals = rnorm(1e4),
+                                                             crs = test_map$map_layers$crs$input),
                                                            amask = test_map$map_layers$survey.area);
                     expect_equal(test_map$n.breaks[1], 6);
                     expect_true(length(test_labs$map_layers$place.labels) > 2);

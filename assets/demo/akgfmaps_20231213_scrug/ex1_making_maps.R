@@ -186,7 +186,7 @@ akgfmaps::eval_plot_breaks(CPUE = NOODLES$CPUE_KGHA,
                            log.scale.plot = TRUE)
 
 
-# Using manual breaks
+# Manual breaks identified through trial and error
 noodles_manual_breaks <- akgfmaps::make_idw_stack(x = akgfmaps::NOODLES,
                                                   region = "nbs",
                                                   in.crs = "WGS84",
@@ -196,6 +196,7 @@ noodles_manual_breaks <- akgfmaps::make_idw_stack(x = akgfmaps::NOODLES,
                                                   grouping.vars = "YEAR"
 )
 
+# Now the plots show how densities have changed over time and within-year hot spots have moved around
 ggplot() +
   geom_sf(data = nbs_layers$akland) +
   geom_sf(data = nbs_layers$bathymetry) +
@@ -208,3 +209,5 @@ ggplot() +
   scale_fill_viridis_d(name = "CPUE",
                        na.value = NA) +
   theme_bw()
+
+

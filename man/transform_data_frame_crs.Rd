@@ -8,8 +8,7 @@ transform_data_frame_crs(
   x,
   coords = c("x", "y"),
   in.crs = "+proj=longlat",
-  out.crs =
-    "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
+  out.crs,
   only.new.coords = FALSE
 )
 }

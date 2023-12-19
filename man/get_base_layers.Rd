@@ -7,7 +7,8 @@
 get_base_layers(
   select.region,
   set.crs = "+proj=longlat +datum=NAD83",
-  use.survey.bathymetry = TRUE
+  use.survey.bathymetry = TRUE,
+  fix.invalid.geom = TRUE
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ get_base_layers(
 \item{set.crs}{Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.}
 
 \item{use.survey.bathymetry}{Should survey bathymetry be used?}
+
+\item{fix.invalid.geom}{Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?}
 }
 \value{
 A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.

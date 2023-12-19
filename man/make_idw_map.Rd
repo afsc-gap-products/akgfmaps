@@ -44,7 +44,7 @@ make_idw_map(
 
 \item{set.breaks}{Either a numeric vector of breaks to use for plotting or a character vector indicating which classIntervals() algorithm to use for break selection. See Description for information about break selection.  Users are strongly encouraged to specify their own numeric vector of breaks based on the properties of their data.}
 
-\item{grid.cell}{Numeric vector of length two specifying dimensions of grid cells for extrpolation grid, in units for the output CRS. Default = c(5000,5000) corresponds with 5x5 km for EPSG:3338}
+\item{grid.cell}{Numeric vector of length two specifying dimensions of grid cells for extrapolation grid, in units for the output CRS. Default = c(5000,5000) corresponds with 5x5 km for EPSG:3338}
 
 \item{in.crs}{Character vector containing the coordinate reference system for projecting the extrapolation grid.}
 

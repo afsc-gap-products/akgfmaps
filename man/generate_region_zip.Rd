@@ -17,5 +17,5 @@ generate_region_zip(select.region, set.crs = "EPSG:4326", zip.path = NULL)
 Write regional shapefiles returned by get_base_layers() and a README file with version information to a zip file.
 }
 \examples{
-generate_region_zip(select.region = "ai.west", set.crs = "WGS84")
+# generate_region_zip(select.region = "ebs", set.crs = "WGS84")
 }
