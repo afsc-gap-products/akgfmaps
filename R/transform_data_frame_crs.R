@@ -10,7 +10,7 @@
 #' @export
 
 transform_data_frame_crs <- function(x, coords = c("x", "y"),
-                                     in.crs,
+                                     in.crs = "+proj=longlat",
                                      out.crs,
                                      only.new.coords = FALSE) {
 

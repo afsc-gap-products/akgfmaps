@@ -485,7 +485,7 @@ normal_transform <- function(x) {
 #' This function applies sf::st_wrap_dateline and sf::st_make_valid to geometries to correct
 #' degenerate geometries.
 #'
-#' @param x
+#' @param x sf object
 #' @noRd
 
 fix_geometry <- function(x) {

@@ -7,7 +7,7 @@
 transform_data_frame_crs(
   x,
   coords = c("x", "y"),
-  in.crs,
+  in.crs = "+proj=longlat",
   out.crs,
   only.new.coords = FALSE
 )
