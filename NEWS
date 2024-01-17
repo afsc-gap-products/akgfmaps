@@ -3,7 +3,7 @@ akgfmaps 3.4.2 (January 16, 2024)
 
 BUG FIX
 
-- Temporary fix to address functionality change in sf::st_make_valid().
+- Fix to address functionality change in sf::st_make_valid().
   See: https://github.com/r-spatial/sf/issues/2315
 
 
