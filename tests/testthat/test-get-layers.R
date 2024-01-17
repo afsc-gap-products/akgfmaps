@@ -18,8 +18,8 @@ testthat::test_that("Test get survey bathymetry ",
 
 testthat::test_that("Test Bering Sea grid filtering",
                     {bs_south <- suppressWarnings(akgfmaps::get_base_layers(select.region = "bs.south",
-                                                                            set.crs = "auto"));
+                                                                            set.crs = "WGS84"));
                     bs_north <- suppressWarnings(akgfmaps::get_base_layers(select.region = "nbs",
-                                                                                       set.crs = "auto"));
+                                                                                       set.crs = "WGS84"));
                     expect_equal(length(bs_north$survey.grid$geometry), 144);
                     expect_equal(length(bs_south$survey.grid$geometry), 376)})
