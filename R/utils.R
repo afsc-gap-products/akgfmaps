@@ -496,7 +496,7 @@ fix_geometry <- function(x) {
   stopifnot("fix_geometry: x must be a simple features class." = "sf" %in% class(x))
 
   x <- suppressWarnings(sf::st_wrap_dateline(x))
-  x <- suppressWarnings(sf::st_make_valid(x, geos_method = "valid_structure"))
+  x <- suppressWarnings(sf::st_make_valid(x))
 
   return(x)
 
