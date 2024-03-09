@@ -29,8 +29,8 @@ set_crs <- "EPSG:3338"
 grid_cell_size <- c(5000, 5000)
 
 # Setup offsets for grid options
-offsets <- expand.grid(x_off = seq(from = -2000, to = 2000, by = 1000),
-                       y_off = seq(from = -2000, to = 2000, by = 1000))
+offsets <- expand.grid(x_off = seq(from = -1000, to = 1000, by = 1000),
+                       y_off = seq(from = -1000, to = 1000, by = 1000))
 
 offsets$option <- 1:nrow(offsets)
 offsets$creation_date <- Sys.Date()
@@ -104,4 +104,34 @@ for(ii in 1:nrow(offsets)) {
   )
 
 }
+
+
+# Verify that the center grid matches Mark's grid
+marks_centered_grid <- sf::st_read(here::here("analysis", "goaai_grid_2025", "Fishnets", "Center", "FISHNET_C.shp"))
+
+seans_centered_grid <- sf::st_read(dsn = here::here("analysis", "goaai_grid_2025", "grid_options", "grids",
+                                                    paste0(gsub(x = Sys.Date(), pattern = "-", replacement = ""),
+                                                           "_goaai_grid_2025_",
+                                                           offsets$option[offsets$x_off == 0 & offsets$y_off == 0], ".shp"))) |>
+  sf::st_transform(centered_grid, crs = sf::st_crs(marks_centered_grid))
+
+identical(dplyr::select(seans_centered_grid, geometry),
+          dplyr::select(marks_centered_grid, geometry))
+
+marks_coords <- sf::st_coordinates(marks_centered_grid) |>
+  as.data.frame() |>
+  dplyr::select(X, Y) |>
+  unique()
+
+seans_coords <- sf::st_coordinates(seans_centered_grid) |>
+  as.data.frame() |>
+  dplyr::select(X, Y) |>
+  unique()
+
+
+nrow(marks_coords) == nrow(seans_coords)
+nrow(dplyr::inner_join(marks_coords, seans_coords)) == nrow(marks_coords)
+nrow(dplyr::inner_join(marks_coords, seans_coords)) == nrow(seans_coords)
+
+
 
