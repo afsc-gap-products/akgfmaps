@@ -1,3 +1,17 @@
+# Exploring options for a new GOA/AI grid for 2025
+#
+# Created by: Sean Rohan <sean.rohan@noaa.gov>
+# Date: March 9, 2024
+#
+# Description:
+#
+# This script generates prospective survey grid shapefiles for GOA/AI bottom trawl surveys.
+# The grid is designed to have 5 km x 5 km cells across a fixed extent in the Alaska Albers Equal
+# Area projection (EPSG:3338).
+#
+# The script produces grids with different origin points that are offset by -2000 m to 2000 m from
+# the proposed standard extent in order to determine whether the origin should be shifted to avoid
+# small areas along stratum boundaries.
 
 # install.packages("here", "remotes")
 # remotes::install_github(repo = "afsc-gap-products/akgfmaps")
