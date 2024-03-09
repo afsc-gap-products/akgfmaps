@@ -1,6 +1,6 @@
 # Exporting shapefiles and viewing layers
 # Sean Rohan <sean.rohan@noaa.gov>
-# Survey-Centric R Users Group
+# NMFS R Users Group
 # February 27, 2024
 # https://github.com/afsc-gap-products/akgfmaps
 # akgfmaps version 3.4.2

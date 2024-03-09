@@ -1,6 +1,6 @@
 # coldpool data sets
 # Sean Rohan <sean.rohan@noaa.gov>
-# Survey-Centric R Users Group
+# NMFS R Users Group
 # February 27, 2024
 # https://github.com/afsc-gap-products/coldpool
 # coldpool version 3.3-1
