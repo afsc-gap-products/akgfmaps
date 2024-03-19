@@ -19,7 +19,7 @@ browseVignettes('akgfmaps')
 
 # Access shapefiles without R
 
-Survey shapefiles and associated metadata for the eastern Bering Sea shelf, northern Bering Sea, eastern Bering Sea slope, Gulf of Alaska, Aleutian Islands, and Chukchi Sea are available [here](./assets/regional_shapefiles). Please note that survey shapefiles change over time as bathymetry information improves and when survey designs change.
+Survey shapefiles and associated metadata for the eastern Bering Sea shelf, northern Bering Sea, eastern Bering Sea slope, Gulf of Alaska, Aleutian Islands, and Chukchi Sea are available [here](./assets/region_shapefiles). Please note that survey shapefiles change over time as bathymetry information improves and when survey designs change.
 
 ## Legal disclaimer
 
