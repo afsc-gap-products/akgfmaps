@@ -4,6 +4,7 @@
 #' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
+#' @param include.corners Logical. Should corner stations be returned in the survey grid? Only for the EBS.
 #' @param fix.invalid.geom Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?
 #' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
 #' @import sf
@@ -12,7 +13,25 @@
 get_base_layers <- function(select.region,
                             set.crs = "+proj=longlat +datum=NAD83",
                             use.survey.bathymetry = TRUE,
+                            include.corners = NULL,
                             fix.invalid.geom = TRUE) {
+
+  stopifnot("get_base_layers: include.corners argument must be NULL, TRUE, or FALSE." = c(is.null(include.corners) || is.logical(include.corners)))
+
+  if(!is.null(include.corners) & !(select.region %in% c("ebs", "bs.all", "sebs", "bs.south", "ebs.ecs"))) {
+    warning("get_base_layers: Ignoring include.corners since include.corners is only valid when select.region include.cornerss the SEBS")
+  }
+
+  if(is.null(include.corners) & select.region %in% c("ebs", "bs.all", "sebs", "bs.south", "ebs.ecs")) {
+    warning("get_base_layers: Corner stations are no longer included in the default EBS shelf survey.grid design. To include.corners corner stations in the survey.grid, set include.corners = FALSE. Refer to release notes for akgfmaps version 3.5.0 for more info (https://github.com/afsc-gap-products/akgfmaps/blob/master/NEWS).")
+    include.corners <- FALSE
+  }
+
+  if(select.region %in% c("ebs", "bs.all", "sebs", "bs.south", "ebs.ecs")) {
+
+    grid.file <- ifelse(include.corners, "bs_grid_w_corners.shp", "bs_grid.shp")
+
+  }
 
   select.region <- tolower(select.region)
 
@@ -97,7 +116,7 @@ get_base_layers <- function(select.region,
 
     survey.strata <- survey.strata[survey.strata$Stratum %in% c(10, 20, 31, 32, 41, 42, 43, 50, 61, 62, 82, 90), ]
 
-    survey.grid <- sf::st_read(system.file("extdata", "bs_grid_w_corners.shp", package = "akgfmaps"),
+    survey.grid <- sf::st_read(system.file("extdata", grid.file, package = "akgfmaps"),
                                quiet = TRUE)
 
     lon.breaks <- seq(-180, -154, 5)
@@ -110,7 +129,7 @@ get_base_layers <- function(select.region,
                                quiet = TRUE)
     survey.strata <- sf::st_read(system.file("extdata", "ebs_strata.shp", package = "akgfmaps"),
                                  quiet = TRUE)
-    survey.grid <- sf::st_read(system.file("extdata", "bs_grid_w_corners.shp", package = "akgfmaps"),
+    survey.grid <- sf::st_read(system.file("extdata", grid.file, package = "akgfmaps"),
                                quiet = TRUE)
 
     lon.breaks <- seq(-180, -154, 5)

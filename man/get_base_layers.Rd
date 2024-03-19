@@ -8,6 +8,7 @@ get_base_layers(
   select.region,
   set.crs = "+proj=longlat +datum=NAD83",
   use.survey.bathymetry = TRUE,
+  include.corners = NULL,
   fix.invalid.geom = TRUE
 )
 }
@@ -17,6 +18,8 @@ get_base_layers(
 \item{set.crs}{Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.}
 
 \item{use.survey.bathymetry}{Should survey bathymetry be used?}
+
+\item{include.corners}{Logical. Should corner stations be returned in the survey grid? Only for the EBS.}
 
 \item{fix.invalid.geom}{Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?}
 }
