@@ -1,3 +1,26 @@
+akgfmaps 3.5.0 (March 19, 2024)
+----------------------------------------------------------------
+
+FUNCTIONALITY CHANGES
+
+- The 2024 EBS shelf survey will not include corner stations
+  around the Pribilof Islands and St. Matthew. Therefore,
+  get_base_layers() now returns a survey.grid without corner
+  stations for the EBS/SEBS. Users can still access a survey.grid
+  with corner stations by setting include.corners = TRUE in
+  get_base_layers, i.e.:
+
+    get_base_layers(include.corners = TRUE)
+
+  See also:
+
+  DeFilippo, L., Kotwicki, S., Barnett, L., Richar, J., Litzow,
+    M.A., Stockhausen, W.T., Palof, K., 2023. Evaluating the impacts
+    of reduced sampling density in a systematic fisheries-
+    independent survey design. Front. Mar. Sci. 10, 1–16.
+    https://doi.org/10.3389/fmars.2023.1219283
+
+
 akgfmaps 3.4.2 (January 16, 2024)
 ----------------------------------------------------------------
 

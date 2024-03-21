@@ -22,4 +22,4 @@ testthat::test_that("Test Bering Sea grid filtering",
                     bs_north <- suppressWarnings(akgfmaps::get_base_layers(select.region = "nbs",
                                                                                        set.crs = "WGS84"));
                     expect_equal(length(bs_north$survey.grid$geometry), 144);
-                    expect_equal(length(bs_south$survey.grid$geometry), 376)})
+                    expect_equal(length(bs_south$survey.grid$geometry), 350)})
