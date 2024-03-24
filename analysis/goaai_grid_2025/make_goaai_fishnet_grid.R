@@ -1,4 +1,4 @@
-# Exploring options for a new GOA/AI grid for 2025
+# Options for a new 2025 GOA/AI grid
 #
 # Created by: Sean Rohan <sean.rohan@noaa.gov>
 # Date: March 9, 2024
@@ -28,7 +28,7 @@ standard_extent <- c(xmin = -2400000, ymin = 300000,  xmax = 1500000, ymax = 125
 set_crs <- "EPSG:3338"
 grid_cell_size <- c(5000, 5000)
 
-# Setup offsets for grid options
+# Offsets to explore
 offsets <- expand.grid(x_off = seq(from = -1000, to = 1000, by = 1000),
                        y_off = seq(from = -1000, to = 1000, by = 1000))
 
