@@ -4,7 +4,7 @@ akgfmaps 3.5.1 (March 25, 2024)
 NEW FEATURES
 
 - Added make_wkt_table(), a function that calculates areas of
-  simple features geometries in km^s, then converts simple
+  simple features geometries in km^2, then converts simple
   features objects to data.frames where well-known text (WKT)
   strings represent geometries.
 
