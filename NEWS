@@ -1,10 +1,10 @@
-akgfmaps 4.0.0 (Planned release: January 3, 2025)
+akgfmaps 4.0.0 (Planned release: December 15, 2024)
 ----------------------------------------------------------------
 
 This significant update replaces outdated shapefiles from multiple
 survey regions and standardizes spatial data structures across
-regions. This update is expected to break backwards compatibility,
-but will allow long-term harmonization of survey spatial products.
+regions. This update helps harmonize survey spatial products but
+breaks backwards compatibility.
 
 MAJOR CHANGES TO SHAPEFILES
 
@@ -16,8 +16,10 @@ MAJOR CHANGES TO SHAPEFILES
      address area calculation errors and inconsistencies.
   3) Replaced 1998 GEBCO bathymetry linestring shapefiles with
      a single file generated from the best available bathymetry,
-     i.e., a combination of 2024 GEBCO and 100-m resolution
-     bathymetry from Zimmerman et al. (2019, 2021).
+     i.e., a combination of 2024 GEBCO, 100-m resolution
+     bathymetry from Prescott and Zimmermann (2015), Zimmermann
+     and Prescott (2018), Zimmermann et al. (2019), and
+     Zimmermann and Prescott (2021).
   4) Replaced EBS Slope stratum shapefiles with one dervied from
      newer bathymetry. EBS shelf and slope stratum boundaries were
      redefined to remove both gaps and overlap.
@@ -26,14 +28,34 @@ MAJOR CHANGES TO SHAPEFILES
      released in 2017.
   6) Closed erroneous gap through the middle of Wrangel Island
      (Russia) at 180 W/E.
-  7) Removed eastern land areas from Canada shapefile.
+  7) Removed eastern portions of Canada shapefile.
 
 FUNCTIONALITY CHANGES
 
 - The use.survey.bathymetry argument in get_base_layers() is now
   deprecated because they are unnecessary now that EBS bathymetry
   files have been updated.
+- Added a split.lon.at.180 argument to get_base_layers(), which
+  splits the land shapefile at 180 longitude when a geographic
+  coordinate system is used.
 
+SEE ALSO
+
+Prescott, M.M. and Zimmermann, M. 2015. Smooth sheet bathymetry
+  of Norton Sound. http://doi.org/10.7289/V5V69GJ9
+
+Zimmermann, M., Prescott, M.M., 2018. Bathymetry and canyons of
+  the eastern Bering Sea slope. Geosci. 8.
+  https://doi.org/10.3390/geosciences8050184
+
+Zimmermann, M., Prescott, M.M., 2021. Passes of the Aleutian
+  Islands: First detailed description. Fish. Oceanogr. 30, 280–
+  299. https://doi.org/10.1111/fog.12519
+
+Zimmermann, M., Prescott, M.M., Haeussler, P.J., 2019. Bathymetry
+  and geomorphology of Shelikof Strait and the western Gulf of
+  Alaska. Geosci. 9, 1–31.
+  https://doi.org/10.3390/geosciences9100409
 
 akgfmaps 3.5.0 (March 19, 2024)
 ----------------------------------------------------------------

@@ -2,9 +2,10 @@
 #'
 #' This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
 #' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6
-#' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
+#' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned using a PROJ4 string.
 #' @param include.corners Logical. Should corner stations be returned in the survey grid? Only for the EBS.
-#' @param fix.invalid.geom Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?
+#' @param fix.invalid.geom Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()? Default = TRUE.
+#' @param split.land.at.180 Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = FALSE.
 #' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
 #' @import sf
 #' @export
@@ -13,6 +14,7 @@ get_base_layers <- function(select.region,
                             set.crs = "+proj=longlat +datum=NAD83",
                             include.corners = NULL,
                             fix.invalid.geom = TRUE,
+                            split.land.at.180 = FALSE,
                             ...) {
 
   # Return a warning when use.survey.bathymetry = TRUE
@@ -120,7 +122,7 @@ get_base_layers <- function(select.region,
 
     sel.depths <- c(100, 300, 500, 700)
 
-  } else if(select.region %in% c(  "ai","ai.west", "ai.central", "ai.east")) {
+  } else if(select.region %in% c("ai","ai.west", "ai.central", "ai.east")) {
 
     akland <- dplyr::bind_rows(akland,
                                sf::st_read(system.file("extdata", "w_canada.shp", package = "akgfmaps"), quiet = TRUE) |>
@@ -435,7 +437,7 @@ get_base_layers <- function(select.region,
   place.labels <- akgfmaps::transform_data_frame_crs(place.labels, out.crs = set.crs)
 
 
-  # Attempt to correct any remaining degenerate geometry and dateline wrapping issues --------------
+  # Correct remaining degenerate geometry and dateline wrapping issues -----------------------------
 
   if(fix.invalid.geom) {
     akland <- akgfmaps:::fix_geometry(x = akland)
@@ -444,6 +446,17 @@ get_base_layers <- function(select.region,
     survey.strata <- akgfmaps:::fix_geometry(x = survey.strata)
     bathymetry <- akgfmaps:::fix_geometry(x = bathymetry)
     inpfc.strata <- akgfmaps:::fix_geometry(x = inpfc.strata)
+  }
+
+  # Split land polygons to fix dateline wrapping for lat/lon  --------------------------------------
+  if(sf::st_is_longlat(akland) & split.land.at.180) {
+
+    west <- sf::st_crop(akland, xmin = -179.9995, xmax = -90, ymin = 0, ymax = 90)
+
+    east <- sf::st_crop(akland, xmin = 90, xmax = 179.9995, ymin = 0, ymax = 90)
+
+    akland <- dplyr::bind_rows(west, east)
+
   }
 
   return(list(akland = akland,
