@@ -66,6 +66,20 @@ Zimmermann, M., Prescott, M.M., Haeussler, P.J., 2019. Bathymetry
   Alaska. Geosci. 9, 1–31.
   https://doi.org/10.3390/geosciences9100409
 
+
+
+akgfmaps 3.5.1 (March 25, 2024)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Added make_wkt_table(), a function that calculates areas of
+  simple features geometries in km^2, then converts simple
+  features objects to data.frames where well-known text (WKT)
+  strings represent geometries.
+
+
+
 akgfmaps 3.5.0 (March 19, 2024)
 ----------------------------------------------------------------
 
