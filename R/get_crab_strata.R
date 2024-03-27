@@ -2,7 +2,7 @@
 #'
 #' Load crab strata polygons for red king crab, blue king crab, snow crab, or Tanner crab. Species and areas are described below.
 #'
-#' @param select.unit Select a species and management unit as a character vector. Options are Bristol Bay RKC ('bbrkc'), Pribilof Islands RKC ('pirkc'), Pribilof Islands BKC ('pibkc'), St. Matthew's BKC ('smbkc'), Norton Sound RKC ('nsrkc'), eastern Bering Sea snow crab ('ebsco'), and eastern Bering Sea Tanner crab ('ebscb').
+#' @param select.unit Select a species and management unit as a character vector. Options are Bristol Bay RKC ('bbrkc'), Pribilof Islands RKC ('pirkc'), Pribilof Islands BKC ('pibkc'), St. Matthew's BKC ('smbkc'), Norton Sound RKC ('nsrkc'), eastern Bering Sea snow crab ('ebssc'), and eastern Bering Sea Tanner crab ('ebstc').
 #' @param set.crs Which coordinate reference system should be used?
 #' @export
 

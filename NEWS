@@ -1,10 +1,10 @@
 akgfmaps 4.0.0 (Planned release: December 15, 2024)
 ----------------------------------------------------------------
 
-This significant update replaces outdated shapefiles from multiple
-survey regions and standardizes spatial data structures across
-regions. This update helps harmonize survey spatial products but
-breaks backwards compatibility.
+This significant update replaces outdated shapefiles from multi-
+ple survey regions and standardizes spatial data structures
+across regions. This update helps harmonize survey spatial prod-
+ucts but breaks backwards compatibility.
 
 MAJOR CHANGES TO SHAPEFILES
 
@@ -12,8 +12,8 @@ MAJOR CHANGES TO SHAPEFILES
      been standardized across shapefiles and regions.
   2) Added an AREAID fields to stratum shapefiles that correspond
      with AREAIDs in AFSC/RACE/GAP's GAP_PRODUCTS schema.
-  2) Removed precalculated areas and perimeters from shapefiles to
-     address area calculation errors and inconsistencies.
+  2) Removed precalculated areas and perimeters from shapefiles
+     to address area calculation errors and inconsistencies.
   3) Replaced 1998 GEBCO bathymetry linestring shapefiles with
      a single file generated from the best available bathymetry,
      i.e., a combination of 2024 GEBCO, 100-m resolution
@@ -29,6 +29,7 @@ MAJOR CHANGES TO SHAPEFILES
   6) Closed erroneous gap through the middle of Wrangel Island
      (Russia) at 180 W/E.
   7) Removed eastern portions of Canada shapefile.
+  8) Added crab stratum shapefiles for the EBS
 
 FUNCTIONALITY CHANGES
 
@@ -38,6 +39,14 @@ FUNCTIONALITY CHANGES
 - Added a split.lon.at.180 argument to get_base_layers(), which
   splits the land shapefile at 180 longitude when a geographic
   coordinate system is used.
+
+NEW FEATURES
+
+- Added a new get_crab_strata() function that retrieves crab
+  stratum layers. Support for Bristol Bay RKC, Pribilof Islands
+  RKC, Pribilof Islands BKC, St. Matthew's BKC, Norton Sound
+  RKC, eastern Bering Sea snow crab, and eastern Bering Sea
+  Tanner crab.
 
 SEE ALSO
 

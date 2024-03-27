@@ -7,7 +7,7 @@
 get_crab_strata(select.unit, set.crs)
 }
 \arguments{
-\item{select.unit}{Select a species and management unit as a character vector. Options are Bristol Bay RKC ('bbrkc'), Pribilof Islands RKC ('pirkc'), Pribilof Islands BKC ('pibkc'), St. Matthew's BKC ('smbkc'), Norton Sound RKC ('nsrkc'), eastern Bering Sea snow crab ('ebsco'), and eastern Bering Sea Tanner crab ('ebscb').}
+\item{select.unit}{Select a species and management unit as a character vector. Options are Bristol Bay RKC ('bbrkc'), Pribilof Islands RKC ('pirkc'), Pribilof Islands BKC ('pibkc'), St. Matthew's BKC ('smbkc'), Norton Sound RKC ('nsrkc'), eastern Bering Sea snow crab ('ebssc'), and eastern Bering Sea Tanner crab ('ebstc').}
 
 \item{set.crs}{Which coordinate reference system should be used?}
 }
