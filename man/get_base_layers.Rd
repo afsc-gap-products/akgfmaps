@@ -7,21 +7,22 @@
 get_base_layers(
   select.region,
   set.crs = "+proj=longlat +datum=NAD83",
-  use.survey.bathymetry = TRUE,
   include.corners = NULL,
-  fix.invalid.geom = TRUE
+  fix.invalid.geom = TRUE,
+  split.land.at.180 = FALSE,
+  ...
 )
 }
 \arguments{
 \item{select.region}{Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6}
 
-\item{set.crs}{Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.}
-
-\item{use.survey.bathymetry}{Should survey bathymetry be used?}
+\item{set.crs}{Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned using a PROJ4 string.}
 
 \item{include.corners}{Logical. Should corner stations be returned in the survey grid? Only for the EBS.}
 
-\item{fix.invalid.geom}{Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?}
+\item{fix.invalid.geom}{Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()? Default = TRUE.}
+
+\item{split.land.at.180}{Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = FALSE.}
 }
 \value{
 A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
