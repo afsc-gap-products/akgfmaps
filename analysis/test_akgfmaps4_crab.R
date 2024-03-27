@@ -22,19 +22,6 @@ crab_strata <- dplyr::bind_rows(bbrkc,
                                 ebstc,
                                 ebssc)
 
-# sf::st_read(here::here("inst", "extdata", "crab_strata", "BBRKC_strata.shp")) |>
-#   dplyr::select(-TEMP) |>
-#   dplyr::mutate(OBJECTID = 1) |>
-#   dplyr::select(OBJECTID, Shape_Leng, Shape_Area, geometry) |>
-#   sf::st_write(here::here("inst", "extdata", "crab_strata", "BBRKC_strata.shp"),
-#                append = FALSE)
-#
-# sf::st_read(here::here("inst", "extdata", "crab_strata", "Norton_RKC_Strata.shp")) |>
-#   dplyr::mutate(OBJECTID = 1) |>
-#   dplyr::select(OBJECTID, Shape_Leng, Shape_Area, geometry) |>
-#   sf::st_write(here::here("inst", "extdata", "crab_strata", "Norton_RKC_Strata.shp"),
-#                append = FALSE)
-
 ggplot() +
   geom_sf(data = crab_strata,
           mapping = aes(fill = STRATUM)) +
