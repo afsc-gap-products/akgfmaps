@@ -1,5 +1,13 @@
-akgfmaps 3.5.1 (March 25, 2024)
+akgfmaps 3.5.1 (April 10, 2024)
 ----------------------------------------------------------------
+
+IMPROVEMENTS
+
+- get_base_layers() now accepts an argument to split land
+  polygons into east and west when set.crs is a geographic
+  coordinate system. The default is to split using
+  split.land.at.180 = TRUE. Set this to FALSE when shifting
+  coordinates afterwards.
 
 NEW FEATURES
 
