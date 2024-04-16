@@ -1,0 +1,170 @@
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Project:       GOA Restratification Adjustments
+## Author:        Zack Oyafuso (zack.oyafuso@noaa.gov)
+## Description:   Workflow to take the new stratum boundaries and create new
+##                stratum polygons. 
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+## Restart R Session before running
+rm(list = ls())
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##   Import Packages ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+library(terra)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##   Import stratum depth boundaries ----
+##   Import depth from Mark's shared drive location
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+depth_mods <-
+  read.csv(file = "analysis/goa_strata_2025/depth_modifications_2025.csv")
+bathy <-
+  terra::rast("//AKC0SS-n086/AKC_PubliC/Dropbox/Zimm/GEBCO/GOA/goa_bathy")
+
+old_goa_strata <- terra::vect(x = "analysis/goa_strata_2025/goa_strata.shp")
+goa_domain <- terra::aggregate(x = old_goa_strata)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##   Import NMFS Areas ----
+##   NMFS Management area is a 2025 stratum variable and is different from the
+##   historically used INPFC areas. Reproject `nmfs` shape object to the same
+##   projection as the `bathy` raster and add management area names. 
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+nmfs <- terra::vect(x = "analysis/goa_strata_2025/GOA_Shapes.shp")
+nmfs <- terra::project(x = nmfs[nmfs$REP_AREA %in% paste(c(610, 620, 630, 
+                                                           640, 650)),
+                                c("AREA_NAME", "REP_AREA")],
+                       
+                       y = bathy)
+nmfs$AREA_NAME <- c("610" = "Shumagin",
+                    "620" = "Chirikof",
+                    "630" = "Kodiak",
+                    "640" = "West Yakutat",
+                    "650" = "Southeast Outside")[paste(nmfs$REP_AREA)] 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##   Create stratum polygons ----
+##   For each management area, create new strata based on depth specifications
+##   and append to strata_list
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+strata_list <- list()
+for (idistrict in unique(x = depth_mods$manage_area)) { ## Loop over area --st.
+  
+  ## Mask bathymetry raster to just the nmfs management area and goa_domain
+  district_outline <- nmfs[nmfs$AREA_NAME  == idistrict]
+  
+  district_bathy <- terra::mask(x = bathy,
+                                mask = goa_domain)
+  district_bathy <- terra::mask(x = district_bathy,
+                                mask = district_outline)
+  district_bathy <- terra::crop(x = district_bathy,
+                                y = district_outline)
+  
+  ## Define modified stratum depth boundaries
+  depth_boundary <- subset(x = depth_mods,
+                           subset = manage_area == idistrict,
+                           select = c("lower_depth_m", "upper_depth_m"))
+  
+  ## Discretize the `bathy`` raster: Define each raster cell based on the
+  ## defined stratum depth boundaries in `depth_mods` and create an arbitrary
+  ## integer label for each stratum.
+  terra::values(district_bathy) <-
+    as.integer(as.character(cut(x = terra::values(x = district_bathy),
+                                breaks = c(0, depth_boundary$upper_depth_m),
+                                labels = 1:nrow(x = depth_boundary)) ))
+  
+  ## Convert discretized raster to polygon based on those discrete values
+  strata_poly <- terra::as.polygons(x = district_bathy)
+  strata_poly_disagg <- terra::disagg(x = strata_poly)
+  strata_poly_disagg$area <- terra::expanse(x = strata_poly_disagg) / 1e6
+  
+  ## The literal assignment of raster cells to strata creates a lot of very
+  ## small "specks" so in this step we dissolve these specks less than a certain 
+  ## chosen area (5 km2) into their surrounding larger stratum polygons. 
+  ## 
+  ## First, for each stratum polygon, calculate adjacent polygons. The argument 
+  ## type == "rook" excludes polygons that touch at a single node.
+  nearest_poly <- terra::adjacent(x = strata_poly_disagg, type = "rook")
+  
+  for (i in which(x = strata_poly_disagg$area < 5)) {
+    
+    ## isolate the speck
+    temp_speck <- strata_poly_disagg[i, ]
+    
+    ## isolate the adjacent polygons
+    adj_polys <- nearest_poly[nearest_poly[, 2] == i, 1]
+    
+    if (length(x = adj_polys) != 0) {
+      ## assign the speck to the adjacent polygon with the highest area
+      adj_poly <- adj_polys[which.max(x = strata_poly_disagg$area[adj_polys])]
+      strata_poly_disagg$GOA_bathy[i] <- strata_poly_disagg$GOA_bathy[adj_poly]
+    }
+  }
+  
+  ## aggregate the newly assigned specks to their new strata
+  strata_poly_agg <- terra::aggregate(x = strata_poly_disagg,
+                                      by = "GOA_bathy",
+                                      fun = "sum",
+                                      count = F)
+  
+  strata_poly_disagg <- terra::disagg(x = strata_poly_agg)
+  strata_poly_disagg$area <- terra::expanse(x = strata_poly_disagg,
+                                            unit = "km")
+  
+  ## After this round of speck dissolution, some specks remain so we do 
+  ## another round of speck dissolution. 
+  nearest_poly <- terra::adjacent(x = strata_poly_disagg, type = "intersects")
+  
+  for (i in which(strata_poly_disagg$area < 5)) {
+    temp_speck <- strata_poly_disagg[i, ]
+    adj_polys <- nearest_poly[nearest_poly[, 2] == i, 1]
+    
+    if (length(adj_polys) != 0) {
+      adj_poly <- adj_polys[which.max(x = strata_poly_disagg$area[adj_polys])]
+      strata_poly_disagg$GOA_bathy[i] <- strata_poly_disagg$GOA_bathy[adj_poly]
+    }
+  }
+  
+  strata_poly_agg <- terra::aggregate(x = strata_poly_disagg,
+                                      by = "GOA_bathy",
+                                      fun = "sum",
+                                      count = F)
+  
+  ## Create dataframe of stratum information
+  strata_poly[, names(depth_mods)] <- strata_poly_agg[, names(depth_mods)] <-
+    subset(x = depth_mods, subset = manage_area == idistrict)
+  
+  ## Calculate the total area and perimeter of the strata.
+  strata_poly_agg$AREA_KM2 <- terra::expanse(x = strata_poly_agg, unit = "km")
+  strata_poly_agg$PER_KM <- terra::perim(x = strata_poly_agg) / 1000
+  
+  ## Append to strata_list
+  strata_list <- c(strata_list, list(strata_poly_agg))
+  
+  print(paste("Finished with the", idistrict, "region"))
+} ## Loop over district -- end
+rm(idistrict, strata_poly, strata_poly_agg, district_outline, district_bathy)
+
+##   Merge strata into one object
+strata_list <- do.call(what = rbind, args = strata_list)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##   Format strata object----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+goa_strata_2025 <-
+  data.frame("SURVEY" = "GOA",
+             "SURVEY_DEFINITION_ID" = 47,
+             "DESIGN_YEAR" = 2025,
+             "AREA_ID" = strata_list$stratum,
+             "AREA_TYPE" = "STRATUM",
+             "AREA_NAME" = paste0(strata_list$manage_area, ", ",
+                                  strata_list$lower_depth_m, "-",
+                                  strata_list$upper_depth_m, " m"),
+             "DESCRIPTION" = paste0(strata_list$manage_area, ", ",
+                                    strata_list$lower_depth_m, "-",
+                                    strata_list$upper_depth_m, " m"),
+             "AREA_KM2" = strata_list$AREA_KM2,
+             "MIN_DEPTH" = strata_list$lower_depth_m,
+             "MAX_DEPTH" = strata_list$upper_depth_m,
+             CRS = NA)

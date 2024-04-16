@@ -1,0 +1,34 @@
+manage_area,stratum,used,lower_depth_m,upper_depth_m
+Shumagin,14,TRUE,1,50
+Shumagin,15,TRUE,51,125
+Shumagin,113,TRUE,126,225
+Shumagin,211,TRUE,226,700
+Shumagin,511,FALSE,701,1000
+Shumagin,610,FALSE,1001,3000
+Chirikof,23,TRUE,1,50
+Chirikof,24,TRUE,51,150
+Chirikof,123,TRUE,151,250
+Chirikof,233,TRUE,251,350
+Chirikof,321,TRUE,351,700
+Chirikof,521,FALSE,701,1000
+Chirikof,620,FALSE,1001,3000
+Kodiak,36,TRUE,1,50
+Kodiak,37,TRUE,51,75
+Kodiak,38,TRUE,76,125
+Kodiak,135,TRUE,126,150
+Kodiak,136,TRUE,151,700
+Kodiak,531,FALSE,701,1000
+Kodiak,630,FALSE,1001,3000
+West Yakutat,42,TRUE,1,50
+West Yakutat,43,TRUE,51,100
+West Yakutat,144,TRUE,101,175
+West Yakutat,145,TRUE,176,200
+West Yakutat,242,TRUE,201,700
+West Yakutat,541,FALSE,701,1000
+West Yakutat,640,FALSE,1001,3000
+Southeast Outside,51,TRUE,1,100
+Southeast Outside,152,TRUE,101,200
+Southeast Outside,252,TRUE,201,300
+Southeast Outside,352,TRUE,301,700
+Southeast Outside,551,FALSE,701,1000
+Southeast Outside,650,FALSE,1001,3000
