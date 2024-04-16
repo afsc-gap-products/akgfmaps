@@ -166,5 +166,4 @@ goa_strata_2025 <-
                                     strata_list$upper_depth_m, " m"),
              "AREA_KM2" = strata_list$AREA_KM2,
              "MIN_DEPTH" = strata_list$lower_depth_m,
-             "MAX_DEPTH" = strata_list$upper_depth_m,
-             CRS = NA)
+             "MAX_DEPTH" = strata_list$upper_depth_m)
