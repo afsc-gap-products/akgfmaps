@@ -6,6 +6,7 @@
 #' @param use.survey.bathymetry Should survey bathymetry be used?
 #' @param include.corners Logical. Should corner stations be returned in the survey grid? Only for the EBS.
 #' @param fix.invalid.geom Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?
+#' @param split.land.at.180 Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = TRUE.
 #' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
 #' @import sf
 #' @export
@@ -14,6 +15,7 @@ get_base_layers <- function(select.region,
                             set.crs = "+proj=longlat +datum=NAD83",
                             use.survey.bathymetry = TRUE,
                             include.corners = NULL,
+                            split.land.at.180 = TRUE,
                             fix.invalid.geom = TRUE) {
 
   stopifnot("get_base_layers: include.corners argument must be NULL, TRUE, or FALSE." = c(is.null(include.corners) || is.logical(include.corners)))
@@ -439,6 +441,19 @@ get_base_layers <- function(select.region,
     survey.strata <- akgfmaps:::fix_geometry(x = survey.strata)
     bathymetry <- akgfmaps:::fix_geometry(x = bathymetry)
     inpfc.strata <- akgfmaps:::fix_geometry(x = inpfc.strata)
+  }
+
+  # Split land polygons to fix dateline wrapping for lat/lon  --------------------------------------
+  if(sf::st_is_longlat(akland) & split.land.at.180) {
+
+    west <- sf::st_crop(akland, xmin = -179.9995, xmax = -90, ymin = 0, ymax = 90)
+
+    east <- sf::st_crop(akland, xmin = 90, xmax = 179.9995, ymin = 0, ymax = 90)
+
+    akland <- dplyr::bind_rows(west, east)
+
+    akland <- akland[which(sf::st_geometry_type(akland$geometry) %in% c("POLYGON", "MULTIPOLYGON")), ]
+
   }
 
   return(list(akland = akland,

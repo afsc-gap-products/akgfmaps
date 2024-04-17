@@ -9,6 +9,7 @@ get_base_layers(
   set.crs = "+proj=longlat +datum=NAD83",
   use.survey.bathymetry = TRUE,
   include.corners = NULL,
+  split.land.at.180 = TRUE,
   fix.invalid.geom = TRUE
 )
 }
@@ -20,6 +21,8 @@ get_base_layers(
 \item{use.survey.bathymetry}{Should survey bathymetry be used?}
 
 \item{include.corners}{Logical. Should corner stations be returned in the survey grid? Only for the EBS.}
+
+\item{split.land.at.180}{Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = TRUE.}
 
 \item{fix.invalid.geom}{Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?}
 }
