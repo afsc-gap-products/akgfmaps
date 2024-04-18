@@ -151,8 +151,7 @@ strata_list <- do.call(what = rbind, args = strata_list)
 
 # Write stratum polygons to a GeoPackage (.gpkg) file with Alaska Albers Equal Area CRS
 strata_poly_sf <- sf::st_as_sf(strata_list) |>
-  dplyr::arrange(stratum) |>
-  dplyr::rename(geometry = geom)
+  dplyr::arrange(stratum)
 
 sf::st_crs(strat_poly_sf) <- "EPSG:3338"
 
