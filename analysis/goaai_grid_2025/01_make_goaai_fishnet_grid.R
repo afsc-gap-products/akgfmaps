@@ -1,7 +1,7 @@
 # Options for a new 2025 GOA/AI grid
 #
 # Created by: Sean Rohan <sean.rohan@noaa.gov>
-# Date: March 9, 2024
+# Last update: April 18, 2024
 #
 # Description:
 #
@@ -230,7 +230,7 @@ dev.off()
 
 # Compare grid at stratum boundaries - GOA
 
-goa_strata <- sf::st_read(here::here("analysis", "goa_strata_2025", "GOA_shapes.shp"))
+goa_strata <- sf::st_read(here::here("analysis", "goaai_grid_2025", "data", "goa_strata_2025.shp"))
 goa_layers <- akgfmaps::get_base_layers(select.region = "goa", set.crs = set_crs)
 
 focal_zones <- data.frame(x = c(-177.1766891, -170.1220727, 177.2177623),
@@ -333,39 +333,3 @@ for(jj in 1:nrow(offsets)) {
 }
 
 dev.off()
-
-
-
-grid_poly_wgs84 <- sf::st_transform(grid_poly, crs = "WGS84")
-
-calc_coord_range <- function(x) {
-
-  coords <- x |>
-    sf::st_coordinates()
-
-  coords <- data.frame(x = abs(diff(range(coords[,1]))),
-                       y = abs(diff(range(coords[,2]))))
-
-  return(coords)
-
-}
-
-coord_range_lon <- numeric(length = nrow(grid_poly_wgs84))
-coord_range_lat <- numeric(length = nrow(grid_poly_wgs84))
-
-for(ii in 1:nrow(grid_poly)) {
-
-  coord_range <- calc_coord_range(grid_poly_wgs84$geometry[[ii]])
-
-  coord_range_lon[ii] <- coord_range$x
-  coord_range_lat[ii] <- coord_range$y
-
-}
-
-
-median(coord_range_lat)
-median(coord_range_lon)
-
-hist(coord_range_lon[coord_range_lon < 300])
-hist(coord_range_lat[coord_range_lon < 300])
-

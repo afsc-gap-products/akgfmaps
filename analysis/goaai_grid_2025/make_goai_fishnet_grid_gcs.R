@@ -1,7 +1,7 @@
-# Options for a new 2025 GOA/AI grid
+# Options for a new 2025 GOA/AI grid (WGS84)
 #
 # Created by: Sean Rohan <sean.rohan@noaa.gov>
-# Date: March 9, 2024
+# Date: April 17, 2024
 #
 # Description:
 #
