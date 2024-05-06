@@ -1,8 +1,9 @@
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Project:       GOA Restratification Adjustments
+## Project:       Create 2025 GOA Stratum Polygons
 ## Author:        Zack Oyafuso (zack.oyafuso@noaa.gov)
-## Description:   Workflow to take the new stratum boundaries and create new
-##                stratum polygons. 
+## Description:   Workflow to take the new depth-based stratum boundaries from 
+##                Mark Zimmerman's latest 2024 bathymetry compilation and 
+##                create new stratum polygons for the 2025 GOA survey.  
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Restart R Session before running
@@ -11,32 +12,46 @@ rm(list = ls())
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Import Packages ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## install.packages("terra")
 library(terra)
-# devtools::install_github("MattCallahan-NOAA/akmarineareas2")
-library(akmarineareas2)
+library(akgfmaps)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##   Import stratum depth boundaries ----
-##   Import depth from Mark's shared drive location
+##   Import input data ----
+##   Make sure to connect to VPN or NOAA Internal Network
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## `depth_mods` is a table that specifies depth boundaries for the new strata
+## for each NMFS reporting area. Note that the depth strata are different
+## across NMFS reporting areas
 depth_mods <-
   read.csv(file = "analysis/goa_strata_2025/depth_modifications_2025.csv")
+
+## `bathy` is the most recent 2023 bathymetric compilation of the GOA provided
+## from Mark Zimmerman  
 bathy <-
   terra::rast("//AKC0SS-n086/AKC_PubliC/Dropbox/Zimm/GEBCO/GOA/goa_bathy")
-ak_land <- terra::vect(x = akmarineareas2::ak)
+
+## `goa_base` are basic shape layers from the akgfmaps package
+goa_base <- akgfmaps::get_base_layers(select.region = "goa", 
+                                      set.crs = terra::crs(x = bathy))
+
+## `ak_land` is the extracted land/coastline shapefile from `goa_base` 
+ak_land <- terra::vect(x = goa_base$akland[goa_base$akland$POPYADMIN %in% 
+                                             c("BRITISH COLUMBIA",
+                                               "YUKON TERRITORY",
+                                               "ALASKA"), ])
+
+## `old_goa_strata` is the extracted historical GOA stratum polygons. Filter
+## out land and kingman reef areas (STRATUM == 0)
+old_goa_strata <- 
+  terra::vect(x = goa_base$survey.strata[goa_base$survey.strata$STRATUM != 0,])
+
+## The `goa_domain` is a dissolved version of `old_goa_strata`
+goa_domain <- terra::aggregate(x = old_goa_strata)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##   Use the historical GOA survey footprint to mask the `bathy` raster
+##   Use `goa_domain` to mask the `bathy` raster
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-old_goa_strata <- terra::vect(x = "analysis/goa_strata_2025/goa_strata.shp")
-goa_domain <- terra::aggregate(x = old_goa_strata[old_goa_strata$STRATUM != 0])
 bathy <- terra::crop(x = bathy, y = goa_domain, mask = TRUE)
-
-bathy <- terra::mask(x = bathy, 
-                      mask = ak_land, 
-                      inverse = TRUE)
-
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Import NMFS Areas ----
@@ -44,17 +59,17 @@ bathy <- terra::mask(x = bathy,
 ##   historically used INPFC areas. Reproject `nmfs` shape object to the same
 ##   projection as the `bathy` raster and add management area names. 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-nmfs <- terra::vect(x = akmarineareas2::nmfs)
-nmfs <- terra::project(x = nmfs[nmfs$AreaID %in% c(610, 620, 630, 640, 650),
-                                "AreaID"], 
+nmfs <- 
+  terra::vect(x = akgfmaps::get_nmfs_areas(set.crs = terra::crs(x = bathy)) )
+nmfs <- terra::project(x = nmfs[nmfs$REP_AREA %in% c(610, 620, 630, 640, 650),
+                                "REP_AREA"], 
                        terra::crs(x = goa_domain))
-nmfs$AREA_NAME <- c("610" = "Shumagin",
+nmfs$NMFS_AREA <- c("610" = "Shumagin",
                     "620" = "Chirikof",
                     "630" = "Kodiak",
                     "640" = "West Yakutat",
-                    "650" = "Southeast Outside")[paste(nmfs$AreaID)]
-nmfs <- terra::crop(x = terra::mask(x = nmfs, mask = goa_domain), 
-                    y = goa_domain)
+                    "650" = "Southeast Outside")[paste(nmfs$REP_AREA)]
+nmfs <- terra::crop(x = nmfs, y = goa_domain)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Create stratum polygons ----
@@ -62,31 +77,30 @@ nmfs <- terra::crop(x = terra::mask(x = nmfs, mask = goa_domain),
 ##   and append to strata_list
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 strata_list <- list()
-for (idistrict in unique(x = depth_mods$manage_area)) { ## Loop over area --st.
+for (idistrict in unique(x = depth_mods$NMFS_AREA)) { ## Loop over area --st.
   
   ## Mask bathymetry raster to just the nmfs management area and goa_domain
-  district_outline <- nmfs[nmfs$AREA_NAME  == idistrict]
+  district_outline <- nmfs[nmfs$NMFS_AREA == idistrict]
   district_bathy <- terra::crop(x = bathy,
                                 y = district_outline, 
                                 mask = T)
   
   ## Define modified stratum depth boundaries
   depth_boundary <- subset(x = depth_mods,
-                           subset = manage_area == idistrict,
-                           select = c("lower_depth_m", "upper_depth_m"))
+                           subset = NMFS_AREA == idistrict,
+                           select = c("DEPTH_MIN_M", "DEPTH_MAX_M"))
   
   ## Discretize the `bathy`` raster: Define each raster cell based on the
   ## defined stratum depth boundaries in `depth_mods` and create an arbitrary
   ## integer label for each stratum.
-  depth_cuts <- as.matrix(cbind(from = depth_boundary$lower_depth_m - 1, 
-                                to = depth_boundary$upper_depth_m,
+  depth_cuts <- as.matrix(cbind(from = depth_boundary$DEPTH_MIN_M - 1, 
+                                to = depth_boundary$DEPTH_MAX_M,
                                 becomes = 1:nrow(x = depth_boundary)))
   colnames(x = depth_cuts) <- NULL
   
   district_bathy <- terra::classify(x = district_bathy, rcl = depth_cuts, 
                                     others = NA, 
                                     include.lowest=TRUE)
-  
   
   ## Convert discretized raster to polygon based on those discrete values
   strata_poly <- terra::as.polygons(x = district_bathy)
@@ -128,12 +142,12 @@ for (idistrict in unique(x = depth_mods$manage_area)) { ## Loop over area --st.
                                       fun = "sum",
                                       count = F)
   
+  ## After this round of speck dissolution, some specks < 5 km2 remain so we do 
+  ## another round of speck dissolution. 
   strata_poly_disagg <- terra::disagg(x = strata_poly_agg)
   strata_poly_disagg$area <- terra::expanse(x = strata_poly_disagg,
                                             unit = "km")
   
-  ## After this round of speck dissolution, some specks < 5 km2 remain so we do 
-  ## another round of speck dissolution. 
   nearest_poly <- terra::adjacent(x = strata_poly_disagg, type = "intersects")
   
   for (i in which(strata_poly_disagg$area < 5)) {
@@ -146,21 +160,26 @@ for (idistrict in unique(x = depth_mods$manage_area)) { ## Loop over area --st.
     }
   }
   
+  ## Aggregate the newly assigned specks to their new strata
   strata_poly_agg <- terra::aggregate(x = strata_poly_disagg,
                                       by = "GOA_bathy",
                                       fun = "sum",
                                       count = F)
   
   ## Create dataframe of stratum information
-  strata_poly[, names(depth_mods)] <- strata_poly_agg[, names(depth_mods)] <-
-    subset(x = depth_mods, subset = manage_area == idistrict)
+  strata_poly[, names(x = depth_mods)] <- 
+    strata_poly_agg[, names(x = depth_mods)] <-
+    subset(x = depth_mods, subset = NMFS_AREA == idistrict)
   
   ## Calculate the total area and perimeter of the strata.
   strata_poly_agg$AREA_KM2 <- terra::expanse(x = strata_poly_agg, unit = "km")
-  strata_poly_agg$PER_KM <- terra::perim(x = strata_poly_agg) / 1000
+  strata_poly_agg$PERIM_KM <- terra::perim(x = strata_poly_agg) / 1000
   
   ## Append to strata_list
-  strata_list <- c(strata_list, list(strata_poly_agg))
+  strata_list <- c(strata_list, 
+                   list(strata_poly_agg[, c("NMFS_AREA", "REP_AREA", "STRATUM", 
+                                            "DEPTH_MIN_M", "DEPTH_MAX_M", 
+                                            "AREA_KM2", "PERIM_KM")]))
   
   print(paste("Finished with the", idistrict, "region"))
 } ## Loop over district -- end
@@ -175,22 +194,24 @@ goa_strata_2025 <-
   data.frame("SURVEY" = "GOA",
              "SURVEY_DEFINITION_ID" = 47,
              "DESIGN_YEAR" = 2025,
-             "AREA_ID" = strata_list$stratum,
+             "AREA_ID" = strata_list$STRATUM,
              "AREA_TYPE" = "STRATUM",
-             "AREA_NAME" = paste0(strata_list$manage_area, ", ",
-                                  strata_list$lower_depth_m, "-",
-                                  strata_list$upper_depth_m, " m"),
-             "DESCRIPTION" = paste0(strata_list$manage_area, ", ",
-                                    strata_list$lower_depth_m, "-",
-                                    strata_list$upper_depth_m, " m"),
+             "AREA_NAME" = paste0(strata_list$NMFS_AREA, ", ",
+                                  strata_list$DEPTH_MIN_M, "-",
+                                  strata_list$DEPTH_MAX_M, " m"),
+             "DESCRIPTION" = paste0(strata_list$NMFS_AREA, ", ",
+                                    strata_list$DEPTH_MIN_M, "-",
+                                    strata_list$DEPTH_MAX_M, " m"),
              "AREA_KM2" = strata_list$AREA_KM2,
-             "MIN_DEPTH" = strata_list$lower_depth_m,
-             "MAX_DEPTH" = strata_list$upper_depth_m)
+             "PERIM_KM" = strata_list$PERIM_KM,
+             "MIN_DEPTH" = strata_list$DEPTH_MIN_M,
+             "MAX_DEPTH" = strata_list$DEPTH_MAX_M)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##   Re-project `strata_list` to EPSG:3338
 ##   Write geopackage ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-strata_list <- terra::project(x = strata_list,  "EPSG:3338")
+strata_list <- terra::project(x = strata_list, "EPSG:3338")
 terra::writeVector(x = strata_list, 
                    filename = "analysis/goa_strata_2025/goa_strata_2025.gpkg", 
                    overwrite = TRUE)
