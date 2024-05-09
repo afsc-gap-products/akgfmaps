@@ -105,6 +105,7 @@ names(x = towpaths) <- "HAULJOIN"
 towpaths <- merge(x = towpaths,
                   y = goa_hauls_from_1990,
                   by = "HAULJOIN")
+towpaths <- terra::project(x = towpaths, "EPSG:3338")
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Speck dissoluion: for grid cells that are > 5 km2, dissolve the
@@ -126,6 +127,11 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
   ## Subset stations within icell
   temp_stn <- subset(x = new_goa_stations_2025,
                       subset = new_goa_stations_2025$GOAGRID_ID == icell)
+  
+  # plot(temp_stn, 
+  #      axes = F,
+  #      col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLAB])
+  # plot(towpaths, add = TRUE, lwd = 2, xpd = NA)
   
   ## Scenario 2: If there is a speck...
   if (any(temp_stn$AREA_KM2 < 1)) {
@@ -164,11 +170,11 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
                         relation = "intersects"))
     
     ## If so, convert the non-T area in the station as T
-    if (good_tow_in_station & any(temp_stn$TRAWLABLE == "Y")) {
+    if (good_tow_in_station & any(temp_stn$TRAWLAB == "Y")) {
       trawl_area <- subset(x = temp_stn,
-                           subset = temp_stn$TRAWLABLE == "Y")
+                           subset = temp_stn$TRAWLAB == "Y")
       non_trawl_area <- subset(x = temp_stn,
-                               subset = temp_stn$TRAWLABLE != "Y")
+                               subset = temp_stn$TRAWLAB != "Y")
       ## if the non-trawlable area consists of UKN and UT areas,
       ## then merge and dissolve into one geometry
       if (nrow(x = non_trawl_area) > 1)
@@ -180,20 +186,20 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
       temp_combined_geo$FLAG <- 3
       ## and then replace the merged station in new_goa_stations_2025
       new_goa_stations_2025 <-
-        new_goa_stations_2025[new_goa_stations_2025$GOAGRID_ID != istation]
+        new_goa_stations_2025[new_goa_stations_2025$GOAGRID_ID != icell]
       new_goa_stations_2025 <- rbind(new_goa_stations_2025,
                                      temp_combined_geo)
-      print(paste("Station", istation, "in grid cell", icell,
+      print(paste("Station", icell, "in grid cell", icell,
                   "converted to TRAWLABLE"))
     }
     ## Scenario 4-10: if there are no tows that
     if ((!good_tow_in_station) |
-        (good_tow_in_station & !any(temp_stn$TRAWLABLE %in% "Y")) ) {
+        (good_tow_in_station & !any(temp_stn$TRAWLAB %in% "Y")) ) {
       larger_area <- temp_stn[which.max(x = temp_stn$AREA_KM2)]
       other_area <- temp_stn[-which.max(x = temp_stn$AREA_KM2)]
       if (nrow(other_area) > 1) {
-        other_area$TRAWLABLE <-
-          other_area$TRAWLABLE[which.max(x = other_area$AREA_KM2)]
+        other_area$TRAWLAB <-
+          other_area$TRAWLAB[which.max(x = other_area$AREA_KM2)]
         other_area <- terra::combineGeoms(x = other_area[1],
                                           y =  other_area[2])
         other_area$AREA_KM2 <- terra::expanse(other_area) / 1000 / 1000
@@ -205,7 +211,7 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
       ## Scenario 4: if the lesser area has an area > 5 km2, then station is
       ## turned to unknown
       if (other_area$AREA_KM2 > 5) {
-        temp_combined_geo$TRAWLABLE <- "UNK"
+        temp_combined_geo$TRAWLAB <- "UNK"
         temp_combined_geo$FLAG <- 4
       }
       
