@@ -1,8 +1,8 @@
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Project:       Create 2025 GOA Stratum Polygons
 ## Author:        Zack Oyafuso (zack.oyafuso@noaa.gov)
-## Description:   Workflow to take the new depth-based stratum boundaries from 
-##                Mark Zimmerman's latest 2024 bathymetry compilation and 
+## Description:   Create new depth-based stratum boundaries from Mark 
+##                Zimmerman's latest 2023 bathymetry compilation and 
 ##                create new stratum polygons for the 2025 GOA survey.  
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -14,6 +14,8 @@ rm(list = ls())
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 library(terra)
 library(akgfmaps)
+library(rmapshaper)
+library(sf)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Import input data ----
@@ -104,18 +106,22 @@ for (idistrict in unique(x = depth_mods$NMFS_AREA)) { ## Loop over area --st.
   
   ## Convert discretized raster to polygon based on those discrete values
   strata_poly <- terra::as.polygons(x = district_bathy)
+  strata_poly <- 
+    terra::vect(x = rmapshaper::ms_simplify(input = sf::st_as_sf(strata_poly), 
+                                            keep = 0.05 ))
+  
   strata_poly_disagg <- terra::disagg(x = strata_poly)
   strata_poly_disagg$area <- terra::expanse(x = strata_poly_disagg) / 1e6
   
   ## The literal assignment of raster cells to strata creates a lot of very
   ## small "specks" so in this step we dissolve these specks less than a certain 
-  ## chosen area (5 km2) into their surrounding larger stratum polygons. 
+  ## chosen area (25 km2) into their surrounding larger stratum polygons. 
   ## 
   ## First, for each stratum polygon, calculate adjacent polygons. The argument 
   ## type == "rook" excludes polygons that touch at a single node.
   nearest_poly <- terra::adjacent(x = strata_poly_disagg, type = "intersects")
   
-  specks <- which(x = strata_poly_disagg$area < 5)
+  specks <- which(x = strata_poly_disagg$area < 25)
   
   for (i in 1:length(x = specks)) {
     
