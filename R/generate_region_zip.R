@@ -9,9 +9,9 @@
 #' @export
 #' @import sf here
 #' @examples
-#' # generate_region_zip(select.region = "ebs", set.crs = "WGS84")
+#' # generate_region_zip(select.region = "ebs")
 
-generate_region_zip <- function(select.region, set.crs = "EPSG:4326", zip.path = NULL) {
+generate_region_zip <- function(select.region, set.crs = "EPSG:4269", zip.path = NULL) {
 
   zip_path <- zip.path
 
