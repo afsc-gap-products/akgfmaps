@@ -12,7 +12,7 @@
 #' @export
 
 get_base_layers <- function(select.region,
-                            set.crs = "+proj=longlat +datum=NAD83",
+                            set.crs = "EPSG:4269",
                             use.survey.bathymetry = TRUE,
                             include.corners = NULL,
                             split.land.at.180 = TRUE,
