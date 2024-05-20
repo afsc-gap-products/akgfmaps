@@ -2,5 +2,8 @@
 ^\.Rproj\.user$
 ^doc$
 ^Meta$
-/assets/
-/demo/
+assets
+demo
+analysis
+paper
+plots
