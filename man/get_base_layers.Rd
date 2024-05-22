@@ -6,10 +6,11 @@
 \usage{
 get_base_layers(
   select.region,
-  set.crs = "+proj=longlat +datum=NAD83",
+  set.crs = "EPSG:4269",
+  use.survey.bathymetry = TRUE,
   include.corners = NULL,
+  split.land.at.180 = TRUE,
   fix.invalid.geom = TRUE,
-  split.land.at.180 = FALSE,
   ...
 )
 }
@@ -20,9 +21,10 @@ get_base_layers(
 
 \item{include.corners}{Logical. Should corner stations be returned in the survey grid? Only for the EBS.}
 
-\item{fix.invalid.geom}{Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()? Default = TRUE.}
+\item{split.land.at.180}{Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = TRUE.}
 
-\item{split.land.at.180}{Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = FALSE.}
+\item{fix.invalid.geom}{Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?}
+
 }
 \value{
 A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
