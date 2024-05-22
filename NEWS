@@ -67,9 +67,34 @@ Zimmermann, M., Prescott, M.M., Haeussler, P.J., 2019. Bathymetry
   https://doi.org/10.3390/geosciences9100409
 
 
-
-akgfmaps 3.5.1 (March 25, 2024)
+akgfmaps 3.5.3 (May 22, 2024)
 ----------------------------------------------------------------
+
+BUG FIX
+
+- NMFS Statistical Area 659 is now included in the output of
+  get_nmfs_areas(). It had been erroneously not included in the
+  output.
+
+
+akgfmaps 3.5.2 (May 20, 2024)
+----------------------------------------------------------------
+
+IMPROVEMENTS
+
+- Replace PROJ4 strings with EPSG IDs.
+
+
+akgfmaps 3.5.1 (April 10, 2024)
+----------------------------------------------------------------
+
+IMPROVEMENTS
+
+- get_base_layers() now accepts an argument to split land
+  polygons into east and west when set.crs is a geographic
+  coordinate system. The default is to split using
+  split.land.at.180 = TRUE. Set this to FALSE when shifting
+  coordinates afterwards.
 
 NEW FEATURES
 
