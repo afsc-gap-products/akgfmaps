@@ -59,9 +59,10 @@ latlon_crs <- "+proj=longlat +datum=NAD83"
 ## Intersect the new stratum polygons with the 5x5 km grid to create new
 ## station polygons. 
 goa_stations_2025 <- 
-  terra::intersect(x = goa_grid_2025[, "STATION"], 
+  terra::intersect(x = goa_grid_2025[, "GRIDID"], 
                    y = goa_strata_2025[, c("NMFS_AREA", "STRATUM")])
-goa_stations_2025$GOAGRID_ID <- 1:nrow(x = goa_stations_2025)
+goa_stations_2025$STATION <- paste0(goa_stations_2025$GRIDID, "-", 
+                                    goa_stations_2025$STRATUM)
 
 ## Intersect the station polygons with the trawl_polygons to calculate any new 
 ## stations with mixed trawlability information. 
@@ -119,16 +120,16 @@ new_goa_stations_2025$TRAWLAB[is.na(x = new_goa_stations_2025$TRAWLAB)] <- "UNK"
 new_goa_stations_2025$FLAG <- 1
 
 stns_idx_mixed_trawl_info <- 
-  which(x = table(new_goa_stations_2025$GOAGRID_ID) > 1)
-stns_mixed_trawl_info <- as.numeric(x = names(x = stns_idx_mixed_trawl_info))
+  which(x = table(new_goa_stations_2025$STATION) > 1)
+stns_mixed_trawl_info <- names(x = stns_idx_mixed_trawl_info)
 
 for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
   
   ## Subset stations within icell
   temp_stn <- subset(x = new_goa_stations_2025,
-                      subset = new_goa_stations_2025$GOAGRID_ID == icell)
+                      subset = new_goa_stations_2025$STATION == icell)
   
-  # plot(temp_stn, 
+  # plot(temp_stn,
   #      axes = F,
   #      col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLAB])
   # plot(towpaths, add = TRUE, lwd = 2, xpd = NA)
@@ -147,10 +148,10 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
     
     ## and then replace the merged station in new_goa_stations_2025
     new_goa_stations_2025 <-
-      new_goa_stations_2025[new_goa_stations_2025$GOAGRID_ID != icell]
+      new_goa_stations_2025[new_goa_stations_2025$STATION != icell]
     new_goa_stations_2025 <- rbind(new_goa_stations_2025,
                                    temp_combined_geo)
-    print(paste("GOAGRID_ID", icell, "in grid cell", temp_combined_geo$STATION, 
+    print(paste("STATION", icell, "in grid cell", temp_combined_geo$GRIDID, 
                 "had a speck"))
     
     
@@ -186,7 +187,7 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
       temp_combined_geo$FLAG <- 3
       ## and then replace the merged station in new_goa_stations_2025
       new_goa_stations_2025 <-
-        new_goa_stations_2025[new_goa_stations_2025$GOAGRID_ID != icell]
+        new_goa_stations_2025[new_goa_stations_2025$STATION != icell]
       new_goa_stations_2025 <- rbind(new_goa_stations_2025,
                                      temp_combined_geo)
       print(paste("Station", icell, "in grid cell", icell,
@@ -253,11 +254,11 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
       
       ## and then replace the merged station in new_goa_stations_2025
       new_goa_stations_2025 <-
-        new_goa_stations_2025[new_goa_stations_2025$GOAGRID_ID != icell]
+        new_goa_stations_2025[new_goa_stations_2025$STATION != icell]
       new_goa_stations_2025 <- rbind(new_goa_stations_2025,
                                      temp_combined_geo)
-      print(paste0("GOAGRID_ID ", icell, " in grid cell ", 
-                   temp_combined_geo$STATION, " converted to ", 
+      print(paste0("STATION ", icell, " in grid cell ", 
+                   temp_combined_geo$GRIDID, " converted to ", 
                    temp_combined_geo$TRAWLAB, ". Finished with ", 
                    which(x = stns_mixed_trawl_info == icell), " of ",
                    length(x = stns_mixed_trawl_info), " instances."))
