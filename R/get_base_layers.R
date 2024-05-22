@@ -15,11 +15,7 @@ get_base_layers <- function(select.region,
                             use.survey.bathymetry = TRUE,
                             include.corners = NULL,
                             split.land.at.180 = TRUE,
-                            fix.invalid.geom = TRUE) {
-                            set.crs = "+proj=longlat +datum=NAD83",
-                            include.corners = NULL,
                             fix.invalid.geom = TRUE,
-                            split.land.at.180 = FALSE,
                             ...) {
 
   # Return a warning when use.survey.bathymetry = TRUE
