@@ -1,3 +1,72 @@
+akgfmaps 4.0.0 (Planned release: December 15, 2024)
+----------------------------------------------------------------
+
+This significant update replaces outdated shapefiles from multi-
+ple survey regions and standardizes spatial data structures
+across regions. This update helps harmonize survey spatial prod-
+ucts but breaks backwards compatibility.
+
+MAJOR CHANGES TO SHAPEFILES
+
+  1) Field names for STRATUM, STATIONID, and GRIDID fields have
+     been standardized across shapefiles and regions.
+  2) Added an AREAID fields to stratum shapefiles that correspond
+     with AREAIDs in AFSC/RACE/GAP's GAP_PRODUCTS schema.
+  2) Removed precalculated areas and perimeters from shapefiles
+     to address area calculation errors and inconsistencies.
+  3) Replaced 1998 GEBCO bathymetry linestring shapefiles with
+     a single file generated from the best available bathymetry,
+     i.e., a combination of 2024 GEBCO, 100-m resolution
+     bathymetry from Prescott and Zimmermann (2015), Zimmermann
+     and Prescott (2018), Zimmermann et al. (2019), and
+     Zimmermann and Prescott (2021).
+  4) Replaced EBS Slope stratum shapefiles with one dervied from
+     newer bathymetry. EBS shelf and slope stratum boundaries were
+     redefined to remove both gaps and overlap.
+  5) Replace deprecated 1998 Alaska Department of Natural
+     Resources coastline shapefile (1:63,360 scale) with a version
+     released in 2017.
+  6) Closed erroneous gap through the middle of Wrangel Island
+     (Russia) at 180 W/E.
+  7) Removed eastern portions of Canada shapefile.
+  8) Added crab stratum shapefiles for the EBS
+
+FUNCTIONALITY CHANGES
+
+- The use.survey.bathymetry argument in get_base_layers() is now
+  deprecated because they are unnecessary now that EBS bathymetry
+  files have been updated.
+- Added a split.lon.at.180 argument to get_base_layers(), which
+  splits the land shapefile at 180 longitude when a geographic
+  coordinate system is used.
+
+NEW FEATURES
+
+- Added a new get_crab_strata() function that retrieves crab
+  stratum layers. Support for Bristol Bay RKC, Pribilof Islands
+  RKC, Pribilof Islands BKC, St. Matthew's BKC, Norton Sound
+  RKC, eastern Bering Sea snow crab, and eastern Bering Sea
+  Tanner crab.
+
+SEE ALSO
+
+Prescott, M.M. and Zimmermann, M. 2015. Smooth sheet bathymetry
+  of Norton Sound. http://doi.org/10.7289/V5V69GJ9
+
+Zimmermann, M., Prescott, M.M., 2018. Bathymetry and canyons of
+  the eastern Bering Sea slope. Geosci. 8.
+  https://doi.org/10.3390/geosciences8050184
+
+Zimmermann, M., Prescott, M.M., 2021. Passes of the Aleutian
+  Islands: First detailed description. Fish. Oceanogr. 30, 280–
+  299. https://doi.org/10.1111/fog.12519
+
+Zimmermann, M., Prescott, M.M., Haeussler, P.J., 2019. Bathymetry
+  and geomorphology of Shelikof Strait and the western Gulf of
+  Alaska. Geosci. 9, 1–31.
+  https://doi.org/10.3390/geosciences9100409
+
+
 akgfmaps 3.5.3 (May 22, 2024)
 ----------------------------------------------------------------
 
