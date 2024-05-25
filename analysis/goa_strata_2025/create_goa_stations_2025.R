@@ -100,7 +100,7 @@ goa_hauls_from_1990 <-
                            END AS PERFORMANCE
                            FROM RACEBASE.HAUL
                            WHERE REGION = 'GOA'
-                           --AND CRUISE >= 199000
+                           AND CRUISE >= 199000
                            ORDER BY YEAR")
 names(x = towpaths) <- "HAULJOIN"
 towpaths <- merge(x = towpaths,

@@ -29,9 +29,9 @@ library(sf)
 depth_mods <-
   read.csv(file = "analysis/goa_strata_2025/depth_modifications_2025.csv")
 depth_mods <- rbind(depth_mods,
-                    data.frame(NMFS_AREA = "Southeast Inside", 
-                               REP_AREA = 659,
-                               STRATUM = 61,
+                    data.frame(NMFS_AREA = c("Southeast Inside", "NMFS519"), 
+                               REP_AREA = c(659, 519),
+                               STRATUM = c(52, 16),
                                DEPTH_MIN_M = 1,
                                DEPTH_MAX_M = 1000))
 
@@ -69,23 +69,21 @@ bathy <- terra::crop(x = bathy, y = goa_domain, mask = TRUE)
 ##   historically used INPFC areas. Reproject `nmfs` shape object to the same
 ##   projection as the `bathy` raster and add management area names. 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# nmfs <- 
-# terra::vect(x = akgfmaps::get_nmfs_areas(set.crs = terra::crs(x = bathy)) )
+nmfs <-
+terra::vect(x = akgfmaps::get_nmfs_areas(set.crs = terra::crs(x = bathy)) )
 
-# nmfs <- terra::project(x = nmfs[nmfs$REP_AREA %in% c(610, 620, 630, 640, 650, 659),
-#                                 "REP_AREA"], 
-#                        terra::crs(x = goa_domain))
-nmfs <- terra::project(x = terra::vect(x = akmarineareas2::nmfs),
+nmfs <- terra::project(x = nmfs[nmfs$REP_AREA %in% c(519, 610, 620, 630, 640, 
+                                                     650, 659),
+                                "REP_AREA"],
                        terra::crs(x = goa_domain))
-nmfs <- nmfs[nmfs$NMFS_REP_AREA %in% c(610, 620, 630, 640, 650, 659),
-             c("NMFS_REP_AREA")]
 
-nmfs$NMFS_AREA <- c("610" = "Shumagin",
+nmfs$NMFS_AREA <- c("519" = "NMFS519",
+                    "610" = "Shumagin",
                     "620" = "Chirikof",
                     "630" = "Kodiak",
                     "640" = "West Yakutat",
                     "650" = "Southeast Outside",
-                    "659" = "Southeast Inside")[paste(nmfs$NMFS_REP_AREA)]
+                    "659" = "Southeast Inside")[paste(nmfs$REP_AREA)]
 # nmfs <- terra::crop(x = nmfs, y = goa_domain)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -97,10 +95,10 @@ strata_list <- list()
 for (idistrict in unique(x = depth_mods$NMFS_AREA)) { ## Loop over area --st.
   
   ## Mask bathymetry raster to just the nmfs management area and goa_domain
-  district_outline <- terra::mask(x = nmfs[nmfs$NMFS_AREA == idistrict],
-                                  mask = goa_domain)
-  district_bathy <- terra::mask(x = bathy,
-                                mask = district_outline)
+  district_outline <- terra::crop(x = nmfs[nmfs$NMFS_AREA == idistrict], 
+                                  y = goa_domain)
+  district_bathy <- terra::mask(x = bathy, mask = district_outline)
+  district_bathy <- terra::crop(x = district_bathy, y = district_outline)
   
   ## Define modified stratum depth boundaries
   depth_boundary <- subset(x = depth_mods,
@@ -168,10 +166,14 @@ for (idistrict in unique(x = depth_mods$NMFS_AREA)) { ## Loop over area --st.
   strata_poly_disagg <- terra::disagg(x = strata_poly_agg)
   strata_poly_disagg$area <- terra::expanse(x = strata_poly_disagg,
                                             unit = "km")
+  if (idistrict == c("Southeast Inside") )
+    strata_poly_disagg <- strata_poly_disagg[strata_poly_disagg$area > 100, ]
+  if (idistrict == c("NMFS519") )
+    strata_poly_disagg <- strata_poly_disagg[strata_poly_disagg$area > 10, ]
   
   nearest_poly <- terra::adjacent(x = strata_poly_disagg, type = "intersects")
   
-  for (i in which(strata_poly_disagg$area < 5)) {
+  for (i in which(strata_poly_disagg$area < 25)) {
     temp_speck <- strata_poly_disagg[i, ]
     adj_polys <- nearest_poly[nearest_poly[, 2] == i, 1]
     
