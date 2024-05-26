@@ -71,20 +71,20 @@ nmfs <- nmfs[nmfs$REP_AREA %in% c(519, 610, 620, 630, 640, 650, 659), "REP_AREA"
 old_deep_strata <-
   terra::vect(x = goa_base$survey.strata[goa_base$survey.strata$STRATUM %in%
                                            c(510, 520, 530, 540, 550), ])
-old_deep_strata <- terra::aggregate(terra::buffer(x = old_deep_strata, width = 2*5000))
+old_deep_strata <- terra::aggregate(terra::buffer(x = old_deep_strata, width = 5*5000))
 
 nmfs_list <- list()
 
 for (iarea in c(610, 620, 630, 640, 650)) {
   nmfs_list <- c(nmfs_list, 
-    list(terra::crop(x = old_deep_strata,
-                       y = nmfs[nmfs$REP_AREA == iarea]) 
-    )
+                 list(terra::crop(x = old_deep_strata,
+                                  y = nmfs[nmfs$REP_AREA == iarea]) 
+                 )
   )
 }
 nmfs_list <- do.call(what = rbind, args = nmfs_list)
 
-  
+
 nmfs <- terra::union(terra::intersect(x = nmfs, y = goa_domain), 
                      nmfs_list)
 nmfs$REP_AREA[is.na(x = nmfs$REP_AREA)] <- c(610, 620, 630, 640, 650)
@@ -140,83 +140,65 @@ for (idistrict in unique(x = depth_mods$NMFS_AREA)) { ## Loop over area --st.
                                     include.lowest=TRUE)
   
   ## Convert discretized raster to polygon based on those discrete values
-  strata_poly <- terra::as.polygons(x = district_bathy)
-  # strata_poly <- 
-  #   terra::vect(x = rmapshaper::ms_simplify(input = sf::st_as_sf(strata_poly), 
-  #                                           keep = 0.05 ))
+  strata_poly_agg <- terra::as.polygons(x = district_bathy)
+  # strata_poly_agg <- terra::vect(x = rmapshaper::ms_simplify(input = sf::st_as_sf(strata_poly_agg),
+  #                                                            keep = 0.05 ))
+  strata_poly_agg$area <- terra::expanse(x = strata_poly_agg) / 1e6
   
-  strata_poly_disagg <- terra::disagg(x = strata_poly)
-  strata_poly_disagg$area <- terra::expanse(x = strata_poly_disagg) / 1e6
-  strata_poly_disagg[order(strata_poly_disagg$area), ]
-  
-  ## The literal assignment of raster cells to strata creates a lot of very
-  ## small "specks" so in this step we dissolve these specks less than a certain 
-  ## chosen area (25 km2) into their surrounding larger stratum polygons. 
-  ## 
-  ## First, for each stratum polygon, calculate adjacent polygons. The argument 
-  ## type == "rook" excludes polygons that touch at a single node.
-  nearest_poly <- terra::adjacent(x = strata_poly_disagg, type = "intersects")
-  
-  specks <- which(x = strata_poly_disagg$area < 25)
-  
-  for (i in 1:length(x = specks)) {
+  still_needs_work <- T
+  while (still_needs_work) {
+    strata_poly_disagg <- terra::disagg(x = strata_poly_agg)
+    strata_poly_disagg$area <- terra::expanse(x = strata_poly_disagg) / 1e6
     
-    ## isolate the speck
-    temp_speck <- strata_poly_disagg[specks[i], ]
+    if (idistrict == c("Southeast Inside") )
+      strata_poly_disagg <- strata_poly_disagg[strata_poly_disagg$area > 100, ]
+    if (idistrict == c("NMFS519") )
+      strata_poly_disagg <- strata_poly_disagg[strata_poly_disagg$area > 10, ]
     
-    ## isolate the adjacent polygons
-    adj_polys <- nearest_poly[nearest_poly[, 2] == specks[i], 1]
+    neighbors <- terra::adjacent(x = strata_poly_disagg, 
+                                 type = "intersects", 
+                                 symmetrical = T, pairs = F)
     
-    if (length(x = adj_polys) != 0) {
-      ## assign the speck to the adjacent polygon with the highest area
-      adj_poly <- adj_polys[which.max(x = strata_poly_disagg$area[adj_polys])]
-      strata_poly_disagg$GOA_bathy[specks[i]] <-
-        strata_poly_disagg$GOA_bathy[adj_poly]
+    speck_idx <- which(strata_poly_disagg$area < 25 & rowSums(x = neighbors) != 0)
+    speck_report <- data.frame()
+    cat(paste(idistrict, length(x = speck_idx), "specks being worked on\n"))
+    
+    for( temp_speck in speck_idx ) {
+      adj_polys <- which(neighbors[temp_speck, ] == T)
+      parent_poly <- adj_polys[which.max(x = strata_poly_disagg$area[adj_polys])]
+      
+      speck_report <- 
+        rbind(speck_report, 
+              data.frame(
+                speck = temp_speck,
+                speck_stratum = strata_poly_disagg$GOA_bathy[temp_speck],
+                parent_poly = parent_poly,
+                parent_stratum = strata_poly_disagg$GOA_bathy[parent_poly])
+        )
+      
+      strata_poly_disagg$GOA_bathy[temp_speck] <- 
+        strata_poly_disagg$GOA_bathy[parent_poly]
     }
-    if (i %% 500 == 0) 
-      print(paste("Finished reassigning via dissolving", i, "of", 
-                  length(x = specks), idistrict, "speck areas"))
-  }
-  
-  ## aggregate the newly assigned specks to their new strata
-  strata_poly_agg <- terra::aggregate(x = strata_poly_disagg,
-                                      by = "GOA_bathy",
-                                      fun = "sum",
-                                      count = F)
-  
-  ## After this round of speck dissolution, some specks < 5 km2 remain so we do 
-  ## another round of speck dissolution. 
-  strata_poly_disagg <- terra::disagg(x = strata_poly_agg)
-  strata_poly_disagg$area <- terra::expanse(x = strata_poly_disagg,
-                                            unit = "km")
-  if (idistrict == c("Southeast Inside") )
-    strata_poly_disagg <- strata_poly_disagg[strata_poly_disagg$area > 100, ]
-  if (idistrict == c("NMFS519") )
-    strata_poly_disagg <- strata_poly_disagg[strata_poly_disagg$area > 10, ]
-  
-  strata_poly_disagg[order(strata_poly_disagg$area), ]
-  nearest_poly <- terra::adjacent(x = strata_poly_disagg, type = "intersects")
-  specks <- which(x = strata_poly_disagg$area < 25)
-  
-  for (i in specks) {
-    temp_speck <- strata_poly_disagg[i, ]
-    adj_polys <- nearest_poly[nearest_poly[, 2] == i, 1]
     
-    if (length(adj_polys) != 0) {
-      adj_poly <- adj_polys[which.max(x = strata_poly_disagg$area[adj_polys])]
-      strata_poly_disagg$GOA_bathy[i] <- strata_poly_disagg$GOA_bathy[adj_poly]
+    still_needs_work <- 
+      !all(speck_report$speck_stratum == speck_report$parent_stratum)
+    
+    if (!still_needs_work & !idistrict %in% c("NMFS519", "Southeast Inside")) {
+      orphans <- which(rowSums(x = neighbors) == 0)
+      strata_poly_disagg <- strata_poly_disagg[-orphans]
     }
+    
+    strata_poly_agg <- terra::aggregate(x = strata_poly_disagg,
+                                        by = "GOA_bathy",
+                                        fun = "sum",
+                                        count = F)
+    strata_poly_agg$area <- terra::expanse(x = strata_poly_agg) / 1e6
+    
   }
-  
-  ## Aggregate the newly assigned specks to their new strata
-  strata_poly_agg <- terra::aggregate(x = strata_poly_disagg,
-                                      by = "GOA_bathy",
-                                      fun = "sum",
-                                      count = F)
   
   ## Create dataframe of stratum information
-  strata_poly[, names(x = depth_mods)] <- 
-    strata_poly_agg[, names(x = depth_mods)] <-
+  # strata_poly[, names(x = depth_mods)] <-
+  strata_poly_agg[, names(x = depth_mods)] <-
     subset(x = depth_mods, subset = NMFS_AREA == idistrict)
   
   ## Calculate the total area and perimeter of the strata.
