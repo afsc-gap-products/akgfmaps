@@ -64,6 +64,10 @@ goa_stations_2025 <-
 goa_stations_2025$STATION <- paste0(goa_stations_2025$GRIDID, "-", 
                                     goa_stations_2025$STRATUM)
 
+within_legacy_footprint <- is.related(x = goa_stations_2025, 
+                                      y = trawl_polygons, 
+                                      "intersects")
+
 ## Intersect the station polygons with the trawl_polygons to calculate any new 
 ## stations with mixed trawlability information. 
 goa_stations_2025_trawl <- terra::intersect(x = goa_stations_2025, 
@@ -113,7 +117,8 @@ towpaths <- terra::project(x = towpaths, "EPSG:3338")
 ##   trawlability information of the portions of stations that are < 1 km2 into
 ##   the larger portion of the station with the different trawlability info.
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-new_goa_stations_2025 <- goa_stations_2025_trawl
+new_goa_stations_2025 <- rbind(goa_stations_2025_trawl, 
+                               goa_stations_2025[!within_legacy_footprint] ) 
 new_goa_stations_2025$TRAWLAB[is.na(x = new_goa_stations_2025$TRAWLAB)] <- "UNK"
 
 ## The default scenario for a new station is no change, Scenario 1
@@ -127,42 +132,18 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
   
   ## Subset stations within icell
   temp_stn <- subset(x = new_goa_stations_2025,
-                      subset = new_goa_stations_2025$STATION == icell)
+                     subset = new_goa_stations_2025$STATION == icell)
   
   # plot(temp_stn,
   #      axes = F,
   #      col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLAB])
   # plot(towpaths, add = TRUE, lwd = 2, xpd = NA)
   
-  ## Scenario 2: If there is a speck...
-  if (any(temp_stn$AREA_KM2 < 1)) {
-    ## Otherwise, subset the station from x
-    major_stn <- temp_stn[which.max(x = temp_stn$AREA_KM2)]
-    ## and subset the speck station
-    speck_stn <- temp_stn[temp_stn$AREA_KM2 < 1]
-    if (nrow(x = speck_stn) > 1)
-      speck_stn <- terra::combineGeoms(x = speck_stn[1], y = speck_stn[2])
-    ## then absorb the speck station into the bigger station
-    temp_combined_geo <- terra::combineGeoms(x = major_stn, y = speck_stn)
-    temp_combined_geo$FLAG <- 2
-    
-    ## and then replace the merged station in new_goa_stations_2025
-    new_goa_stations_2025 <-
-      new_goa_stations_2025[new_goa_stations_2025$STATION != icell]
-    new_goa_stations_2025 <- rbind(new_goa_stations_2025,
-                                   temp_combined_geo)
-    print(paste("STATION", icell, "in grid cell", temp_combined_geo$GRIDID, 
-                "had a speck"))
-    
-    
-  } else({
+  
+  {
     ## Scenario 3: station is a mixture of T area (with good tows paths)
     ## and either UKN or UT area. Since there is a good tow in the station,
     ## the whole station is turned to T.
-    # good_tows <- subset(x = towpaths,
-    #                     subset = towpaths$PERFORMANCE == T &
-    #                       towpaths$STATION %in%
-    #                       unique(temp_stn$STATION))
     
     ## Query whether there are any good tows in the mixed station
     good_tow_in_station <-
@@ -192,6 +173,7 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
                                      temp_combined_geo)
       print(paste("Station", icell, "in grid cell", icell,
                   "converted to TRAWLABLE"))
+      next
     }
     ## Scenario 4-10: if there are no tows that
     if ((!good_tow_in_station) |
@@ -262,9 +244,33 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
                    temp_combined_geo$TRAWLAB, ". Finished with ", 
                    which(x = stns_mixed_trawl_info == icell), " of ",
                    length(x = stns_mixed_trawl_info), " instances."))
+      next
     }
-  })
+  }
   # } ## Loop over mixed stations -- end
+  
+  ## Scenario 2: If there is a speck...
+  if (any(temp_stn$AREA_KM2 < 1)) {
+    ## Otherwise, subset the station from x
+    major_stn <- temp_stn[which.max(x = temp_stn$AREA_KM2)]
+    ## and subset the speck station
+    speck_stn <- temp_stn[temp_stn$AREA_KM2 < 1]
+    if (nrow(x = speck_stn) > 1)
+      speck_stn <- terra::combineGeoms(x = speck_stn[1], y = speck_stn[2])
+    ## then absorb the speck station into the bigger station
+    temp_combined_geo <- terra::combineGeoms(x = major_stn, y = speck_stn)
+    temp_combined_geo$FLAG <- 2
+    
+    ## and then replace the merged station in new_goa_stations_2025
+    new_goa_stations_2025 <-
+      new_goa_stations_2025[new_goa_stations_2025$STATION != icell]
+    new_goa_stations_2025 <- rbind(new_goa_stations_2025,
+                                   temp_combined_geo)
+    print(paste("STATION", icell, "in grid cell", temp_combined_geo$GRIDID, 
+                "had a speck"))
+    next
+    
+  } 
   
 } ## Loop over cells -- end
 
