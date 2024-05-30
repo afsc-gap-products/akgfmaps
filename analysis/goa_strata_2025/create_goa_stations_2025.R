@@ -14,6 +14,7 @@ rm(list = ls())
 library(terra)
 library(akgfmaps)
 library(gapindex)
+library(rmapshaper)
 # library(devtools)
 # devtools::install_github("afsc-gap-products/navmaps")
 
@@ -50,6 +51,8 @@ goa_grid_2025 <-
 goa_strata_2025 <- 
   terra::vect(x = "analysis/goa_strata_2025/goa_strata_2025.gpkg")
 
+goa_strata_2025 <- terra::vect(rmapshaper::ms_simplify(input = sf::st_as_sf(goa_strata_2025), keep_shapes = T, keep = 0.05))
+
 latlon_crs <- "+proj=longlat +datum=NAD83"
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -64,28 +67,24 @@ goa_stations_2025 <-
 goa_stations_2025$STATION <- paste0(goa_stations_2025$GRIDID, "-", 
                                     goa_stations_2025$STRATUM)
 
-within_legacy_footprint <- is.related(x = goa_stations_2025, 
-                                      y = trawl_polygons, 
-                                      "intersects")
-
 ## Intersect the station polygons with the trawl_polygons to calculate any new 
 ## stations with mixed trawlability information. 
 goa_stations_2025_trawl <- terra::intersect(x = goa_stations_2025, 
                                             y = trawl_polygons)
 
 ## Calculate perimeter of each new station
-goa_stations_2025_trawl$PERIM_KM <- 
-  terra::perim(x = goa_stations_2025_trawl) / 1e3
+# goa_stations_2025_trawl$PERIM_KM <- 
+#   terra::perim(x = goa_stations_2025_trawl) / 1e3
 
 ## Calculate area of each new station
-goa_stations_2025_trawl$AREA_KM2 <- 
+goa_stations_2025_trawl$AREA_KM2 <-
   terra::expanse(x = goa_stations_2025_trawl) / 1e6
 
 ## Calculate centroid lat/lon location each new station
-goa_stations_2025_trawl[, c("LONGITUDE_DD", "LATITUDE_DD")] <-
-  terra::geom(terra::centroids(x = terra::project(x = goa_stations_2025_trawl,
-                                                  y = latlon_crs),
-                               inside = TRUE))[, c("x", "y")]
+# goa_stations_2025_trawl[, c("LONGITUDE_DD", "LATITUDE_DD")] <-
+#   terra::geom(terra::centroids(x = terra::project(x = goa_stations_2025_trawl,
+#                                                   y = latlon_crs),
+#                                inside = TRUE))[, c("x", "y")]
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Import tow data
@@ -113,13 +112,45 @@ towpaths <- merge(x = towpaths,
 towpaths <- terra::project(x = towpaths, "EPSG:3338")
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##   Speck dissoluion: for grid cells that are > 5 km2, dissolve the
-##   trawlability information of the portions of stations that are < 1 km2 into
-##   the larger portion of the station with the different trawlability info.
+##   There are some station areas that are cut off due to being at the outside
+##   of the legacy goa footprint. The main reason this happens is becuase 
+##   the deeper end of the survey footprint (1000 m) extends past the legacy 
+##   GOA survey footprint and thus is cut off when the trawlability information
+##   from the legacy GOA stations are intersected with the new GOA stations. 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-new_goa_stations_2025 <- rbind(goa_stations_2025_trawl, 
-                               goa_stations_2025[!within_legacy_footprint] ) 
+
+## Isolate the area in `goa_stations_2025` is truncated by 
+## `goa_stations_2025_trawl`, label these areas with unknown trawlability,
+## and calculate the area
+outside_legacy_footprint <- terra::vect(
+  x = rmapshaper::ms_erase(target = sf::st_as_sf(goa_stations_2025),
+                           erase = sf::st_as_sf(goa_stations_2025_trawl),
+                           remove_slivers = TRUE)
+)
+outside_legacy_footprint$TRAWLAB <- "UNK"
+outside_legacy_footprint$AREA_KM2 <- 
+  terra::expanse(x = outside_legacy_footprint, "km")
+
+## Append the area outside the legacy footprint to `goa_stations_2025_trawl`
+new_goa_stations_2025 <- rbind(goa_stations_2025_trawl,
+                               outside_legacy_footprint)
 new_goa_stations_2025$TRAWLAB[is.na(x = new_goa_stations_2025$TRAWLAB)] <- "UNK"
+
+## Aggregate new_goa_stations_2025 by station and trawlability
+new_goa_stations_2025 <- 
+  terra::aggregate(x = new_goa_stations_2025, 
+                   by = c("GRIDID", "NMFS_AREA", "STRATUM", 
+                          "STATION", "TRAWLAB"))[c("GRIDID", "NMFS_AREA", 
+                                                   "STRATUM", "STATION", 
+                                                   "TRAWLAB")]
+## Recalculate total area
+new_goa_stations_2025$AREA_KM2 <- 
+  terra::expanse(x = new_goa_stations_2025, "km")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##   Resolve stations with mixe trawlability information. First identify
+##   which stations have mixed trawlability info (`stns_idx_mixed_trawl_info`)
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## The default scenario for a new station is no change, Scenario 1
 new_goa_stations_2025$FLAG <- 1
@@ -128,17 +159,17 @@ stns_idx_mixed_trawl_info <-
   which(x = table(new_goa_stations_2025$STATION) > 1)
 stns_mixed_trawl_info <- names(x = stns_idx_mixed_trawl_info)
 
-for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
+for (icell in stns_mixed_trawl_info[-c(1:5394)]) { ## loop over cells -- start
   
   ## Subset stations within icell
   temp_stn <- subset(x = new_goa_stations_2025,
                      subset = new_goa_stations_2025$STATION == icell)
   
-  # plot(temp_stn,
-  #      axes = F,
-  #      col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLAB])
-  # plot(towpaths, add = TRUE, lwd = 2, xpd = NA)
-  
+  plot(temp_stn,
+       axes = F,
+       col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLAB])
+  plot(towpaths, add = TRUE, lwd = 2, xpd = NA)
+
   
   {
     ## Scenario 3: station is a mixture of T area (with good tows paths)
@@ -162,9 +193,19 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
       if (nrow(x = non_trawl_area) > 1)
         non_trawl_area <-
         terra::aggregate(x = non_trawl_area)
+      
       temp_combined_geo <-
-        terra::combineGeoms(x = trawl_area,
-                            y =  non_trawl_area)
+        tryCatch(
+          {
+            terra::combineGeoms(x = trawl_area,
+                                y =  non_trawl_area)
+          },
+          error = function(cond){
+            message("Cannot merge, skipping.")
+            return(trawl_area)
+          }
+        )
+
       temp_combined_geo$FLAG <- 3
       ## and then replace the merged station in new_goa_stations_2025
       new_goa_stations_2025 <-
@@ -178,18 +219,47 @@ for (icell in stns_mixed_trawl_info) { ## loop over cells -- start
     ## Scenario 4-10: if there are no tows that
     if ((!good_tow_in_station) |
         (good_tow_in_station & !any(temp_stn$TRAWLAB %in% "Y")) ) {
+      
       larger_area <- temp_stn[which.max(x = temp_stn$AREA_KM2)]
       other_area <- temp_stn[-which.max(x = temp_stn$AREA_KM2)]
-      if (nrow(other_area) > 1) {
-        other_area$TRAWLAB <-
-          other_area$TRAWLAB[which.max(x = other_area$AREA_KM2)]
-        other_area <- terra::combineGeoms(x = other_area[1],
-                                          y =  other_area[2])
-        other_area$AREA_KM2 <- terra::expanse(other_area) / 1000 / 1000
+      
+      if (nrow(x = other_area) > 1) {
+        other_area <- other_area[order(x = other_area$AREA_KM2,
+                                       decreasing = T)]
+        other_area$TRAWLAB <- "UNK"
+        
+        other_area <- 
+          tryCatch(
+            {
+              other_area <- terra::combineGeoms(x = other_area[1],
+                                                y =  other_area[2])
+            },
+            error = function(cond){
+              message("Cannot merge, skipping.")
+              return(other_area[1])
+            }
+          )
+        
+        
+        other_area$AREA_KM2 <- terra::expanse(other_area, "km") 
       }
       
-      temp_combined_geo <- terra::combineGeoms(x = larger_area,
-                                               y =  other_area)
+      temp_combined_geo <- larger_area
+      other_area_disagg <- terra::disagg(x = other_area)
+      for (ifrag in 1:nrow(x = other_area_disagg)) {
+        tryCatch(
+          {
+            temp_combined_geo <- 
+              terra::combineGeoms(x = temp_combined_geo,
+                                  y =  other_area_disagg[ifrag])
+          },
+          error = function(cond){
+            message("Cannot merge, skipping.")
+          }
+        )
+        
+        
+      }
       
       ## Scenario 4: if the lesser area has an area > 5 km2, then station is
       ## turned to unknown
