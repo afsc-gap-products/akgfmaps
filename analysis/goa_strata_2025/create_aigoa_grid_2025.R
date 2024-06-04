@@ -69,7 +69,7 @@ y_index$y_rank <- 1:nrow(x = y_index)
 coords_df <- coords_df |>
   dplyr::inner_join(y_index, by = "Y") |>
   dplyr::inner_join(x_index, by = "X") |>
-  dplyr::mutate(GRIDID = paste0(y_rank, "-", x_rank))
+  dplyr::mutate(GRIDID = paste0(x_rank, "-", y_rank))
 
 grid_poly$GRIDID <- coords_df$GRIDID
 
