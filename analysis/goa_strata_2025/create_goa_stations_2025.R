@@ -45,10 +45,11 @@ if (!file.exists("output/goa/shapefiles/goa_trawlwable_grid.shp")) {
 goa_stations_2023 <- 
   sf::st_read(dsn = "output/goa/shapefiles/goa_trawlwable_grid.shp")
 goa_stations_2023$TRAWLAB[is.na(x = goa_stations_2023$TRAWLAB)] <- "UNK"
+goa_stations_2023$TRAWLABLE <- goa_stations_2023$TRAWLAB
 
 ## Group the legacy GOA stations by trawlability status
 trawl_polygons <-
-  goa_stations_2023 %>% dplyr::group_by(TRAWLAB) %>% dplyr::summarize()
+  goa_stations_2023 %>% dplyr::group_by(TRAWLABLE) %>% dplyr::summarize()
 
 ## Import the new 5-km grid created using from create_aigoa_grid_2025.R
 goa_grid_2025 <- 
@@ -64,15 +65,11 @@ goa_strata_2025 <-
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Intersect the new stratum polygons with the 5x5 km grid to create new
-## station polygons. 
-# goa_stations_2025 <- 
-#   sf::st_intersection(x = goa_grid_2025[, "GRIDID"], 
-#                       y = goa_strata_2025[goa_strata_2025$NMFS_AREA == "Shumagin", c("NMFS_AREA", "STRATUM")])
-
-goa_stations_2025 <-
-  sf::st_intersection(x = goa_grid_2025[, "GRIDID"],
-                      y = goa_strata_2025[, c("NMFS_AREA", "STRATUM")])
-
+## station polygons.
+goa_stations_2025 <- sf::st_intersection(
+  x = goa_grid_2025[, "GRIDID"],
+  y = goa_strata_2025[, c("NMFS_AREA", "REP_AREA", "STRATUM")]
+)
 
 goa_stations_2025$STATION <- paste0(goa_stations_2025$GRIDID, "-", 
                                     goa_stations_2025$STRATUM)
@@ -145,7 +142,7 @@ outside_legacy_footprint <-
   sf::st_sf(sf::st_difference(x = goa_stations_2025,
                               y = sf::st_union(trawl_polygons)))
 ## Assign these station/station bits with unknown trawlability
-outside_legacy_footprint$TRAWLAB <- "UNK"
+outside_legacy_footprint$TRAWLABLE <- "UNK"
 # Calculate the area of each station/station bit
 outside_legacy_footprint$AREA_KM2 <- sf::st_area(x = outside_legacy_footprint)
 units(x = outside_legacy_footprint$AREA_KM2) <- "km2"
@@ -153,14 +150,14 @@ units(x = outside_legacy_footprint$AREA_KM2) <- "km2"
 ## Append the area outside the legacy footprint to `goa_stations_2025_trawl`
 goa_stations_2025_trawl <- dplyr::bind_rows(x = goa_stations_2025_trawl,
                                             y = outside_legacy_footprint)
-goa_stations_2025_trawl$TRAWLAB[is.na(x = goa_stations_2025_trawl$TRAWLAB)] <- "UNK"
+goa_stations_2025_trawl$TRAWLABLE[is.na(x = goa_stations_2025_trawl$TRAWLABLE)] <- "UNK"
 
 ## Merge any station bits outside the legacy GOA footprint with their respective
 ## station ID within the legacy GOA footprint. This step creates a new 2025
 ## GOA survey footprint.
 goa_stations_2025_trawl <-
   goa_stations_2025_trawl %>%
-  dplyr::group_by(GRIDID, NMFS_AREA, STRATUM, STATION, TRAWLAB) %>% 
+  dplyr::group_by(GRIDID, NMFS_AREA, REP_AREA, STRATUM, STATION, TRAWLABLE) %>% 
   dplyr::summarize()
 
 ## Recalculate total area of each station
@@ -194,7 +191,7 @@ for (istn in stns_mixed_trawl_info) { ## loop over affected stations -- start
   
   # plot(sf::st_geometry(temp_stn),
   #      axes = F,
-  #      col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLAB])
+  #      col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLABLE])
   # plot(sf::st_geometry(towpaths), add = TRUE, lwd = 2, xpd = NA)
   
   
@@ -209,43 +206,31 @@ for (istn in stns_mixed_trawl_info) { ## loop over affected stations -- start
                           sparse = F)) > 0
   
   ## If so, convert the non-T area in the station as T
-  if (good_tow_in_station & any(temp_stn$TRAWLAB == "Y")) {
+  if (good_tow_in_station & any(temp_stn$TRAWLABLE == "Y")) {
     
     temp_stn %>%
-      dplyr::group_by(GRIDID, NMFS_AREA, STRATUM, STATION) %>% 
+      dplyr::group_by(GRIDID,  NMFS_AREA, REP_AREA, STRATUM, STATION) %>% 
       dplyr::summarize() -> temp_stn
     
-    temp_stn$TRAWLAB <- "Y"
+    temp_stn$TRAWLABLE <- "Y"
     temp_stn$FLAG <- 1
     temp_stn$AREA_KM2 <- sf::st_area(x = temp_stn)
     units(x = temp_stn$AREA_KM2) <- "km2"
-    
-    ## and then replace the merged station in new_goa_stations_2025
-    updated_stations <- c(updated_stations, list(temp_stn))
-    
-    cat(paste("Station", istn, "in grid cell", istn, 
-              "converted to T. Finished with", 
-              which(x = stns_mixed_trawl_info == istn), "of",
-              length(x = stns_mixed_trawl_info), "instances.\n"))
-  }
-  
-  ## Scenario 2-8: if there are no tows that
-  if ( (!good_tow_in_station) |
-       (good_tow_in_station & !any(temp_stn$TRAWLAB %in% "Y")) ) {
+  } else {
     
     ## Subset any stns features that are either trawlable (Y) or unknown (UNK) 
-    open_area <- subset(x = temp_stn, subset = TRAWLAB %in% c("UNK", "Y"))
+    open_area <- subset(x = temp_stn, subset = TRAWLABLE %in% c("UNK", "Y"))
     open_area$AREA_KM2 <- sf::st_area(x = open_area)
     units(x = open_area$AREA_KM2) <- "km2"
     
     ## Subset any untrawlable station features
-    ut_area <- subset(x = temp_stn, subset = TRAWLAB %in% c("N"))
+    ut_area <- subset(x = temp_stn, subset = TRAWLABLE %in% c("N"))
     ut_area$AREA_KM2 <- sf::st_area(x = ut_area)
     units(x = ut_area$AREA_KM2) <- "km2"
     
     ## Merge all station bits back together
     temp_stn %>%
-      dplyr::group_by(GRIDID, NMFS_AREA, STRATUM, STATION) %>% 
+      dplyr::group_by(GRIDID, NMFS_AREA, REP_AREA, STRATUM, STATION) %>% 
       dplyr::summarize() -> temp_stn
     
     ## Reassign trawlable status and flag 
@@ -253,14 +238,14 @@ for (istn in stns_mixed_trawl_info) { ## loop over affected stations -- start
     ## Scenario 2: If the total open area is >= 5km2, there's ample space to 
     ## search for a tow, reassign station as unknown trawlability
     if (as.numeric(x = sum(open_area$AREA_KM2)) >= 5) {
-      temp_stn$TRAWLAB <- "UNK"
+      temp_stn$TRAWLABLE <- "UNK"
       temp_stn$FLAG <- 2
     } else if (nrow(x = ut_area) > 0) {
       ## Scenario 3: If the total open area is < 5km2, and there is any portion 
       ## of the station that is untrawlable, turn the station to untrawlable 
       ## because the open area is < 5km2 and too small to search for a tow,
       ## effectively turning the station untrawlable.
-      temp_stn$TRAWLAB <- "N"
+      temp_stn$TRAWLABLE <- "N"
       temp_stn$FLAG <- 3
     } else {
       ## Scenario 4: If the total open area is < 5km2, and none of the station
@@ -270,31 +255,30 @@ for (istn in stns_mixed_trawl_info) { ## loop over affected stations -- start
       ## that is untrawlable to assign the whole station as untrawlable nor can
       ## the station be called trawlable because of the lack of a previously 
       ## good tow. 
-      temp_stn$TRAWLAB <- "UNK"
+      temp_stn$TRAWLABLE <- "UNK"
       temp_stn$FLAG <- 4
     }
   }
   ## and then replace the merged station in new_goa_stations_2025
   updated_stations <- c(updated_stations, list(temp_stn))
   cat(paste0("Station ", istn, " converted to ", 
-             temp_stn$TRAWLAB, ". Finished with ", 
+             temp_stn$TRAWLABLE, ". Finished with ", 
              which(x = stns_mixed_trawl_info == istn), " of ",
              length(x = stns_mixed_trawl_info), " instances.\n"))
 } ## loop over affected stations -- end
-
 
 ## Bind updated stations into one sf object
 updated_stations <- do.call(dplyr::bind_rows, updated_stations)
 
 ## Update newly trawlability-reassigned stations
 new_goa_stations_2025 <- dplyr::bind_rows(
-  new_goa_stations_2025[!new_goa_stations_2025$STATION %in% 
-                          updated_stations$STATION, ],
+  new_goa_stations_2025[!(new_goa_stations_2025$STATION %in% 
+                            updated_stations$STATION), ],
   updated_stations
 )
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##   Recalculate area of the new stations
+##   Recalculate area and centorid lat/lon of the new stations.
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 new_goa_stations_2025$AREA_KM2 <- sf::st_area(x = new_goa_stations_2025)
 units(x = new_goa_stations_2025$AREA_KM2) <- "km2"
@@ -302,15 +286,17 @@ units(x = new_goa_stations_2025$AREA_KM2) <- "km2"
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Save to geopackage
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# sf::st_write(obj = new_goa_stations_2025,
-#              dsn = "analysis/goa_strata_2025/goa_stations_2025.gpkg",
-#              append = FALSE)
+sf::st_write(obj = sf::st_cast(x = subset(new_goa_stations_2025, 
+                                          select = -FLAG), 
+                               to = "MULTIPOLYGON"),
+             dsn = "analysis/goa_strata_2025/goa_stations_2025.gpkg",
+             append = FALSE)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Plot each changed stations to pdf
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-for (iscenario in 1:4) { ## Loop over the 8 scenarios -- start
+for (iscenario in 1:4) { ## Loop over the 4 scenarios -- start
   
   ## Subset the stations by the scenario flag
   scenario_subset <- subset(x = updated_stations,
@@ -339,7 +325,7 @@ for (iscenario in 1:4) { ## Loop over the 8 scenarios -- start
     
     ## Plot the original station with mixed trawlability information
     plot(st_geometry(temp_stn), axes = F, cex.main = 0.75, lwd = 0.5,
-         col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLAB],
+         col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLABLE],
          main = paste("Station", scenario_subset$STATION[stn_idx]))
     
     ## Plot towpaths
@@ -349,11 +335,11 @@ for (iscenario in 1:4) { ## Loop over the 8 scenarios -- start
     
     ## Legend for trawlability information
     legend("bottomleft", bty = "n", cex = 0.6,
-           legend = paste0(temp_stn$TRAWLAB, ": ", 
+           legend = paste0(temp_stn$TRAWLABLE, ": ", 
                            round(temp_stn$AREA_KM2, 1), " km2"), 
            fill = c("Y" = "green", 
                     "UNK" = "grey", 
-                    "N" = "red")[temp_stn$TRAWLAB]
+                    "N" = "red")[temp_stn$TRAWLABLE]
     )
     ## Legend for towpaths
     legend("topleft", lty = 1, lwd = 1.5, bty = "n", cex = 0.6, 
@@ -366,7 +352,7 @@ for (iscenario in 1:4) { ## Loop over the 8 scenarios -- start
     plot(st_geometry(updated_stn), cex.main = 0.75, lwd = 0.5,
          col = c("Y" = "green", 
                  "UNK" = "grey", 
-                 "N" = "red")[updated_stn$TRAWLAB],
+                 "N" = "red")[updated_stn$TRAWLABLE],
          main = paste("Updated Station", scenario_subset$STATION[stn_idx]))
     
     ## Plot towpaths
@@ -376,11 +362,11 @@ for (iscenario in 1:4) { ## Loop over the 8 scenarios -- start
     
     ## Legend for trawlability information    
     legend("bottomleft", bty = "n", cex = 0.6, 
-           legend = paste0(updated_stn$TRAWLAB, ": ", 
+           legend = paste0(updated_stn$TRAWLABLE, ": ", 
                            round(updated_stn$AREA_KM2, 1), " km2"),
            fill = c("Y" = "green", 
                     "UNK" = "grey", 
-                    "N" = "red")[updated_stn$TRAWLAB])
+                    "N" = "red")[updated_stn$TRAWLABLE])
     ## Legend for towpaths
     legend("topleft", lty = 1, lwd = 1.5, bty = "n", cex = 0.6, 
            legend = c("good", "bad"), col = c("black", "purple"))
@@ -395,4 +381,4 @@ for (iscenario in 1:4) { ## Loop over the 8 scenarios -- start
   ## Print message
   cat("Finished with", paste0("analysis/goa_strata_2025/trawl_scenario_", 
                               iscenario, ".pdf\n"))
-} ## Loop over the 8 scenarios -- end
+} ## Loop over the 4 scenarios -- end
