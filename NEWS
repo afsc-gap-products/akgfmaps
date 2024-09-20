@@ -1,3 +1,12 @@
+akgfmaps 3.5.4 (September 18, 2024)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fix label formatting issue in make_idw_map() and
+  make_idw_stack().
+
+
 akgfmaps 3.5.3 (May 22, 2024)
 ----------------------------------------------------------------
 

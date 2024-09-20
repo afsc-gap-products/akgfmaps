@@ -57,7 +57,7 @@ make_idw_stack(
 \item{use.survey.bathymetry}{Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE}
 }
 \value{
-Returns a list containing: 
+Returns a list containing:
 (1) map_layers: Layer of shapefiles returned by akgfmaps::get_base_layers()
 (2) extrapolation.stack: a stack of extrapolated spatial objects with estimated values on a discrete scale as a 'stars' (when extrapolation.grid.type is "stars") or 'sf' (when extrapolation.grid.type is "sf" or "sf.simple") object;
 (3) continuous.grid: extrapolation grid with estimates on a continuous scale;

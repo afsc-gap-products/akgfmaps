@@ -31,6 +31,7 @@
 #' (6) key.title: title for the legend;
 #' (7) crs: coordinate reference system as a PROJ6 (WKT2:2019) string;
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
+#' @import dplyr
 #' @importFrom classInt classIntervals
 #' @export
 
@@ -197,10 +198,15 @@ make_idw_map <- function(x = NA,
     vec <- sub("\\(", "\\>", vec)
     vec <- sub("\\,", "–", vec)
     vec <- sub("\\]", "", vec)
-    vec <- sub("-Inf", "", vec)
+
     if(length(sig.dig) > 3) {
+
+      sig.dig.format <- trimws(format(sort(sig.dig, decreasing = TRUE), nsmall=0, big.mark=","))
+
+      sig.dig.desc <- trimws(format(sort(sig.dig, decreasing = TRUE)))
+
       for(j in 1:length(sig.dig)) {
-        vec <- sub(sig.dig[j], format(sig.dig[j], nsmall=0, big.mark=","), vec)
+        vec <- sub(pattern = sig.dig.desc[j], replacement = sig.dig.format[j], x = vec)
       }
     }
     return(vec)
@@ -220,7 +226,7 @@ make_idw_map <- function(x = NA,
       sf::st_as_sf() |>
       dplyr::select(-var1.var) |>
       dplyr::group_by(var1.pred) |>
-      dplyr::summarise(n = n()) |>
+      dplyr::summarise(n = dplyr::n()) |>
       sf::st_intersection(map_layers$survey.area)
 
     extrap.grid <- extrap.grid |>
