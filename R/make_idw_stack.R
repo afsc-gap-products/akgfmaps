@@ -197,14 +197,28 @@ make_idw_stack <- function(x = NA,
       vec <- sub("\\,", "–", vec)
       vec <- sub("\\]", "", vec)
 
-      if(length(sig.dig) > 3) {
+      if(length(sig.dig) > 0) {
 
-        sig.dig.format <- trimws(format(sort(sig.dig, decreasing = TRUE), nsmall=0, big.mark=","))
+        sig.dig.format <- trimws(
+          format(
+            sort(sig.dig,
+                 decreasing = TRUE),
+            scientific = FALSE,
+            nsmall=0,
+            big.mark=",")
+        )
 
-        sig.dig.desc <- trimws(format(sort(sig.dig, decreasing = TRUE)))
+        sig.dig.desc <- trimws(
+          format(
+            sort(sig.dig,
+                 decreasing = TRUE),
+            scientific = FALSE)
+        )
 
         for(j in 1:length(sig.dig)) {
-          vec <- sub(pattern = sig.dig.desc[j], replacement = sig.dig.format[j], x = vec)
+          vec <- sub(pattern = sig.dig.desc[j],
+                     replacement = sig.dig.format[j],
+                     x = vec)
         }
       }
       return(vec)
