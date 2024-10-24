@@ -87,46 +87,29 @@ units(x = goa_stations_2025_trawl$AREA_KM2) <- "km^2"
 ##   Import tow data
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-if (!file.exists("analysis/goa_strata_2025/towpaths.gpkg")) {
+if (!file.exists("output/goa/shapefiles/goa_towpath.shp")) {
+  library(navmaps)
+  library(gapindex)
   
   ## Connect to Oracle. Make sure you are connected to the NOAA internal 
   ## network or VPN.  
   channel <- gapindex::get_connected(check_access = FALSE)
+  navmaps::get_gps_data(channel = channel, region = "goa")
+  navmaps::make_towpaths(region = "goa")
   
-  ## Import towpaths made from navmaps package
-  towpaths <- 
-    sf::st_read(dsn = "analysis/goa_strata_2025/towpaths/towpaths.shp")
-  ## Transform to Alaska Albers projection
-  towpaths <- sf::st_transform(x = towpaths, crs = "EPSG:3338")
-  ## Id is the HAULJOIN associated with the tow
-  towpaths$HAULJOIN <-towpaths$Id
-  
-  ## Import haul data from 1990. This is the start of the time series so
-  ## we will only use towpaths from then.
-  goa_hauls_from_1990 <-
-    RODBC::sqlQuery(channel = gapindex::get_connected(check_access = FALSE),
-                    query = "SELECT FLOOR(CRUISE / 100) AS YEAR,
-                           HAULJOIN, STATIONID,
-                           CASE
-                            WHEN PERFORMANCE >= 0 THEN 'TRUE'
-                            WHEN PERFORMANCE < 0 THEN 'FALSE'
-                           END AS PERFORMANCE
-                           FROM RACEBASE.HAUL
-                           WHERE REGION = 'GOA'
-                           AND CRUISE >= 199000
-                           ORDER BY YEAR")
-  
-  ## Merge PERFORMANCE and STATIONID fields using HAULJOIN as the key. These
-  ## STATIONIDS refer to the legacy AIGOA survey grid. 
-  towpaths <- merge(x = towpaths[, c("HAULJOIN", "geometry")],
-                    y = goa_hauls_from_1990,
-                    by = "HAULJOIN")
-  
-  ## Save output
-  sf::st_write(obj = towpaths,
-               dsn = "analysis/goa_strata_2025/towpaths.gpkg",
-               append = FALSE)
-} else towpaths <- sf::st_read(dsn = "analysis/goa_strata_2025/towpaths.gpkg")
+  ## Move shapefile folder into the analysis/goa_strata_2025 folder
+  file.copy(from = "output/goa/shapefiles/", 
+            to = "analysis/goa_strata_2025/",
+            recursive = TRUE)
+
+} else {
+  towpaths <- sf::st_read(dsn = "output/goa/shapefiles/goa_towpath.shp")
+  towpath_mid <- sf::st_read(dsn = "output/goa/shapefiles/goa_midpoint.shp")
+}
+## Remove Green Hope (VESSEL 83) and 80s data
+towpaths <- subset(x = towpaths,
+                   subset = CRUISE >= 199000 & VESSEL != 83)
+towpaths_mid <- sf::st_centroid(x = towpaths)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   There are some station areas that are cut off due to being outside the 
@@ -192,16 +175,17 @@ for (istn in stns_mixed_trawl_info) { ## loop over affected stations -- start
   # plot(sf::st_geometry(temp_stn),
   #      axes = F,
   #      col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLABLE])
+  # points(towpaths_mid,  lwd = 2, xpd = F)
   # plot(sf::st_geometry(towpaths), add = TRUE, lwd = 2, xpd = NA)
-  
-  
+
   ## Scenario 1: station is a mixture of T area (with good tows paths)
   ## and either UKN or UT area. Since there is a good tow in the station,
-  ## the whole station is turned to T.
+  ## the whole station is turned to T if it contains the midpoint of the 
+  ## towline. 
   
   ## Query whether there are any good tows in the mixed station
   good_tow_in_station <- 
-    sum(sf::st_intersects(x = towpaths[towpaths$PERFORMANCE == T, ],
+    sum(sf::st_intersects(x = towpaths_mid[towpaths_mid$PERFORM >= 0, ],
                           y = temp_stn, 
                           sparse = F)) > 0
   
@@ -322,6 +306,7 @@ for (iscenario in 1:4) { ## Loop over the 4 scenarios -- start
     
     ## Any towpaths contained within the station
     temp_towpaths <- sf::st_intersection(x = towpaths, y = updated_stn)
+    temp_towpaths_mids <- sf::st_intersection(x = towpaths_mid, y = updated_stn)
     
     ## Plot the original station with mixed trawlability information
     plot(st_geometry(temp_stn), axes = F, cex.main = 0.75, lwd = 0.5,
@@ -329,9 +314,12 @@ for (iscenario in 1:4) { ## Loop over the 4 scenarios -- start
          main = paste("Station", scenario_subset$STATION[stn_idx]))
     
     ## Plot towpaths
-    plot(st_geometry(obj = temp_towpaths), add = T, lwd = 2, 
+    lines(temp_towpaths, lwd = 2, 
          col = c("TRUE" = "black", 
-                 "FALSE" = "purple")[paste(temp_towpaths$PERFORMANCE)])
+                 "FALSE" = "purple")[paste(temp_towpaths$PERFORM >= 0)])
+    points(temp_towpaths_mids,  pch = 16, 
+         col = c("TRUE" = "black", 
+                 "FALSE" = "purple")[paste(temp_towpaths_mids$PERFORM >= 0)])
     
     ## Legend for trawlability information
     legend("bottomleft", bty = "n", cex = 0.6,
@@ -356,9 +344,12 @@ for (iscenario in 1:4) { ## Loop over the 4 scenarios -- start
          main = paste("Updated Station", scenario_subset$STATION[stn_idx]))
     
     ## Plot towpaths
-    plot(st_geometry(obj = temp_towpaths), add = T, lwd = 2, 
-         col = c("TRUE" = "black", 
-                 "FALSE" = "purple")[paste(temp_towpaths$PERFORMANCE)])
+    lines(temp_towpaths, lwd = 2, 
+          col = c("TRUE" = "black", 
+                  "FALSE" = "purple")[paste(temp_towpaths$PERFORM >= 0)])
+    points(temp_towpaths_mids,  pch = 16, 
+           col = c("TRUE" = "black", 
+                   "FALSE" = "purple")[paste(temp_towpaths_mids$PERFORM >= 0)])
     
     ## Legend for trawlability information    
     legend("bottomleft", bty = "n", cex = 0.6, 
