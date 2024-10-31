@@ -13,16 +13,18 @@ get_bsierp_regions <- function(set.crs) {
 
 
   layer <- sf::st_read(here::here("inst/extdata/Alaska_Marine_Management_Areas.gdb"),
-                       layer = "Alaska_Marine_Areas_AK_prj") |>
+                       layer = "Alaska_Marine_Areas_AK_prj",
+                       quiet = TRUE) |>
     dplyr::filter(Area_Type == "BSIERP Region") |>
-    dplyr::select(AreaID, Area_Name, BSIERP_ID, BSIERP_Region_Name, Area_m2 = Shape_Area) |>
+    dplyr::select(AREA_NAME = Area_Name, BSIERP_ID, BSIERP_REGION_NAME = BSIERP_Region_Name, AREA_M2 = Shape_Area) |>
     dplyr::arrange(BSIERP_ID)
 
   sf::st_geometry(layer)<- "geometry"
 
 
   layer <- layer |>
-    sf::st_transform(crs = set.crs)
+    sf::st_transform(crs = set.crs) |>
+    wrap_dateline_silent()
 
   return(layer)
 

@@ -501,3 +501,23 @@ fix_geometry <- function(x) {
   return(x)
 
 }
+
+
+#' Wrap dateline with warning suppress
+#'
+#' Function to wrap dateline if an sf object uses a geographic coordinate system.
+#'
+#' @param x sf object
+#' @noRd
+
+wrap_dateline_silent <- function(x) {
+
+  if(sf::st_is_longlat(x)) {
+
+    x <- sf::st_wrap_dateline(x)
+
+  }
+
+  return(x)
+
+}

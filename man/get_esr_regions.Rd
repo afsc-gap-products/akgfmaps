@@ -4,9 +4,11 @@
 \alias{get_esr_regions}
 \title{Alaska Ecosystem Status Report (ESR) large marine ecosystem regions}
 \usage{
-get_esr_regions(set.crs)
+get_esr_regions(select.region = "esr_subarea", set.crs)
 }
 \arguments{
+\item{select.region}{Character vector indicating which region to retrieve. Options are: 'esr_subarea', 'esr_area', 'esr_suberea_inside', 'esr_area_inside'}
+
 \item{set.crs}{Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area coordinate reference system (EPSG:3338) is automatically assigned.}
 }
 \description{

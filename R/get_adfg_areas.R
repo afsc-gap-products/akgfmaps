@@ -3,6 +3,7 @@
 #' Retrieve ADFG management area POLYGON grid.
 #'
 #' @param set.crs Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area coordinate reference system (EPSG:3338) is automatically assigned.
+#' @param subset.field Logical. Should all of the columns from the original file be returned (including blank and duplicate fields).
 #' @return ADFG management area sf POLYGON.
 #' @export
 
@@ -13,13 +14,16 @@ get_adfg_areas <- function(set.crs = "auto", subset.fields = TRUE) {
   }
 
   layer <- sf::st_read(here::here("inst/extdata/Alaska_Marine_Management_Areas.gdb"),
-                       layer = "Alaska_Marine_Areas_AK_prj") |>
+                       layer = "Alaska_Marine_Areas_AK_prj",
+                       quiet = TRUE) |>
     dplyr::filter(Area_Type == "ADFG Stat Area") |>
     unique()
 
   if(subset.fields) {
+
     layer <- layer |>
-      dplyr::select(STAT_AREA,
+      dplyr::select(AREA_TYPE = Area_Type,
+                    STAT_AREA,
                     FISHERY_GR,
                     REGION_CODE = REGION_COD,
                     REGISTRATI,
@@ -46,17 +50,17 @@ get_adfg_areas <- function(set.crs = "auto", subset.fields = TRUE) {
                     IFQ_IPHC_A,
                     IFQ_SABLEF,
                     COAR_AREA_,
-                    Area_m2 = Shape_Area
+                    AREA_M2 = Shape_Area
       )
 
   }
-
 
   sf::st_geometry(layer)<- "geometry"
 
   layer <- layer |>
     sf::st_transform(crs = set.crs) |>
-    sf::st_make_valid()
+    sf::st_make_valid() |>
+    wrap_dateline_silent()
 
   return(layer)
 
