@@ -101,7 +101,7 @@ if (!file.exists("output/goa/shapefiles/goa_towpath.shp")) {
   file.copy(from = "output/goa/shapefiles/", 
             to = "analysis/goa_strata_2025/",
             recursive = TRUE)
-
+  
 } else {
   towpaths <- sf::st_read(dsn = "output/goa/shapefiles/goa_towpath.shp")
   towpath_mid <- sf::st_read(dsn = "output/goa/shapefiles/goa_midpoint.shp")
@@ -172,12 +172,12 @@ for (istn in stns_mixed_trawl_info) { ## loop over affected stations -- start
   temp_stn <- subset(x = new_goa_stations_2025,
                      subset = new_goa_stations_2025$STATION == istn)
   
-  # plot(sf::st_geometry(temp_stn),
-  #      axes = F,
-  #      col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLABLE])
-  # points(towpaths_mid,  lwd = 2, xpd = F)
-  # plot(sf::st_geometry(towpaths), add = TRUE, lwd = 2, xpd = NA)
-
+  plot(sf::st_geometry(temp_stn),
+       axes = F,
+       col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLABLE])
+  points(towpaths_mid,  lwd = 2, xpd = F)
+  plot(sf::st_geometry(towpaths), add = TRUE, lwd = 2, xpd = NA)
+  
   ## Scenario 1: station is a mixture of T area (with good tows paths)
   ## and either UKN or UT area. Since there is a good tow in the station,
   ## the whole station is turned to T if it contains the midpoint of the 
@@ -262,6 +262,23 @@ new_goa_stations_2025 <- dplyr::bind_rows(
 )
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##   
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+T_areas <- sf::st_intersects(
+  x = new_goa_stations_2025[new_goa_stations_2025$TRAWLABLE == "Y", ],
+  y = towpaths_mid[towpaths_mid$PERFORM >= 0, ],
+  sparse = F
+)
+
+rownames(x = T_areas) <- 
+  new_goa_stations_2025$STATION[new_goa_stations_2025$TRAWLABLE == "Y"]
+
+new_goa_stations_2025$TRAWLABLE[ 
+  new_goa_stations_2025$STATION %in% 
+    rownames(x = T_areas)[rowSums(x = T_areas) == 0] 
+] <- "UNK"
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Recalculate area and centorid lat/lon of the new stations.
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 new_goa_stations_2025$AREA_KM2 <- sf::st_area(x = new_goa_stations_2025)
@@ -315,11 +332,11 @@ for (iscenario in 1:4) { ## Loop over the 4 scenarios -- start
     
     ## Plot towpaths
     lines(temp_towpaths, lwd = 2, 
-         col = c("TRUE" = "black", 
-                 "FALSE" = "purple")[paste(temp_towpaths$PERFORM >= 0)])
+          col = c("TRUE" = "black", 
+                  "FALSE" = "purple")[paste(temp_towpaths$PERFORM >= 0)])
     points(temp_towpaths_mids,  pch = 16, 
-         col = c("TRUE" = "black", 
-                 "FALSE" = "purple")[paste(temp_towpaths_mids$PERFORM >= 0)])
+           col = c("TRUE" = "black", 
+                   "FALSE" = "purple")[paste(temp_towpaths_mids$PERFORM >= 0)])
     
     ## Legend for trawlability information
     legend("bottomleft", bty = "n", cex = 0.6,
