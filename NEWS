@@ -1,3 +1,30 @@
+akgfmaps 3.6.0 (November 4, 2024)
+----------------------------------------------------------------
+
+NEW FEATURES
+
+- Added new functions to access layers that were included in
+  akmarineareas2 (github.com/MattCallahan-NOAA/akmarineareas2).
+
+  - get_adfg_areas(): Alaska Department of Fish and Game (ADFG)
+    Statistical Areas
+  - get_esr_regions(): Alaska Ecosystem Status Report (ESR)
+    regions
+  - get_bsierp_regions(): Bering Sea Integrated Ecosystem
+    Research Program (BSIERP) regions
+
+  Layers are retrieved from a file Geodatabase (.gdb;
+  inst/extdata/Alaska_Marine_Management_Areas.gdb) provided
+  courtesy of Matt Callahan (matt.callahan@noaa.gov)-- thanks
+  Matt!
+
+- Added get_crab_strata() function to retrieve crab stratum
+  layers. Support for Bristol Bay RKC, Pribilof Islands
+  RKC, Pribilof Islands BKC, St. Matthew's BKC, Norton Sound
+  RKC, eastern Bering Sea snow crab, and eastern Bering Sea
+  Tanner crab.
+
+
 akgfmaps 3.5.4 (September 23, 2024)
 ----------------------------------------------------------------
 
@@ -61,10 +88,10 @@ FUNCTIONALITY CHANGES
   See also:
 
   DeFilippo, L., Kotwicki, S., Barnett, L., Richar, J., Litzow,
-    M.A., Stockhausen, W.T., Palof, K., 2023. Evaluating the impacts
-    of reduced sampling density in a systematic fisheries-
-    independent survey design. Front. Mar. Sci. 10, 1–16.
-    https://doi.org/10.3389/fmars.2023.1219283
+    M.A., Stockhausen, W.T., Palof, K., 2023. Evaluating the
+    impacts of reduced sampling density in a systematic
+    fisheries- independent survey design. Front. Mar. Sci. 10,
+    1–16. https://doi.org/10.3389/fmars.2023.1219283
 
 
 akgfmaps 3.4.2 (January 16, 2024)
