@@ -6,8 +6,8 @@
 #' @param sel_year Numeric vector indicating the survey year.
 #' @param vgm_init List of initial parameters to pass to gstat::vgm function
 #' @param log_transform Should variables be log_transformed prior to subsequent transformation?
-#' @param transform What transformation method should be applied? Options "none" = No transformation; nst" = normal score transform based on cdf using akgfmaps::normal_transform() with backtransformation using akgfmaps::backtransform_normal(), based on GSLIB nscore and backtr; "boxcox" - Box-Cox transformation and back transformation; "z" = z-score transform to mean zero, variance one without using cdf.
-#' @param nst_options List with options (tails, make_plot) for backtransformation when transform = "nst". See documentation for akgfmaps::backtransform_normal().
+#' @param transform What transformation method should be applied? Options "none" = No transformation; nst" = normal score transform based on cdf using normal_transform() with back-transformation using backtransform_normal(), based on GSLIB nscore and backtr; "boxcox" - Box-Cox transformation and back transformation; "z" = z-score transform to mean zero, variance one without using cdf.
+#' @param nst_options List with options (tails, make_plot) for back-transformation when transform = "nst". See documentation for backtransform_normal().
 #' @param nmax Numeric. Maximum number of data points to use for kriging (default = 500.
 #' @param save_csv Logical. Should the output be saved to a csv file?
 #' @param suffix Character vector added to the end of the filename if save_csv is TRUE.
@@ -98,10 +98,10 @@ interp_2d_grid <- function(x,
   # Normal score transform (based on GSLIB normal score transformation)
   if(transform == "nst") {
     print("Normal score back-transform")
-    output_2d_grid$var1.pred <- akgfmaps::backtransform_normal(scores = output_2d_grid$var1.pred,
-                                                               z_score = scale_vars,
-                                                               tails = nst_options$tails,
-                                                               make_plot = nst_options$make_plot)
+    output_2d_grid$var1.pred <- backtransform_normal(scores = output_2d_grid$var1.pred,
+                                                     z_score = scale_vars,
+                                                     tails = nst_options$tails,
+                                                     make_plot = nst_options$make_plot)
   }
 
   if(transform == "z") {
@@ -180,26 +180,26 @@ interp_2d_grid <- function(x,
 #' @param z_expansion Vertical expansion factor to use for interpolation.
 #' @param vgm_init List of initial parameters to pass to gstat::vgm function
 #' @param log_transform Should variables be log_transformed prior to subsequent transformation?
-#' @param transform What transformation method should be applied? Options "none" = No transformation; nst" = normal score transform based on cdf using akgfmaps::normal_transform() with backtransformation using akgfmaps::backtransform_normal(), based on GSLIB nscore and backtr; "boxcox" - Box-Cox transformation and back transformation; "z" = z-score transform to mean zero, variance one without using cdf.
-#' @param nst_options List with options (tails, make_plot) for backtransformation when transform = "nst". See documentation for akgfmaps::backtransform_normal().
+#' @param transform What transformation method should be applied? Options "none" = No transformation; nst" = normal score transform based on cdf using normal_transform() with backtransformation using backtransform_normal(), based on GSLIB nscore and backtr; "boxcox" - Box-Cox transformation and back transformation; "z" = z-score transform to mean zero, variance one without using cdf.
+#' @param nst_options List with options (tails, make_plot) for backtransformation when transform = "nst". See documentation for backtransform_normal().
 #' @param nmax Numeric. Maximum number of data points to use for kriging (default = 500.
 #' @param save_csv Logical. Should the output be saved to a csv file?
 #' @param suffix Character vector added to the end of the filename if save_csv is TRUE.
 #' @noRd
 
 interp_3d_grid <- function(x,
-                         extrapolation_3d_grid = NA,
-                         par_name,
-                         sel_year,
-                         z_expansion,
-                         vgm_init,
-                         log_transform = FALSE,
-                         transform = "none",
-                         nst_options = list(tails = "none", make_plot = FALSE),
-                         nmax = 500,
-                         make_variogram = FALSE,
-                         save_csv = TRUE,
-                         suffix = "") {
+                           extrapolation_3d_grid = NA,
+                           par_name,
+                           sel_year,
+                           z_expansion,
+                           vgm_init,
+                           log_transform = FALSE,
+                           transform = "none",
+                           nst_options = list(tails = "none", make_plot = FALSE),
+                           nmax = 500,
+                           make_variogram = FALSE,
+                           save_csv = TRUE,
+                           suffix = "") {
 
   # Load output grid locations ---------------------------------------------------------------------
   if(is.na(extrapolation_3d_grid)[1]) {
@@ -244,25 +244,25 @@ interp_3d_grid <- function(x,
   # Fit variogram ----
   bes_variogram <- gstat::variogram(trans_var ~ 1, dat)
   bes_variogram <- gstat::variogram(trans_var ~ 1, dat,
-                             cutoff = max(bes_variogram$dist),
-                             width = max(bes_variogram$dist)/50)
+                                    cutoff = max(bes_variogram$dist),
+                                    width = max(bes_variogram$dist)/50)
 
   bes_mod <- gstat::vgm(psill = vgm_init$psill,
-                 model = "Bes",
-                 range = bes_variogram$dist[10],
-                 nugget = vgm_init$nugget)
+                        model = "Bes",
+                        range = bes_variogram$dist[10],
+                        nugget = vgm_init$nugget)
   bes_mod <- gstat::fit.variogram(bes_variogram,
-                           bes_mod,
-                           fit.sills = TRUE,
-                           fit.ranges = TRUE,
-                           fit.kappa = TRUE)
+                                  bes_mod,
+                                  fit.sills = TRUE,
+                                  fit.ranges = TRUE,
+                                  fit.kappa = TRUE)
 
   # Krige ----
   start_time <- Sys.time()
   krige_bes <- gstat::gstat(formula = trans_var ~ 1,
-                     locations = dat,
-                     model = bes_mod,
-                     nmax = nmax)
+                            locations = dat,
+                            model = bes_mod,
+                            nmax = nmax)
   output_3d_grid <- predict(krige_bes,
                             newdata = extrapolation_3d_grid)
 
@@ -277,10 +277,10 @@ interp_3d_grid <- function(x,
   # Normal score transform (based on GSLIB normal score transformation)
   if(transform == "nst") {
     print("Normal score back-transform")
-    output_3d_grid$var1.pred <- akgfmaps::backtransform_normal(scores = output_3d_grid$var1.pred,
-                                                               z_score = scale_vars,
-                                                               tails = nst_options$tails,
-                                                               make_plot = nst_options$make_plot)
+    output_3d_grid$var1.pred <- backtransform_normal(scores = output_3d_grid$var1.pred,
+                                                     z_score = scale_vars,
+                                                     tails = nst_options$tails,
+                                                     make_plot = nst_options$make_plot)
   }
 
   if(transform == "z") {
@@ -352,8 +352,8 @@ interp_3d_grid <- function(x,
 #' Backtransformation of normal score transform.
 #'
 #' @param scores Numeric vector of scores to be transformed
-#' @param z_score List returned by akgfmaps::normal_transform().
-#' @param tails Character vector indicating which transformation/extrapoltion method to use. "none" (default): No extrapolation. Scores outside the original range get transformed to min or max.; "equal": Calculate magnitude of standard deviations around the original mean, and extrapolate linearly.; "separate": Calculates a new standard deviation for values above and below the mean, then extrpolate.
+#' @param z_score List returned by normal_transform().
+#' @param tails Character vector indicating which transformation/extrapoltion method to use. "none" (default): No extrapolation. Scores outside the original range get transformed to min or max.; "equal": Calculate magnitude of standard deviations around the original mean, and extrapolate linearly.; "separate": Calculates a new standard deviation for values above and below the mean, then extrapolate.
 #' @noRd
 
 backtransform_normal <- function(scores,
@@ -474,7 +474,7 @@ normal_transform <- function(x) {
   if(flag) {
     stop(
       paste0("Error: Invalid region selection ('", select.region, "'). Valid options: ", paste(valid_regions, collapse = ", "))
-      )
+    )
   }
 
 }
