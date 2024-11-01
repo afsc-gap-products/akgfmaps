@@ -9,12 +9,12 @@
 get_nmfs_areas <- function(set.crs) {
 
   if(set.crs == "auto") {
-    set.crs <- "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
+    set.crs <- "EPSG:3338"
   }
 
   nmfs_areas <- sf::st_read(
     system.file("extdata",
-                "NMFS Reporting Areas.shp",
+                "NMFS_Reporting_Areas.shp",
                 package = "akgfmaps"),
     quiet = TRUE) |>
     dplyr::filter(REP_AREA > 0 & REP_AREA < 660) |> # Select Alaska regions only and exclude land
