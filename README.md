@@ -25,37 +25,42 @@ Survey shapefiles and associated metadata are available [here](./assets/region_s
 
 # Layers in the package
 
-| Region  | Layer | Function | Provided by |
-|---------|-------|----------|-------------|
-| All | Alaska DNR Land Polygon | get_base_layers() | Alaska DNR |
-| All | ADFG Statistical/Managment Areas | get_adfg_areas() | M. Callahan (PSMFC/AKFIN) |
-| All | NMFS Statistical Areas | get_nmfs_areas() | A. Jahn (AKRO) |
-| All | Ecosystem Status Report Regions | get_esr_regions() | M. Callahan (PSMFC/AKFIN) |
-| All | North Pacific bathymetry (0-1000 m) | get_base_layers() | A. Grieg (AFSC Ret.) |
-| AI | Bottom trawl survey area | get_base_layers() | N. Laman (AFSC) |
-| AI | Bottom trawl survey strata | get_base_layers() | N. Laman (AFSC) |
-| AI | Bottom trawl survey grid | get_base_layers() | N. Laman (AFSC) |
-| BSS/NBS/SEBS | BSIERP Regions | get_bsierp_regions() | M. Callahan (PSMFC/AKFIN) |  
-| BSS | Bottom trawl survey area | get_base_layers() | A. Grieg (AFSC Ret.) |
-| BSS | Bottom trawl survey strata | get_base_layers() | A. Grieg (AFSC Ret.) |
-| CS  | Bottom trawl survey area | get_base_layers() | B. Lauth (AFSC Ret.) |
-| CS  | Bottom trawl survey grid | get_base_layers() | B. Lauth (AFSC Ret.) |
-| GOA | Bottom trawl survey area | get_base_layers() | N. Laman (AFSC) |
-| GOA | Bottom trawl survey strata | get_base_layers() | N. Laman (AFSC) |
-| GOA | Bottom trawl survey grid | get_base_layers() | N. Laman (AFSC) |
-| NBS | Bottom trawl survey area | get_base_layers() | J. Conner (AFSC) |
-| NBS | Bottom trawl survey strata | get_base_layers() | J. Conner (AFSC) |
-| NBS | Bottom trawl survey grid | get_base_layers() | J. Benson (AFSC Ret.) |
-| NBS | Norton Sound RKC strata | get_crab_strata() | E. Ryznar (AFSC) |
-| SEBS | Bottom trawl survey area | get_base_layers() | J. Conner (AFSC) |
-| SEBS | Bottom trawl survey strata | get_base_layers() | J. Conner (AFSC) |
-| SEBS | Bottom trawl survey grid | get_base_layers() | J. Benson (AFSC Ret.) |
-| SEBS | Bristol Bay RKC strata | get_crab_strata() | E. Ryznar (AFSC) |
-| SEBS | EBS Snow crab strata | get_crab_strata() | E. Ryznar (AFSC) |
-| SEBS | EBS Tanner crab strata | get_crab_strata() | E. Ryznar (AFSC) |
-| SEBS | Pribilof Island BKC strata | get_crab_strata() | E. Ryznar (AFSC) |
-| SEBS | Pribilof Island RKC strata | get_crab_strata() | E. Ryznar (AFSC) |
-| SEBS | St. Matthew's BKC strata | get_crab_strata() | E. Ryznar (AFSC) |
+The table below lists vector geometry layers (POLYGONS) that are included in the package by region 
+
+| Region  | Layer | Function | Provided by | Source | 
+|---------|-------|----------|-------------|--------|
+| All | Alaska Coastline (1:63360) - Full | get_base_layers() | Alaska DNR | [Link](https://data-soa-dnr.opendata.arcgis.com/datasets/SOA-DNR::alaska-coastline/explore?layer=4&location=60.861513%2C30.585938%2C5.84) |
+| All | Alaska Coastline (1:63360) - Simplified | get_base_layers() | Alaska DNR | [Link](https://data-soa-dnr.opendata.arcgis.com/datasets/SOA-DNR::alaska-coastline/explore?layer=4&location=60.861513%2C30.585938%2C5.84) |
+| All | Russia Coastline | get_base_layers() | A. Grieg (AFSC Ret.) | |
+| All | Canada Coastline | get_base_layers() | A. Grieg (AFSC Ret.) | |
+| All | ADFG Statistical/Management Areas | get_adfg_areas() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link] |
+| All | NMFS Statistical Areas | get_nmfs_areas() | [A. Jahn (AKRO)](https://github.com/abby-jahn) | |
+| All | Ecosystem Status Report Areas/Subareas | get_esr_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | |
+| All | North Pacific bathymetry (0-1000 m) | get_base_layers() | A. Grieg (AFSC Ret.) | |
+| AI | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
+| AI | Bottom trawl survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
+| AI | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
+| BSS/NBS/SEBS | BSIERP Regions | get_bsierp_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | |
+| BSS | Bottom trawl survey area | get_base_layers() | A. Grieg (AFSC Ret.) | |
+| BSS | Bottom trawl survey strata | get_base_layers() | A. Grieg (AFSC Ret.) | |
+| CS  | Bottom trawl survey area | get_base_layers() | B. Lauth (AFSC Ret.) | |
+| CS  | Bottom trawl survey grid | get_base_layers() | B. Lauth (AFSC Ret.) | |
+| GOA | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
+| GOA | Bottom trawl survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
+| GOA | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
+| NBS | Bottom trawl survey area | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | |
+| NBS | Bottom trawl survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | |
+| NBS | Bottom trawl survey grid | get_base_layers() | J. Benson (AFSC Ret.) | |
+| NBS | Norton Sound RKC strata | get_crab_strata() | [ [E. Ryznar (AFSC)](https://github.com/eryznar) | |
+| SEBS | Bottom trawl survey area | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | |
+| SEBS | Bottom trawl survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | |
+| SEBS | Bottom trawl survey grid | get_base_layers() | J. Benson (AFSC Ret.) | |
+| SEBS | Bristol Bay RKC strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
+| SEBS | EBS Snow crab strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
+| SEBS | EBS Tanner crab strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
+| SEBS | Pribilof Island BKC strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
+| SEBS | Pribilof Island RKC strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
+| SEBS | St. Matthew's BKC strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
 
 ## Legal disclaimer
 
