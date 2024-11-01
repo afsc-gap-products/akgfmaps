@@ -10,9 +10,9 @@
 #' @param resolution Resolution for a raster_template as a 2L numeric vector where values denote the x and y grid cell resolution. Must be provided if raster_template is not provided
 #' @param set_crs Coordinate reference system for the output. Uses the same crs as raster_template if not provided; must be provided if raster_template argument is not provided.
 #' @param return_slope_aspect Logical. Should slope and aspect also be returned in the output?
-#' @param interpolation_method Method for interpolating raster during reprojection, passed to raster::projecRaster(method)
-#' @param slope_nn Number of nearest neighbor cells to use for calculating slope (must be 4 or 8). Passed to raster::terrain(neighbors).
-#' @param slope_units Character vector denoting units for slope and aspect ("degrees" or "radians"). Passed to raster::terrain(unit)
+#' @param interpolation_method Method for interpolating raster during reprojection.
+#' @param slope_nn Number of nearest neighbor cells to use for calculating slope (must be 4 or 8).
+#' @param slope_units Character vector denoting units for slope and aspect ("degrees" or "radians").
 #' @return A rasterLayer object with bathymetry when return_slope_aspect argument is FALSE. If return_slope_argument is TRUE, returns a rasterLayer with seafloor_bathymetry, slope, and aspect.
 #' @export
 
@@ -74,7 +74,7 @@ reproject_gebco <- function(x,
   stopifnot("gebco_to_bs: raster_template must be a raster or terra object." = class(raster_template) %in% c("SpatRaster", "SpatVector"))
 
   # Load GEBCO raster if a filepath was provided
-  if(class(x) == "character") {
+  if(is(x, "character")) {
     x <- terra::rast(x,
                      lyrs = z_varname) # Elevation (up = positive)
 
@@ -106,12 +106,12 @@ reproject_gebco <- function(x,
       neighbors = slope_nn
     )
 
-    output_aspect <- raster::terrain(
-      output,
-      v = 'aspect',
-      unit = slope_units,
-      neighbors = slope_nn
-    )
+    # output_aspect <- raster::terrain(
+    #   output,
+    #   v = 'aspect',
+    #   unit = slope_units,
+    #   neighbors = slope_nn
+    # )
 
     output <- c(output, output_slope, output_aspect)
   }

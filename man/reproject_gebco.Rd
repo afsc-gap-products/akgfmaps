@@ -35,11 +35,11 @@ reproject_gebco(
 
 \item{return_slope_aspect}{Logical. Should slope and aspect also be returned in the output?}
 
-\item{interpolation_method}{Method for interpolating raster during reprojection, passed to raster::projecRaster(method)}
+\item{interpolation_method}{Method for interpolating raster during reprojection.}
 
-\item{slope_nn}{Number of nearest neighbor cells to use for calculating slope (must be 4 or 8). Passed to raster::terrain(neighbors).}
+\item{slope_nn}{Number of nearest neighbor cells to use for calculating slope (must be 4 or 8).}
 
-\item{slope_units}{Character vector denoting units for slope and aspect ("degrees" or "radians"). Passed to raster::terrain(unit)}
+\item{slope_units}{Character vector denoting units for slope and aspect ("degrees" or "radians").}
 }
 \value{
 A rasterLayer object with bathymetry when return_slope_aspect argument is FALSE. If return_slope_argument is TRUE, returns a rasterLayer with seafloor_bathymetry, slope, and aspect.

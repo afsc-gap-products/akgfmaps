@@ -22,13 +22,17 @@ get_esr_regions <- function(select.region = "esr_subarea", set.crs) {
          'esr_area_inside'= "Ecosystem Area Inside"
          )
 
-  layer <- sf::st_read(here::here("inst/extdata/Alaska_Marine_Management_Areas.gdb"),
+  layer <- suppressWarnings(sf::st_read(here::here("inst/extdata/Alaska_Marine_Management_Areas.gdb"),
                        layer = "Alaska_Marine_Areas_AK_prj",
-                       quiet = TRUE) |>
-    dplyr::filter(Area_Type == area_type) |>
-    dplyr::select(AREA_TYPE = Area_Type,
-                  AREA_NAME = Area_Name,
-                  AREA_M2 = Shape_Area)
+                       quiet = TRUE))
+
+  layer <- layer[layer$Area_Type == area_type, ]
+
+  layer$AREA_TYPE <- layer$Area_Type
+  layer$AREA_NAME <- layer$Area_Name
+  layer$AREA_M2 <- layer$Shape_Area
+
+  layer <- layer[c("AREA_TYPE", "AREA_NAME", "AREA_M2", "Shape")]
 
   sf::st_geometry(layer)<- "geometry"
 

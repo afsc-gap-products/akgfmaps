@@ -56,7 +56,7 @@ The table below lists the vector geometry layers (polygons) in the package by re
 | NBS | Bottom trawl survey area | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
 | NBS | Groundfish survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
 | NBS | Bottom trawl survey grid | get_base_layers() | J. Benson (AFSC Ret.) | |
-| NBS | Norton Sound RKC strata | get_crab_strata() | [ [E. Ryznar (AFSC)](https://github.com/eryznar) | |
+| NBS | Norton Sound RKC strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
 | SEBS | Bottom trawl survey area | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
 | SEBS | Groundfish survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
 | SEBS | Bottom trawl survey grid | get_base_layers() | J. Benson (AFSC Ret.) | |

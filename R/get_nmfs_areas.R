@@ -16,8 +16,10 @@ get_nmfs_areas <- function(set.crs) {
     system.file("extdata",
                 "NMFS_Reporting_Areas.shp",
                 package = "akgfmaps"),
-    quiet = TRUE) |>
-    dplyr::filter(REP_AREA > 0 & REP_AREA < 660) |> # Select Alaska regions only and exclude land
+    quiet = TRUE)
+
+  # Select Alaska regions only and exclude land
+  nmfs_areas <- nmfs_areas[nmfs_areas$REP_AREA > 0 & nmfs_areas$REP_AREA < 660, ]
     sf::st_transform(crs = set.crs) |>
     sf::st_make_valid()
 

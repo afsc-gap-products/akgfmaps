@@ -1,6 +1,11 @@
 akgfmaps 3.6.0 (November 4, 2024)
 ----------------------------------------------------------------
 
+FUNCTIONALITY CHANGES
+
+ - rasterize_and_mask() no longer supports object classes from
+   the raster package.
+
 NEW FEATURES
 
 - Added new functions to access layers that were included in

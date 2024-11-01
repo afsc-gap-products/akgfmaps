@@ -31,8 +31,9 @@ get_inpfc_strata <- function(select.region, set.crs) {
     system.file("extdata",
                 path,
                 package = "akgfmaps"),
-    quiet = TRUE) |>
-    dplyr::filter(STRATUM != 0) # Remove land
+    quiet = TRUE)
+
+  strata <- strata[strata$STRATUM != 0, ] # Remove land
 
   # Assign strata based on numerical stratum codes
   strata$STRATUM <- formatC(strata$STRATUM, width = 3, flag = 0)

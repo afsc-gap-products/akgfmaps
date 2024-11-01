@@ -31,7 +31,7 @@
 #' (6) key.title: title for the legend;
 #' (7) crs: coordinate reference system as a PROJ6 (WKT2:2019) string;
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
-#' @import dplyr
+#' @import dplyr gstat
 #' @importFrom classInt classIntervals
 #' @export
 

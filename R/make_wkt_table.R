@@ -5,6 +5,7 @@
 #' @param x A simple features objects
 #' @param area.crs Character vector or numeric indicating which coordinate reference system to use for calculating areas. The default is Alaska Albers Equal Area ("EPSG:3338")
 #' @param wkt.crs Character vector or numeric indicating which coordinate reference system to use for WKT outputs. The default is WGS84 ("WGS84")
+#' @import units
 #' @export
 
 make_wkt_table <- function(x, area.crs, wkt.crs = "WGS84") {

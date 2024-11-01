@@ -27,6 +27,7 @@
 #' (4) region: the region;
 #' (5) crs: coordinate reference system as a PROJ6 (WKT2:2019) string;
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
+#' @import gstat
 #' @importFrom classInt classIntervals
 #' @export
 
@@ -67,7 +68,7 @@ make_idw_stack <- function(x = NA,
   x <- as.data.frame(x)
 
   # Load map layers---------------------------------------------------------------------------------
-  map_layers <- akgfmaps::get_base_layers(select.region = region, set.crs = out.crs)
+  map_layers <- get_base_layers(select.region = region, set.crs = out.crs)
 
   # Set up mapping region---------------------------------------------------------------------------
   if(is.null(extrap.box)) {
@@ -81,7 +82,7 @@ make_idw_stack <- function(x = NA,
 
   # Use survey bathymetry---------------------------------------------------------------------------
   if(use.survey.bathymetry) {
-    map_layers$bathymetry <- akgfmaps::get_survey_bathymetry(select.region = region, set.crs = out.crs)
+    map_layers$bathymetry <- get_survey_bathymetry(select.region = region, set.crs = out.crs)
   }
 
   # Generate extrapolation grid---------------------------------------------------------------------
@@ -139,7 +140,7 @@ make_idw_stack <- function(x = NA,
       set.breaks <- tolower(set.breaks)
 
       # Set breaks ----
-      break.vals <- classInt::classIntervals(x$CPUE_KGHA, n = 5, style = set.breaks)$brks
+      break.vals <- classIntervals(x$CPUE_KGHA, n = 5, style = set.breaks)$brks
 
       # Setup rounding for small CPUE ----
       alt.round <- floor(-1*(min((log10(break.vals)-2)[abs(break.vals) > 0])))

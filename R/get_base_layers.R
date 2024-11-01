@@ -1,15 +1,16 @@
-#' Function to get base layers for plotting
+#' Function to get base layers for groundfish survey regions, bathymetry, and land
 #'
 #' This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
-#' @param select.region Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6
+#' @param select.region Character vector indicating which region to retrieve. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
 #' @param include.corners Logical. Should corner stations be returned in the survey grid? Only for the EBS.
 #' @param fix.invalid.geom Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?
 #' @param split.land.at.180 Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = TRUE.
-#' @param high.resolution.land Should the State of Alaska polygon be a high resolution polygon that includes small islands and a detailed coastline (TRUE)? The lower resolution polygon is returned by default and is recommended for general mapping and visualization purposes. The larger higher resolution polygon takes longer to load/plot and is recommended when spatial operations need to be performed at high resolution (e.g., masking high resolution rasters).
+#' @param high.resolution.coast Should the State of Alaska polygon be a high resolution Alaska Department of Natural Resources 1:63360 scale polygon that includes smaller islands and a more detailed coastline? The higher resolution polygon (high.resolution.coast = TRUE) takes longer to load/plot and is recommended for spatial operations performed at high resolution (e.g., masking high resolution rasters). THe lower resolution polygon (high.resolution.coast = FALSE) is recommended for general mapping and visualization purposes. Default = FALSE.
 #' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
 #' @import sf
+#' @importFrom tools toTitleCase
 #' @export
 
 get_base_layers <- function(select.region,
@@ -18,7 +19,7 @@ get_base_layers <- function(select.region,
                             include.corners = NULL,
                             split.land.at.180 = TRUE,
                             fix.invalid.geom = TRUE,
-                            high.resolution.land = FALSE) {
+                            high.resolution.coast = FALSE) {
 
   select.region <- tolower(select.region)
 
@@ -94,29 +95,79 @@ get_base_layers <- function(select.region,
   survey.grid <- NULL
 
   # Bathymetry and land shapefiles ---------------------------------------------------------------
-  if(select.region[1] %in% c("bs.south", "sebs", "bs.all", "ebs", "nbs", "bs.north", "ecs", "ebs.ecs")) {
+  if(select.region[1] %in%
+     c("bs.south", "sebs", "bs.all", "ebs", "nbs", "bs.north", "ecs", "ebs.ecs")) {
 
-    # if(high.resolution.land) {
-    #
-    # } else {
-    #
-    # }
+    akland <- sf::st_read(system.file("extdata", "ak_russia.shp", package = "akgfmaps"),
+                          quiet = TRUE)
 
-    akland <- sf::st_read(system.file("extdata", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE)
-    bathymetry <- sf::st_read(system.file("extdata", "npac_0-200_meters.shp", package = "akgfmaps"), quiet = TRUE)
+    akland$COUNTRY <- c("RU", "US")
+    akland$STATE_PROVINCE <- c(NA, "Alaska")
 
-  } else if(select.region %in% c("ebs.slope", "bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6")) {
+    bathymetry <- sf::st_read(system.file("extdata", "npac_0-200_meters.shp", package = "akgfmaps"),
+                              quiet = TRUE)
 
-    akland <- sf::st_read(system.file("extdata", "ak_russia.shp", package = "akgfmaps"), quiet = TRUE)
-    bathymetry <- sf::st_read(system.file("extdata", "npac_0-1000_meters.shp", package = "akgfmaps"), quiet = TRUE)
+  } else if(select.region %in%
+            c("ebs.slope", "bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6")) {
 
-  } else if(select.region[1] %in% c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")) {
+    akland <- sf::st_read(system.file("extdata", "ak_russia.shp", package = "akgfmaps"),
+                          quiet = TRUE)
 
-    akland <- sf::st_read(system.file("extdata", "alaska_canada_dcw.shp", package = "akgfmaps"), quiet = TRUE)
-    akland <- dplyr::filter(akland, POPYADMIN %in% c("ALBERTA", "BRITISH COLUMBIA", "YUKON TERRITORY", "NORTHWEST TERRITORIES", "ALASKA"))
-    bathymetry <- sf::st_read(system.file("extdata", "alaska_race.shp", package = "akgfmaps"), quiet = TRUE)
+    bathymetry <- sf::st_read(system.file("extdata", "npac_0-1000_meters.shp", package = "akgfmaps"),
+                              quiet = TRUE)
 
-    }
+    akland$COUNTRY <- c("RU", "US")
+
+    akland$STATE_PROVINCE <- c(NA, "Alaska")
+
+  } else if(select.region[1] %in%
+            c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")) {
+
+    akland <- sf::st_read(system.file("extdata", "alaska_canada_dcw.shp", package = "akgfmaps"),
+                          quiet = TRUE)
+
+    akland <- akland[akland$POPYADMIN %in%
+                       c("ALBERTA",
+                         "BRITISH COLUMBIA",
+                         "YUKON TERRITORY",
+                         "NORTHWEST TERRITORIES",
+                         "ALASKA"), ]
+
+    akland$COUNTRY <- akland$POPYCOUN
+
+    akland$STATE_PROVINCE <- akland$POPYADMIN |>
+      tolower() |>
+      tools::toTitleCase()
+
+    bathymetry <- sf::st_read(system.file("extdata", "alaska_race.shp", package = "akgfmaps"),
+                              quiet = TRUE)
+
+  }
+
+  # Replace Alaska polygon with high resolution version
+  if(high.resolution.coast) {
+
+    alaska_dnr <-
+      sf::st_read(
+      system.file("extdata", "Alaska_Coastline.shp", package = "akgfmaps"),
+      quiet = TRUE)
+
+    alaska_dnr$COUNTRY <- "US"
+
+    alaska_dnr$STATE_PROVINCE <- "Alaska"
+
+    alaska_dnr <- alaska_dnr[c("COUNTRY", "STATE_PROVINCE", "geometry")]
+
+    akland <- akland[c("COUNTRY", "STATE_PROVINCE", "geometry")]
+
+    akland <- akland[!(akland$STATE_PROVINCE == "Alaska"), ]
+
+    akland <- sf::st_transform(akland,
+                               crs = sf::st_crs(alaska_dnr))
+
+    akland <- rbind(akland, alaska_dnr)
+
+  }
 
 
   # SEBS--------------------------------------------------------------------------------------------
