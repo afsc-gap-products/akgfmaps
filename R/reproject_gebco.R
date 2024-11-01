@@ -113,7 +113,9 @@ reproject_gebco <- function(x,
     #   neighbors = slope_nn
     # )
 
-    output <- c(output, output_slope, output_aspect)
+    output <- c(output,
+                # output_aspect,
+                output_slope)
   }
   return(output)
 }
