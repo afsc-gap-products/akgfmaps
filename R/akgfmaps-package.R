@@ -1,7 +1,7 @@
 #' @keywords internal
 "_PACKAGE"
 
-#' @import sf ggplot2 stars terra gstat
+#' @import sf ggplot2 stars terra
 #' @importFrom grDevices dev.off
 #' @importFrom grDevices png
 #' @importFrom methods is

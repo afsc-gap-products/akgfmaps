@@ -42,9 +42,4 @@ doc
 Meta
 *.lock
 
-/vignettes/*.html
-/vignettes/*.R
-/vignettes/*.md
-/vignettes/*.png
-/vignettes/figure
 /plots/
