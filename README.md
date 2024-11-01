@@ -1,5 +1,8 @@
 # akgfmaps
-An R package for retrieving shapefiles (vector geometries) used to produce maps for bottom trawl survey regions, management areas, and statistical areas in Alaska. The package includes groundfish and crab bottom trawl survey layers for the eastern Bering Sea shelf, eastern Bering Sea slope, northern Bering Sea, Chukchi Sea, Gulf of Alaska, and Aleutian Islands. The package also include layers for National Marine Fisheries Service (NMFS) statistical areas, Alaska Department of Fish and Game (ADFG) management and statistical areas, Alaska Ecosystem Status Report (ESR) regions, Bering Sea Integrated Ecosystem Research Program (BSIERP) regions, and legacy International North Pacific Fisheries Commission (INPFC) groundfish areas. 
+
+An R package for retrieving 'shapefiles'/vector geometries (polygons) used to produce maps for bottom trawl survey regions, marine management areas, and marine statistical areas in Alaska. The package includes groundfish and crab bottom trawl survey layers for the eastern Bering Sea shelf, eastern Bering Sea slope, northern Bering Sea, Chukchi Sea, Gulf of Alaska, and Aleutian Islands. The package also include layers for National Marine Fisheries Service (NMFS) statistical areas, Alaska Department of Fish and Game (ADFG) management and statistical areas, Alaska Ecosystem Status Report (ESR) areas, Bering Sea Integrated Ecosystem Research Program (BSIERP) regions, and historical International North Pacific Fisheries Commission (INPFC) groundfish areas in the Aleutian Islands and Gulf of Alaska. 
+
+Please [submit an issue](https://github.com/afsc-gap-products/akgfmaps/issues) if you encounter problems or errors with the package.
 
 See [NEWS](./NEWS) for information about package updates.
 
@@ -11,6 +14,8 @@ akgfmaps can be installed using the following code:
 devtools::install_github("afsc-gap-products/akgfmaps", build_vignettes = TRUE)
 ```
 
+Please note that layers in the package are installed locally to ensure portability. Therefore, the package must be re-installed to access new geometries when they become available.
+
 # Vignettes
 
 Vignettes can be accessed using:
@@ -21,11 +26,11 @@ browseVignettes('akgfmaps')
 
 # Download shapefiles
 
-Survey shapefiles and associated metadata are available [here](./assets/region_shapefiles). Please note that survey shapefiles change over time as information improves.
+For non-R users, the most recent versions of bottom trawl survey shapefiles and associated metadata are available [here](./assets/region_shapefiles).
 
 # Layers in the package
 
-The table below lists vector geometry layers (POLYGONS) in the package by region (AI = Aleutian Islands, BSS = Bering Sea Slope, CS = Chukchi Sea, GOA = Gulf of Alaska, NBS = Northern Bering Sea, SEBS = southeastern Bering Sea continental shelf) 
+The table below lists the vector geometry layers (polygons) in the package by region (AI = Aleutian Islands, BSS = eastern Bering Sea Slope, CS = Chukchi Sea, GOA = Gulf of Alaska, NBS = Northern Bering Sea, SEBS = southeastern Bering Sea continental shelf). 
 
 | Region  | Layer | Function | Contributor/Creator | Source | 
 |---------|-------|----------|-------------|--------|
@@ -38,22 +43,22 @@ The table below lists vector geometry layers (POLYGONS) in the package by region
 | All | Ecosystem Status Report Areas/Subareas | get_esr_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](https://apps-afsc.fisheries.noaa.gov/refm/reem/ecoweb/index.php) |
 | All | North Pacific bathymetry (0-1000 m) | get_base_layers() | A. Grieg (AFSC Ret.) | GEBCO 1998 |
 | AI | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
-| AI | Bottom trawl survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
+| AI | Groundfish survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | AI | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | BSS/NBS/SEBS | BSIERP Regions | get_bsierp_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](https://doi.org/10.5065/D6DF6P6C) |
-| BSS | Bottom trawl survey area | get_base_layers() | A. Grieg (AFSC Ret.) | |
-| BSS | Bottom trawl survey strata | get_base_layers() | A. Grieg (AFSC Ret.) | |
+| BSS | Groundfish survey area | get_base_layers() | A. Grieg (AFSC Ret.) | |
+| BSS | Groundfish survey strata | get_base_layers() | A. Grieg (AFSC Ret.) | |
 | CS  | Bottom trawl survey area | get_base_layers() | B. Lauth (AFSC Ret.) | |
 | CS  | Bottom trawl survey grid | get_base_layers() | B. Lauth (AFSC Ret.) | |
 | GOA | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
-| GOA | Bottom trawl survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
+| GOA | Groundfish survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | GOA | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | NBS | Bottom trawl survey area | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
-| NBS | Bottom trawl survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
+| NBS | Groundfish survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
 | NBS | Bottom trawl survey grid | get_base_layers() | J. Benson (AFSC Ret.) | |
 | NBS | Norton Sound RKC strata | get_crab_strata() | [ [E. Ryznar (AFSC)](https://github.com/eryznar) | |
 | SEBS | Bottom trawl survey area | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
-| SEBS | Bottom trawl survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
+| SEBS | Groundfish survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
 | SEBS | Bottom trawl survey grid | get_base_layers() | J. Benson (AFSC Ret.) | |
 | SEBS | Bristol Bay RKC strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
 | SEBS | EBS Snow crab strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
