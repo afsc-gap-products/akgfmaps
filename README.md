@@ -25,22 +25,22 @@ Survey shapefiles and associated metadata are available [here](./assets/region_s
 
 # Layers in the package
 
-The table below lists vector geometry layers (POLYGONS) that are included in the package by region 
+The table below lists vector geometry layers (POLYGONS) in the package by region (AI = Aleutian Islands, BSS = Bering Sea Slope, CS = Chukchi Sea, GOA = Gulf of Alaska, NBS = Northern Bering Sea, SEBS = southeastern Bering Sea continental shelf) 
 
-| Region  | Layer | Function | Provided by | Source | 
+| Region  | Layer | Function | Contributor/Creator | Source | 
 |---------|-------|----------|-------------|--------|
 | All | Alaska Coastline (1:63360) - Full | get_base_layers() | Alaska DNR | [Link](https://data-soa-dnr.opendata.arcgis.com/datasets/SOA-DNR::alaska-coastline/explore?layer=4&location=60.861513%2C30.585938%2C5.84) |
 | All | Alaska Coastline (1:63360) - Simplified | get_base_layers() | Alaska DNR | [Link](https://data-soa-dnr.opendata.arcgis.com/datasets/SOA-DNR::alaska-coastline/explore?layer=4&location=60.861513%2C30.585938%2C5.84) |
 | All | Russia Coastline | get_base_layers() | A. Grieg (AFSC Ret.) | |
 | All | Canada Coastline | get_base_layers() | A. Grieg (AFSC Ret.) | |
-| All | ADFG Statistical/Management Areas | get_adfg_areas() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link] |
-| All | NMFS Statistical Areas | get_nmfs_areas() | [A. Jahn (AKRO)](https://github.com/abby-jahn) | |
-| All | Ecosystem Status Report Areas/Subareas | get_esr_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | |
-| All | North Pacific bathymetry (0-1000 m) | get_base_layers() | A. Grieg (AFSC Ret.) | |
+| All | ADFG Statistical/Management Areas | get_adfg_areas() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](http://www.adfg.alaska.gov/index.cfm?adfg=fishingCommercialByFishery.statmaps) |
+| All | NMFS Statistical Areas | get_nmfs_areas() | [A. Jahn (AKRO)](https://github.com/abby-jahn) | [Link](https://www.ecfr.gov/cgi-bin/text-idx?mc=true&node=pt50.13.679&rgn=div5#ap50.13.679.0000_0nbspnbspnbsp.1) |
+| All | Ecosystem Status Report Areas/Subareas | get_esr_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](https://apps-afsc.fisheries.noaa.gov/refm/reem/ecoweb/index.php) |
+| All | North Pacific bathymetry (0-1000 m) | get_base_layers() | A. Grieg (AFSC Ret.) | GEBCO 1998 |
 | AI | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | AI | Bottom trawl survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | AI | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
-| BSS/NBS/SEBS | BSIERP Regions | get_bsierp_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | |
+| BSS/NBS/SEBS | BSIERP Regions | get_bsierp_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](https://doi.org/10.5065/D6DF6P6C) |
 | BSS | Bottom trawl survey area | get_base_layers() | A. Grieg (AFSC Ret.) | |
 | BSS | Bottom trawl survey strata | get_base_layers() | A. Grieg (AFSC Ret.) | |
 | CS  | Bottom trawl survey area | get_base_layers() | B. Lauth (AFSC Ret.) | |
@@ -48,12 +48,12 @@ The table below lists vector geometry layers (POLYGONS) that are included in the
 | GOA | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | GOA | Bottom trawl survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | GOA | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
-| NBS | Bottom trawl survey area | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | |
-| NBS | Bottom trawl survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | |
+| NBS | Bottom trawl survey area | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
+| NBS | Bottom trawl survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
 | NBS | Bottom trawl survey grid | get_base_layers() | J. Benson (AFSC Ret.) | |
 | NBS | Norton Sound RKC strata | get_crab_strata() | [ [E. Ryznar (AFSC)](https://github.com/eryznar) | |
-| SEBS | Bottom trawl survey area | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | |
-| SEBS | Bottom trawl survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | |
+| SEBS | Bottom trawl survey area | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
+| SEBS | Bottom trawl survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
 | SEBS | Bottom trawl survey grid | get_base_layers() | J. Benson (AFSC Ret.) | |
 | SEBS | Bristol Bay RKC strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
 | SEBS | EBS Snow crab strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
