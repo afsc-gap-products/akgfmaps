@@ -3,7 +3,7 @@
 #' Retrieve ADFG management area POLYGON grid.
 #'
 #' @param set.crs Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area coordinate reference system (EPSG:3338) is automatically assigned.
-#' @param subset.field Logical. Should all of the columns from the original file be returned (including blank and duplicate fields).
+#' @param subset.fields Logical. Should all of the columns from the original file be returned (including blank and duplicate fields).
 #' @return ADFG management area sf POLYGON.
 #' @export
 

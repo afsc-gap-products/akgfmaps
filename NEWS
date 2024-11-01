@@ -24,6 +24,18 @@ NEW FEATURES
   RKC, eastern Bering Sea snow crab, and eastern Bering Sea
   Tanner crab.
 
+IMPROVEMENTS
+
+- Replace deprecated 1998 Alaska Department of Natural
+  Resources coastline shapefile (1:63,360 scale) with
+  2017 update (https://tinyurl.com/4hvr3psb).
+
+BUG FIX
+
+- Rename inst/extadata/NMFS Reporting Areas.shp to
+  inst/extadata/NMFS_Reporting_Areas.shp to meet recommended
+  portability requirements.
+
 
 akgfmaps 3.5.4 (September 23, 2024)
 ----------------------------------------------------------------

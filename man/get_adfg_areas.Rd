@@ -8,6 +8,8 @@ get_adfg_areas(set.crs = "auto", subset.fields = TRUE)
 }
 \arguments{
 \item{set.crs}{Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area coordinate reference system (EPSG:3338) is automatically assigned.}
+
+\item{subset.fields}{Logical. Should all of the columns from the original file be returned (including blank and duplicate fields).}
 }
 \value{
 ADFG management area sf POLYGON.

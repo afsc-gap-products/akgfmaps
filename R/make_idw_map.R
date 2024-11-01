@@ -196,7 +196,7 @@ make_idw_map <- function(x = NA,
     vec <- as.character(vec)
     vec[grep("-1", vec)] <- "No catch"
     vec <- sub("\\(", "\\>", vec)
-    vec <- sub("\\,", "–", vec)
+    vec <- sub("\\,", "-", vec)
     vec <- sub("\\]", "", vec)
 
     if(length(sig.dig) > 0) {

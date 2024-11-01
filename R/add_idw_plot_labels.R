@@ -20,7 +20,7 @@ add_map_labels <- function(x,
                            lab.replace = FALSE,
                            transform.new.places = TRUE,
                            add.scale.bar = "br") {
-  if(class(x) == "list") {
+  if(is(x, "list")) {
     in.dat <- x
 
     # Load labels and plotting locations--------------------------------------------------------------
