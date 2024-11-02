@@ -38,7 +38,7 @@ get_esr_regions <- function(select.region = "esr_subarea", set.crs) {
 
   layer <- layer |>
     sf::st_transform(crs = set.crs) |>
-    wrap_dateline_silent()
+    fix_geometry()
 
   return(layer)
 

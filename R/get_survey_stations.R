@@ -1,4 +1,4 @@
-#' Character vector of station ID codes
+#' Character vector of EBS/NBS bottom trawl survey station IDs
 #'
 #' Returns a character vector of station id codes in a region.
 #'

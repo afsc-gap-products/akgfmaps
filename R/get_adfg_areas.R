@@ -60,7 +60,7 @@ get_adfg_areas <- function(set.crs = "auto", subset.fields = TRUE) {
   layer <- layer |>
     sf::st_transform(crs = set.crs) |>
     sf::st_make_valid() |>
-    wrap_dateline_silent()
+    fix_geometry()
 
   return(layer)
 

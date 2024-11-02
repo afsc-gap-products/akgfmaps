@@ -57,30 +57,15 @@ fix_geometry <- function(x) {
     return(x)
   }
 
-  stopifnot("fix_geometry: x must be a simple features class." = "sf" %in% class(x))
-
-  x <- suppressWarnings(sf::st_wrap_dateline(x))
-  x <- suppressWarnings(sf::st_make_valid(x))
-
-  return(x)
-
-}
-
-
-#' Wrap dateline with warning suppress
-#'
-#' Function to wrap dateline if an sf object uses a geographic coordinate system.
-#'
-#' @param x sf object
-#' @noRd
-
-wrap_dateline_silent <- function(x) {
+  stopifnot("fix_geometry: x must be a simple features class." = is(x, "sf"))
 
   if(sf::st_is_longlat(x)) {
 
-    x <- sf::st_wrap_dateline(x)
+    x <- suppressWarnings(sf::st_wrap_dateline(x))
 
   }
+
+  x <- suppressWarnings(sf::st_make_valid(x))
 
   return(x)
 

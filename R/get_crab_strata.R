@@ -35,8 +35,7 @@ get_crab_strata <- function(select.unit, set.crs) {
   crab_strata <- sf::st_read(system.file("extdata", "crab_strata", sys_filename, package = "akgfmaps"),
                              quiet = TRUE) |>
     sf::st_transform(crs = set.crs) |>
-    sf::st_make_valid() |>
-    wrap_dateline_silent()
+    fix_geometry()
 
   crab_strata$STRATUM <- stratum_name
 

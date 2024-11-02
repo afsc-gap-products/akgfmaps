@@ -48,7 +48,7 @@ get_inpfc_strata <- function(select.region, set.crs) {
     dplyr::ungroup()
 
   stata <- sf::st_transform(strata, crs = set.crs) |>
-    wrap_dateline_silent()
+    fix_geometry()
 
   return(strata)
 

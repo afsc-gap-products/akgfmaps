@@ -24,7 +24,7 @@ get_bsierp_regions <- function(set.crs) {
 
   layer <- layer |>
     sf::st_transform(crs = set.crs) |>
-    wrap_dateline_silent()
+    fix_geometry()
 
   return(layer)
 

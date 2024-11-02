@@ -6,7 +6,7 @@
 \alias{akgfmaps-package}
 \title{akgfmaps: Alaska Groundfish and Ecosystem Survey Area Mapping}
 \description{
-This package provides functions and layers for making maps and conducting spatial analyses in Alaska marine regions.
+Functions and layers ('shapefiles') for making maps and conducting spatial analyses in Alaska marine regions.
 }
 \author{
 \strong{Maintainer}: Sean Rohan \email{sean.rohan@noaa.gov}

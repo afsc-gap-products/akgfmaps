@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_survey_stations.R
 \name{get_survey_stations}
 \alias{get_survey_stations}
-\title{Character vector of station ID codes}
+\title{Character vector of EBS/NBS bottom trawl survey station IDs}
 \usage{
 get_survey_stations(select.region, include.corners = TRUE)
 }
