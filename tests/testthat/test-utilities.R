@@ -12,7 +12,7 @@ testthat::test_that("Check stations",
                     {expect_equal(length(get_survey_stations(select.region = "sebs",
                                                              include.corners = TRUE)), 376);
                       expect_equal(length(get_survey_stations(select.region = "sebs",
-                                                              include.corners = TRUE)), 350);
+                                                              include.corners = FALSE)), 350);
                       expect_equal(length(get_survey_stations(select.region = "nbs",
                                                               include.corners = TRUE)), 144)})
 
