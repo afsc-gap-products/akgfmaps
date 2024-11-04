@@ -17,7 +17,7 @@ get_base_layers(
 \arguments{
 \item{select.region}{Character vector indicating which region to retrieve. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6}
 
-\item{set.crs}{Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.}
+\item{set.crs}{Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area (EPSG:3338) will be used.}
 
 \item{use.survey.bathymetry}{Should survey bathymetry be used?}
 

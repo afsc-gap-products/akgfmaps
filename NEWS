@@ -1,10 +1,15 @@
-akgfmaps 3.6.0 (November 4, 2024)
+akgfmaps 3.6.0 (In development)
 ----------------------------------------------------------------
 
 FUNCTIONALITY CHANGES
 
- - rasterize_and_mask() no longer supports object classes from
-   the raster package.
+- rasterize_and_mask() no longer supports 'raster' class from
+  the raster package.
+- Functions that allow set.crs = "auto" now use Alaska Albers
+  Equal Area (EPSG:3338) by default instead of region-specific
+  PROJ4s strings. The change is intended to ensure forward
+  compatibility by using 'standard' coordinate reference
+  systems.
 
 NEW FEATURES
 
@@ -20,26 +25,32 @@ NEW FEATURES
 
   Layers are retrieved from a file Geodatabase (.gdb;
   inst/extdata/Alaska_Marine_Management_Areas.gdb) provided
-  courtesy of Matt Callahan (matt.callahan@noaa.gov)-- thanks
-  Matt!
+  by Matt Callahan (matt.callahan@noaa.gov) -- thanks, Matt!
 
 - Added get_crab_strata() function to retrieve crab stratum
   layers. Support for Bristol Bay RKC, Pribilof Islands
   RKC, Pribilof Islands BKC, St. Matthew's BKC, Norton Sound
   RKC, eastern Bering Sea snow crab, and eastern Bering Sea
-  Tanner crab.
+  Tanner crab. Layers provided by Emily Ryznar
+  (emily.ryznar@noaa.gov) -- thanks, Emily!
+- get_base_layers(high.resolution.coast = TRUE) returns
+  high resolution (1:63,360 scale) 2017 Alaska Department
+  of Natural Resources coastline shapefile
+  (https://tinyurl.com/4hvr3psb). The high resolution version
+  is recommended for spatial analyses that require masking.
+  The default option (high.resolution.coast = FALSE) returns
+  a lower resolution coastline that loads faster and is
+  suitable for general mapping/visualization.
 
 IMPROVEMENTS
 
-- Replace deprecated 1998 Alaska Department of Natural
-  Resources coastline shapefile (1:63,360 scale) with
-  2017 update (https://tinyurl.com/4hvr3psb).
+- Removed dplyr and raster removed from imports/dependencies.
 
 BUG FIX
 
 - Rename inst/extadata/NMFS Reporting Areas.shp to
   inst/extadata/NMFS_Reporting_Areas.shp to meet recommended
-  portability requirements.
+  portability standards for R packages.
 
 
 akgfmaps 3.5.4 (September 23, 2024)

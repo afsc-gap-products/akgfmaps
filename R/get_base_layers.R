@@ -101,7 +101,7 @@ get_base_layers <- function(select.region,
 
   }
 
-  # Replace Alaska polygon with high resolution version
+  # Use higher resolution coastline polygon when user sets high.resolution.coast = TRUE
   if(high.resolution.coast) {
 
     alaska_dnr <-
