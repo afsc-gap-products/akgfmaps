@@ -1,6 +1,6 @@
 # akgfmaps
 
-An R package for retrieving 'shapefiles'/vector geometries (polygons) used to produce maps for bottom trawl survey regions, marine management areas, and marine statistical areas in Alaska. The package includes groundfish and crab bottom trawl survey layers for the eastern Bering Sea shelf, eastern Bering Sea slope, northern Bering Sea, Chukchi Sea, Gulf of Alaska, and Aleutian Islands. The package also include layers for National Marine Fisheries Service (NMFS) statistical areas, Alaska Department of Fish and Game (ADFG) management and statistical areas, Alaska Ecosystem Status Report (ESR) areas, Bering Sea Integrated Ecosystem Research Program (BSIERP) regions, and historical International North Pacific Fisheries Commission (INPFC) groundfish areas in the Aleutian Islands and Gulf of Alaska. 
+The akgfmaps package is used to vector geometries ('shapefiles') that are commonly needed for mapping and spatial analysis in Alaska marine management areas, marine statistical areas, and fishery-independent survey regions in Alaska. The package includes groundfish, crab, and ecosystem survey layers for the eastern Bering Sea shelf, eastern Bering Sea slope, northern Bering Sea, Chukchi Sea, Gulf of Alaska, and Aleutian Islands. The package includes layers for National Marine Fisheries Service (NMFS) statistical areas, Alaska Department of Fish and Game (ADFG) management and statistical areas, Alaska Ecosystem Status Report (ESR) areas, Bering Sea Integrated Ecosystem Research Program (BSIERP) regions, and historical International North Pacific Fisheries Commission (INPFC) groundfish areas in the Aleutian Islands and Gulf of Alaska. The package also includes convenienience functions for common spatial tasks that are required by fisheries researchers, such as generating two-dimensional grids in multiple coordinate reference systems to facilitate spatial operations that require interpolation and to performing interpolations to produce qualitative distribution maps in the eastern Bering Sea and northern Bering Sea.
 
 Please [submit an issue](https://github.com/afsc-gap-products/akgfmaps/issues) if you encounter problems or errors with the package.
 
@@ -8,13 +8,13 @@ See [NEWS](./NEWS) for information about package updates.
 
 # Installation
 
-akgfmaps can be installed using the following code:
+The package can installed for R versions >= 4.0 using the using the following code:
 
 ```{r}
 devtools::install_github("afsc-gap-products/akgfmaps", build_vignettes = TRUE)
 ```
 
-Please note that layers in the package are installed locally to ensure portability. Therefore, the package must be re-installed to access new geometries when they become available.
+Layers in the package are saved locally during installation. Therefore, the package must be re-installed to access new geometries when they become available.
 
 # Vignettes
 
@@ -24,11 +24,11 @@ Vignettes can be accessed using:
 browseVignettes('akgfmaps')
 ```
 
-# Download shapefiles
+# Download shapefiles without installation
 
-For non-R users, the most recent versions of bottom trawl survey shapefiles and associated metadata are available [here](./assets/region_shapefiles).
+The package is intended for users to install and access layers using the package to ensure vector geometries are version-controlled for code-based analyses and visualizations. However, zip files containing the most recent versions of the bottom trawl survey shapefiles and associated metadata are provided for download [here](./assets/region_shapefiles).
 
-# Layers in the package
+# Vector geometries in the package
 
 The table below lists the vector geometry layers (polygons) in the package by region (AI = Aleutian Islands, BSS = eastern Bering Sea Slope, CS = Chukchi Sea, GOA = Gulf of Alaska, NBS = Northern Bering Sea, SEBS = southeastern Bering Sea continental shelf). 
 

@@ -41,11 +41,12 @@ get_inpfc_strata <- function(select.region, set.crs) {
   strata$INPFC_STRATUM <- stratum_names[strata$INPFC_STRATUM-offset]
 
   # Combine strata
-  strata <- strata |>
-    dplyr::select(INPFC_STRATUM) |>
-    dplyr::group_by(INPFC_STRATUM) |>
-    dplyr::summarise() |>
-    dplyr::ungroup()
+  strata <- strata["INPFC_STRATUM"]
+
+  strata <- aggregate(strata["geometry"],
+                      by = list(INPFC_STRATUM = strata$INPFC_STRATUM),
+                      FUN = function(x) x[1],
+                      do_union = TRUE)
 
   stata <- sf::st_transform(strata, crs = set.crs) |>
     fix_geometry()

@@ -17,8 +17,8 @@ Depends: R (>= 4.0.0),
     sf,
     stars,
     terra
-Imports: gstat (>= 2.0-1), stats, utils, methods, dplyr, colorspace, RColorBrewer, here, forecast, cowplot, ggspatial, rmapshaper, shadowtext, ggthemes, classInt (>= 0.4-1), units
-Description: Functions and layers ('shapefiles') for making maps and conducting spatial analyses in Alaska marine regions.
+Imports: gstat (>= 2.0-1), stats, utils, methods, colorspace, RColorBrewer, here, ggspatial, rmapshaper, shadowtext, ggthemes, classInt (>= 0.4-1), units
+Description: Functions and vector geometry layers ('shapefiles') for making maps and conducting spatial analyses in Alaska marine regions.
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true

@@ -1,9 +1,9 @@
 #' Function to get survey bathymetry layers
 #'
-#' Retrieves bathymetric contours that have been used in tech memos and reports through 2019 for the EBS.
+#' Retrieves bathymetric contours that approximate groundfish bottom trawl survey stratum boundaries on the EBS shelf.
 #'
-#' @param select.region Region to select
-#' @param set.crs CRS to use
+#' @param select.region Character vector indicating which region to retrieve. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north
+#' @param set.crs Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area (EPSG:3338) will be used.
 #' @return Returns an sf multiline object with survey contours.
 #' @export
 
@@ -12,16 +12,8 @@ get_survey_bathymetry <- function(select.region,
 
   # Automatically set CRS---------------------------------------------------------------------------
   if(set.crs == "auto") {
-    region.crs <- c(
-      "+proj=aea +lat_1=55 +lat_2=60 +lat_0=57.5 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=55 +lat_2=60 +lat_0=57.5 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=57 +lat_2=63 +lat_0=59 +lon_0=-170 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=68.1 +lat_2=70.7 +lat_0=69.4 +lon_0=-162.6 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs",
-      "+proj=aea +lat_1=60.8 +lat_2=67 +lat_0=63.9 +lon_0=-167 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
-    set.crs <- region.crs[match(select.region, c("bs.south", "sebs", "bs.all", "ebs", "bs.north", "nbs", "ecs", "ebs.ecs"))]
+    message("get_survey_bathymetry: select.region = 'auto' now uses Alaska Albers Equal Area (EPSG:3338) by default. This replaces the custom equal area projection PROJ4 strings that were used prior to akgfmaps 3.6.0.")
+    set.crs <- "EPSG:3338"
   }
 
   if(select.region %in% c("bs.all", "ebs", "nbs", "bs.north")) {

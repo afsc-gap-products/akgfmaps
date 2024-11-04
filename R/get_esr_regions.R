@@ -8,6 +8,8 @@
 
 get_esr_regions <- function(select.region = "esr_subarea", set.crs) {
 
+  Area_Type <- NULL
+
   if(set.crs == "auto") {
     set.crs = "EPSG:3338"
   }
@@ -24,9 +26,8 @@ get_esr_regions <- function(select.region = "esr_subarea", set.crs) {
 
   layer <- suppressWarnings(sf::st_read(here::here("inst/extdata/Alaska_Marine_Management_Areas.gdb"),
                        layer = "Alaska_Marine_Areas_AK_prj",
-                       quiet = TRUE))
-
-  layer <- layer[layer$Area_Type == area_type, ]
+                       quiet = TRUE)) |>
+    subset(subset = Area_Type == area_type)
 
   layer$AREA_TYPE <- layer$Area_Type
   layer$AREA_NAME <- layer$Area_Name

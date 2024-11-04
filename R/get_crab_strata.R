@@ -37,7 +37,11 @@ get_crab_strata <- function(select.unit, set.crs) {
     sf::st_transform(crs = set.crs) |>
     fix_geometry()
 
+  names(crab_strata)[names(crab_strata) == "Shape_Area"] <- "AREA_M2"
+
   crab_strata$STRATUM <- stratum_name
+
+  crab_stratum <- subset(crab_strata, select = c("STRATUM", "AREA_M2", "geometry"))
 
   return(crab_strata)
 

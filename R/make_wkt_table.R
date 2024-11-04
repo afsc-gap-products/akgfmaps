@@ -10,21 +10,23 @@
 
 make_wkt_table <- function(x, area.crs, wkt.crs = "WGS84") {
 
+
+
   x$AREA_KM2 <- x |>
     sf::st_transform(crs = area.crs) |>
     sf::st_make_valid() |>
     sf::st_area() |>
-    units::set_units(km^2) |>
+    units::set_units('km^2') |>
     as.numeric()
 
   output <- sf::st_transform(x, wkt.crs = "WGS84") |>
     sf::st_make_valid()
 
-  output$wkt <- sf::st_as_text(output$geometry)
+  output$wkt <- sf::st_as_text(output[['geometry']])
 
   output <- output |>
-    as.data.frame() |>
-    dplyr::select(-geometry)
+    sf::st_drop_geometry() |>
+    as.data.frame()
 
   return(output)
 

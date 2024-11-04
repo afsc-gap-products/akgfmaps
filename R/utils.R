@@ -53,19 +53,20 @@
 #' @noRd
 
 fix_geometry <- function(x) {
+
   if(is.null(x)) {
     return(x)
   }
 
   stopifnot("fix_geometry: x must be a simple features class." = is(x, "sf"))
 
+  x <- suppressWarnings(sf::st_make_valid(x))
+
   if(sf::st_is_longlat(x)) {
 
     x <- suppressWarnings(sf::st_wrap_dateline(x))
 
   }
-
-  x <- suppressWarnings(sf::st_make_valid(x))
 
   return(x)
 

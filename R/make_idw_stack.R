@@ -25,7 +25,7 @@
 #' (2) extrapolation.stack: a stack of extrapolated spatial objects with estimated values on a discrete scale as a 'stars' (when extrapolation.grid.type is "stars") or 'sf' (when extrapolation.grid.type is "sf" or "sf.simple") object;
 #' (3) continuous.grid: extrapolation grid with estimates on a continuous scale;
 #' (4) region: the region;
-#' (5) crs: coordinate reference system as a PROJ6 (WKT2:2019) string;
+#' (5) crs: coordinate reference system as a PROJ6 (WKT2:2019) string.
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 #' @import gstat
 #' @importFrom classInt classIntervals
@@ -47,6 +47,8 @@ make_idw_stack <- function(x = NA,
                            log.transform = FALSE,
                            idw.nmax = 4,
                            use.survey.bathymetry = TRUE) {
+
+  var1.var <- var1.pred <- id_temp <- NULL
 
   .check_region(select.region = region, type = "survey")
 
@@ -99,7 +101,7 @@ make_idw_stack <- function(x = NA,
                  crs = out.crs)
 
   # Assign CRS to input data------------------------------------------------------------------------
-  unique_groups <- dplyr::select(x, dplyr::all_of(grouping.vars)) |>
+  unique_groups <- x[grouping.vars] |>
     unique()
 
   x <- sf::st_as_sf(x,
@@ -111,7 +113,7 @@ make_idw_stack <- function(x = NA,
 
     if(length(grouping.vars) > 1) {
 
-      x_sub <- dplyr::inner_join(x, unique_groups[ii, ], by = grouping.vars)
+      x_sub <- merge(x, unique_groups[ii, ], by = grouping.vars)
 
     } else{
 
@@ -239,18 +241,23 @@ make_idw_stack <- function(x = NA,
     if(extrapolation.grid.type %in% c("sf", "sf.simple")) {
 
       extrap.grid <- extrap.grid |>
-        sf::st_as_sf() |>
-        dplyr::select(-var1.var) |>
-        dplyr::group_by(var1.pred) |>
-        dplyr::summarise(n = n()) |>
+        sf::st_as_sf()
+
+      extrap.grid <- subset(extrap.grid, select = -var1.var)
+
+      extrap.grid <- aggregate(extrap.grid,
+                               by = list(id_temp = extrap.grid$var1.pred),
+                               FUN = function(x) x[1],
+                               do_union = TRUE)
+
+      extrap.grid <- subset(extrap.grid, select = -id_temp) |>
         sf::st_intersection(map_layers$survey.area)
 
-      extrap.grid <- extrap.grid |>
-        dplyr::select(which(names(extrap.grid) %in% c("var1.pred", "n", "SURVEY", "geometry")))
+      extrap.grid <- extrap.grid[c("var1.pred", "SURVEY", "geometry")]
 
       if(length(grouping.vars) > 1) {
 
-        extrap.grid <- dplyr::bind_cols(extrap.grid, unique_groups[ii, ])
+        extrap.grid <- cbind(extrap.grid, unique_groups[ii, ])
 
       } else{
 
@@ -268,7 +275,7 @@ make_idw_stack <- function(x = NA,
       if(ii == 1) {
         extrap.stack <- extrap.grid
       } else {
-        extrap.stack <- dplyr::bind_rows(extrap.stack, extrap.grid)
+        extrap.stack <- rbind(extrap.stack, extrap.grid)
       }
 
     } else {

@@ -10,7 +10,6 @@
 #' @param transform.new.places Logical indicating whether the data frame passed to new.places should be transformed to match the map projection.
 #' @param add.scale.bar A character vector indicating where to add the scale bar. "br" for bottom right, "tl" for top left, etc. Default = "br"
 #' @return Returns input list with IDW plot labels added.
-#' @author Sean Rohan \email{sean.rohan@@noaa.gov}
 #' @export
 
 add_map_labels <- function(x,
@@ -20,6 +19,8 @@ add_map_labels <- function(x,
                            lab.replace = FALSE,
                            transform.new.places = TRUE,
                            add.scale.bar = "br") {
+
+  type <- y <- lab <- NULL
 
   if("list" %in% class(x)) {
     in.dat <- x
@@ -43,7 +44,7 @@ add_map_labels <- function(x,
       if(lab.replace) {
         placenames <- new.places
       } else {
-        placenames <- dplyr::bind_rows(placenames, new.places)
+        placenames <- rbind(placenames, new.places)
       }
     }
 
