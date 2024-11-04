@@ -68,10 +68,11 @@ test_get_crab_strata <- function() {
                          breaks = base_layers[[crab_units$region[ii]]][[as.character(crab_units$crs)[ii]]]$lat.breaks) +
       theme_minimal()
 
+    print(crab_maps[[ii]])
+
   }
 
 
-  print(crab_maps[[ii]])
 
 
   return(list(crab_maps = crab_maps,
