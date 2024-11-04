@@ -1,6 +1,15 @@
 # akgfmaps
 
-The akgfmaps package is used to vector geometries ('shapefiles') that are commonly needed for mapping and spatial analysis in Alaska marine management areas, marine statistical areas, and fishery-independent survey regions in Alaska. The package includes groundfish, crab, and ecosystem survey layers for the eastern Bering Sea shelf, eastern Bering Sea slope, northern Bering Sea, Chukchi Sea, Gulf of Alaska, and Aleutian Islands. The package includes layers for National Marine Fisheries Service (NMFS) statistical areas, Alaska Department of Fish and Game (ADFG) management and statistical areas, Alaska Ecosystem Status Report (ESR) areas, Bering Sea Integrated Ecosystem Research Program (BSIERP) regions, and historical International North Pacific Fisheries Commission (INPFC) groundfish areas in the Aleutian Islands and Gulf of Alaska. The package also includes convenienience functions for common spatial tasks that are required by fisheries researchers, such as generating two-dimensional grids in multiple coordinate reference systems to facilitate spatial operations that require interpolation and to performing interpolations to produce qualitative distribution maps in the eastern Bering Sea and northern Bering Sea.
+The akgfmaps package is used to vector geometries ('shapefiles') that are commonly needed for mapping and spatial analysis in Alaska marine management areas, marine statistical areas, and fishery-independent survey regions in Alaska. 
+
+The package includes:
+
+- Groundfish, and crab bottom trawl survey layers for the eastern Bering Sea shelf (EBS), eastern Bering Sea slope (BSS), northern Bering Sea (NBS), eastern Chukchi Sea (ECS), Gulf of Alaska (GOA), and Aleutian Islands (AI) regions.
+- National Marine Fisheries Service (NMFS) statistical area layer.
+- Alaska Department of Fish and Game (ADFG) management and statistical area layer.
+- Alaska Ecosystem Status Report (ESR) areas, Bering Sea Integrated Ecosystem Research Program (BSIERP) region layer
+- Historical International North Pacific Fisheries Commission (INPFC) groundfish area layer for the Aleutian Islands and Gulf of Alaska. 
+- Functions for common spatial tasks performed by Alaska fisheries researchers (e.g. generating two-dimensional grids in multiple coordinate reference systems, producing qualitative distribution maps in the EBS and NBS).
 
 Please [submit an issue](https://github.com/afsc-gap-products/akgfmaps/issues) if you encounter problems or errors with the package.
 
@@ -30,7 +39,7 @@ The package is intended for users to install and access layers using the package
 
 # Vector geometries in the package
 
-The table below lists the vector geometry layers (polygons) in the package by region (AI = Aleutian Islands, BSS = eastern Bering Sea Slope, CS = Chukchi Sea, GOA = Gulf of Alaska, NBS = Northern Bering Sea, SEBS = southeastern Bering Sea continental shelf). 
+The table below lists the vector geometry layers (polygons) in the package by region (AI = Aleutian Islands, BSS = eastern Bering Sea Slope, ECS = eastern Chukchi Sea, GOA = Gulf of Alaska, NBS = Northern Bering Sea, SEBS = southeastern Bering Sea continental shelf). 
 
 | Region  | Layer | Function | Contributor/Creator | Source | 
 |---------|-------|----------|-------------|--------|
@@ -48,8 +57,8 @@ The table below lists the vector geometry layers (polygons) in the package by re
 | BSS/NBS/SEBS | BSIERP Regions | get_bsierp_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](https://doi.org/10.5065/D6DF6P6C) |
 | BSS | Groundfish survey area | get_base_layers() | A. Grieg (AFSC Ret.) | |
 | BSS | Groundfish survey strata | get_base_layers() | A. Grieg (AFSC Ret.) | |
-| CS  | Bottom trawl survey area | get_base_layers() | B. Lauth (AFSC Ret.) | |
-| CS  | Bottom trawl survey grid | get_base_layers() | B. Lauth (AFSC Ret.) | |
+| ECS  | Bottom trawl survey area | get_base_layers() | B. Lauth (AFSC Ret.) | |
+| ECS  | Bottom trawl survey grid | get_base_layers() | B. Lauth (AFSC Ret.) | |
 | GOA | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | GOA | Groundfish survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | GOA | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
