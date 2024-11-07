@@ -12,15 +12,15 @@ get_bsierp_regions <- function(set.crs) {
   }
 
 
-  layer <- sf::st_read(here::here("inst/extdata/Alaska_Marine_Management_Areas.gdb"),
+  layer <- sf::st_read(system.file("extdata", "Alaska_Marine_Management_Areas.gdb", package = "akgfmaps"),
                        layer = "Alaska_Marine_Areas_AK_prj",
                        quiet = TRUE)
 
   layer <- layer[layer$Area_Type == "BSIERP Region", ]
   layer <- layer[c("Area_Name", "BSIERP_ID", "BSIERP_Region_Name", "Shape_Area")]
 
-  names(layer)[names == "Area_Name"] <- "AREA_NAME"
-  names(layer)[names == "Shape_Area"] <- "AREA_M2"
+  names(layer)[names(layer) == "Area_Name"] <- "AREA_NAME"
+  names(layer)[names(layer) == "Shape_Area"] <- "AREA_M2"
 
   sf::st_geometry(layer)<- "geometry"
 

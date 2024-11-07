@@ -19,7 +19,7 @@ get_nmfs_areas <- function(set.crs) {
     quiet = TRUE)
 
   # Select Alaska regions only and exclude land
-  nmfs_areas <- nmfs_areas[nmfs_areas$REP_AREA > 0 & nmfs_areas$REP_AREA < 660, ]
+  nmfs_areas <- nmfs_areas[nmfs_areas$REP_AREA > 0 & nmfs_areas$REP_AREA < 660, ] |>
     sf::st_transform(crs = set.crs) |>
       fix_geometry()
 

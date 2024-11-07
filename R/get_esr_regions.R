@@ -24,9 +24,12 @@ get_esr_regions <- function(select.region = "esr_subarea", set.crs) {
          'esr_area_inside'= "Ecosystem Area Inside"
          )
 
-  layer <- suppressWarnings(sf::st_read(here::here("inst/extdata/Alaska_Marine_Management_Areas.gdb"),
-                       layer = "Alaska_Marine_Areas_AK_prj",
-                       quiet = TRUE)) |>
+  layer <- suppressWarnings(
+    sf::st_read(
+      system.file("extdata", "Alaska_Marine_Management_Areas.gdb",
+                  package = "akgfmaps"),
+      layer = "Alaska_Marine_Areas_AK_prj",
+      quiet = TRUE)) |>
     subset(subset = Area_Type == area_type)
 
   layer$AREA_TYPE <- layer$Area_Type

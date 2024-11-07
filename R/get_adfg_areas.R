@@ -15,9 +15,10 @@ get_adfg_areas <- function(set.crs = "auto", subset.fields = TRUE) {
     set.crs = "EPSG:3338"
   }
 
-  layer <- sf::st_read(here::here("inst/extdata/Alaska_Marine_Management_Areas.gdb"),
-                       layer = "Alaska_Marine_Areas_AK_prj",
-                       quiet = TRUE)
+  layer <- sf::st_read(
+    system.file("extdata", "Alaska_Marine_Management_Areas.gdb", package = "akgfmaps"),
+    layer = "Alaska_Marine_Areas_AK_prj",
+    quiet = TRUE)
 
   layer <- layer[layer$Area_Type == "ADFG Stat Area", ] |>
     unique()
