@@ -2,6 +2,7 @@
 # remotes::install_github(repo = "afsc-gap-products/akgfmaps@dev2")
 
 library(akgfmaps)
+library(akmarineareas2)
 
 crs_nad83 <- 4269
 crs_aea <- 3338
@@ -11,7 +12,7 @@ adfg_dd <- get_adfg_areas(set.crs = crs_nad83)
 
 adfg_aea <- get_adfg_areas(set.crs = crs_aea)
 
-names(adfg_dd)
+head(adfg_dd)
 
 ggplot() +
   geom_sf(data = adfg_dd, fill = "blue") +

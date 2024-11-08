@@ -13,5 +13,5 @@ get_nmfs_areas(set.crs)
 NMFS statistical areas in Alaska as an sf object.
 }
 \description{
-Load NMFS statistical areas shapefile.
+Load NMFS statistical areas polygons.
 }

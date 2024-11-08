@@ -1,6 +1,6 @@
 #' NMFS Statistical Areas
 #'
-#' Load NMFS statistical areas shapefile.
+#' Load NMFS statistical areas polygons.
 #'
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @return NMFS statistical areas in Alaska as an sf object.
