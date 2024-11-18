@@ -16,8 +16,6 @@ library(terra)
 library(akgfmaps)
 library(rmapshaper)
 library(sf)
-# devtools::install_github("MattCallahan-NOAA/akmarineareas2")
-# library(akmarineareas2)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Import input data ----
@@ -28,15 +26,9 @@ library(sf)
 ## across NMFS reporting areas
 depth_mods <-
   read.csv(file = "analysis/goa_strata_2025/depth_modifications_2025.csv")
-depth_mods <- rbind(depth_mods,
-                    data.frame(NMFS_AREA = c("Southeast Inside", "NMFS519"), 
-                               REP_AREA = c(659, 519),
-                               STRATUM = c(52, 16),
-                               DEPTH_MIN_M = 1,
-                               DEPTH_MAX_M = 1000))
 
-## `bathy` is the most recent 2023 bathymetric compilation of the GOA provided
-## from Mark Zimmerman  
+## `bathy` is the most recent 2023 bathymetric compilation of the Gulf of 
+## Alaska. Provided from Mark Zimmerman et al. (in Review, 2025)
 bathy <-
   terra::rast("//AKC0SS-n086/AKC_PubliC/Dropbox/Zimm/GEBCO/GOA/goa_bathy")
 
@@ -50,10 +42,8 @@ ak_land <- terra::vect(x = goa_base$akland[goa_base$akland$POPYADMIN %in%
                                                "YUKON TERRITORY",
                                                "ALASKA"), ])
 
-## `old_goa_strata` is the extracted historical GOA stratum polygons. Filter
-## out land and kingman reef areas (STRATUM == 0)
-old_goa_strata <- 
-  terra::vect(x = goa_base$survey.strata[goa_base$survey.strata$STRATUM != 0,])
+## `old_goa_strata` is the extracted historical GOA stratum polygons.
+old_goa_strata <- terra::vect(x = goa_base$survey.strata)
 
 ## The `goa_domain` is a dissolved version of `old_goa_strata`
 goa_domain <- terra::aggregate(x = old_goa_strata)
@@ -62,17 +52,25 @@ goa_domain <- terra::aggregate(x = old_goa_strata)
 ##   Import NMFS Areas ----
 ##   NMFS Management area is a 2025 stratum variable and is different from the
 ##   historically used INPFC areas. Reproject `nmfs` shape object to the same
-##   projection as the `bathy` raster and add management area names. 
+##   projection as the `bathy` raster and add management area names. The NMFS
+##   areas extend much deeper than the survey domain (see plot(nmfs))
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-nmfs <- terra::vect(x = akgfmaps::get_nmfs_areas(set.crs = terra::crs(x = bathy)))
-nmfs <- nmfs[nmfs$REP_AREA %in% c(519, 610, 620, 630, 640, 650, 659), "REP_AREA"]
+nmfs <- 
+  terra::vect(x = akgfmaps::get_nmfs_areas(set.crs = terra::crs(x = bathy)))
+nmfs <- nmfs[nmfs$REP_AREA %in% c(610, 620, 630, 640, 650), "REP_AREA"]
 
-
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##   The new bathymetry layer contains areas < 1000 m that are outside the 
+##   historical survey domain. Create a buffer that extends from the deeper
+##   extent of the historical survey domain, `old_deep_strata`
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 old_deep_strata <-
   terra::vect(x = goa_base$survey.strata[goa_base$survey.strata$STRATUM %in%
                                            c(510, 520, 530, 540, 550), ])
-old_deep_strata <- terra::aggregate(terra::buffer(x = old_deep_strata, width = 5*5000))
+old_deep_strata <- 
+  terra::aggregate(terra::buffer(x = old_deep_strata, width = 5*5000))
 
+## 
 nmfs_list <- list()
 
 for (iarea in c(610, 620, 630, 640, 650)) {
@@ -84,24 +82,20 @@ for (iarea in c(610, 620, 630, 640, 650)) {
 }
 nmfs_list <- do.call(what = rbind, args = nmfs_list)
 
-
+## Append the historical GOA domain with the deep buffer
 nmfs <- terra::union(terra::intersect(x = nmfs, y = goa_domain), 
                      nmfs_list)
 nmfs$REP_AREA[is.na(x = nmfs$REP_AREA)] <- c(610, 620, 630, 640, 650)
 
 nmfs <- terra::aggregate(nmfs, by = "REP_AREA")
-
-plot(nmfs)
-plot(goa_domain, add = T, col = "blue")
-
-
-nmfs$NMFS_AREA <- c("519" = "NMFS519",
-                    "610" = "Shumagin",
+nmfs$NMFS_AREA <- c("610" = "Shumagin",
                     "620" = "Chirikof",
                     "630" = "Kodiak",
                     "640" = "West Yakutat",
-                    "650" = "Southeast Outside",
-                    "659" = "Southeast Inside")[paste(nmfs$REP_AREA)]
+                    "650" = "Southeast Outside")[paste(nmfs$REP_AREA)]
+
+plot(nmfs)
+plot(goa_domain, add = T, col = "blue")
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Use `goa_domain` to mask the `bathy` raster
@@ -141,19 +135,16 @@ for (idistrict in unique(x = depth_mods$NMFS_AREA)) { ## Loop over area --st.
   
   ## Convert discretized raster to polygon based on those discrete values
   strata_poly_agg <- terra::as.polygons(x = district_bathy)
-  # strata_poly_agg <- terra::vect(x = rmapshaper::ms_simplify(input = sf::st_as_sf(strata_poly_agg),
-  #                                                            keep = 0.05 ))
+  # strata_poly_agg <-
+  #   terra::vect(x = rmapshaper::ms_simplify(
+  #     input = sf::st_as_sf(strata_poly_agg),
+  #     keep = 0.05 ))
   strata_poly_agg$area <- terra::expanse(x = strata_poly_agg) / 1e6
   
   still_needs_work <- T
   while (still_needs_work) {
     strata_poly_disagg <- terra::disagg(x = strata_poly_agg)
     strata_poly_disagg$area <- terra::expanse(x = strata_poly_disagg) / 1e6
-    
-    if (idistrict == c("Southeast Inside") )
-      strata_poly_disagg <- strata_poly_disagg[strata_poly_disagg$area > 100, ]
-    if (idistrict == c("NMFS519") )
-      strata_poly_disagg <- strata_poly_disagg[strata_poly_disagg$area > 10, ]
     
     neighbors <- terra::adjacent(x = strata_poly_disagg, 
                                  type = "intersects", 
@@ -183,7 +174,7 @@ for (idistrict in unique(x = depth_mods$NMFS_AREA)) { ## Loop over area --st.
     still_needs_work <- 
       !all(speck_report$speck_stratum == speck_report$parent_stratum)
     
-    if (!still_needs_work & !idistrict %in% c("NMFS519", "Southeast Inside")) {
+    if (!still_needs_work) {
       orphans <- which(rowSums(x = neighbors) == 0)
       strata_poly_disagg <- strata_poly_disagg[-orphans]
     }
