@@ -37,20 +37,13 @@ goa_grid <- terra::vect(x = "analysis/goa_strata_2025/goaai_grid_2025.shp")
 ## GOA depth strata 
 depth_mods <-
   read.csv(file = "analysis/goa_strata_2025/depth_modifications_2025.csv")
-depth_mods <- rbind(depth_mods,
-                    data.frame(NMFS_AREA = c("Southeast Inside", "NMFS519"), 
-                               REP_AREA = c(659, 519),
-                               STRATUM = c(52, 16),
-                               DEPTH_MIN_M = 1,
-                               DEPTH_MAX_M = 1000))
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Plot ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pdf(file = "analysis/goa_strata_2025/updated_strata.pdf",
     width = 8, height = 6, onefile = TRUE)
-for (iarea in c(unique(x = depth_mods$NMFS_AREA), "NMFS519", 
-                "Southeast Inside")) { ## Loop over area -- start
+for (iarea in unique(x = depth_mods$NMFS_AREA)) { ## Loop over area -- start
   
   ## temporary objects
   n_strata <- ifelse(test = iarea %in% c("NMFS519", "Southeast Inside"),

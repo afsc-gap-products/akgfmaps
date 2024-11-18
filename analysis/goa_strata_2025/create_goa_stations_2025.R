@@ -147,11 +147,6 @@ goa_stations_2025_trawl <-
 goa_stations_2025_trawl$AREA_KM2 <- sf::st_area(x = goa_stations_2025_trawl)
 units(x = goa_stations_2025_trawl$AREA_KM2) <- "km2"
 
-## Summarize differences in total area between survey footprints
-# sum(goa_stations_2025_trawl$AREA_KM2) #316768.4 km2
-# sum(sf::st_area(x = goa_stations_2023)/1e6)  #320002.2 km2
-# 100 * (320002.2 - 316768.4) / 320002.2 # 1.01% difference
-
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Resolve stations with mixed trawlability information. First identify
 ##   which stations have mixed trawlability info (`stns_idx_mixed_trawl_info`)
@@ -172,11 +167,11 @@ for (istn in stns_mixed_trawl_info) { ## loop over affected stations -- start
   temp_stn <- subset(x = new_goa_stations_2025,
                      subset = new_goa_stations_2025$STATION == istn)
   
-  plot(sf::st_geometry(temp_stn),
-       axes = F,
-       col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLABLE])
-  points(towpaths_mid,  lwd = 2, xpd = F)
-  plot(sf::st_geometry(towpaths), add = TRUE, lwd = 2, xpd = NA)
+  # plot(sf::st_geometry(temp_stn),
+  #      axes = F,
+  #      col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLABLE])
+  # points(towpaths_mid,  lwd = 2, xpd = F)
+  # plot(sf::st_geometry(towpaths), add = TRUE, lwd = 2, xpd = NA)
   
   ## Scenario 1: station is a mixture of T area (with good tows paths)
   ## and either UKN or UT area. Since there is a good tow in the station,
