@@ -33,6 +33,7 @@
 /analysis/bssa_area_mismatch_2022
 /analysis/goaai_grid_2025/Fishnets
 /analysis/goaai_grid_2025/grid_options
+/analysis/make_crab_strata/*.gpkg
 
 # Temporary files created by R markdown
 *.utf8.md

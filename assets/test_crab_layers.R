@@ -82,3 +82,6 @@ test_get_crab_strata <- function() {
 
 crab_maps_and_layers <- test_get_crab_strata()
 
+
+test <- get_crab_strata(select.unit = "ebstc",
+                set.crs = 3338)
