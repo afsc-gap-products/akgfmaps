@@ -104,13 +104,13 @@ testthat::test_that("Test ESR areas and subareas",
 
 testthat::test_that("Test crab strata",
                     {
-                      pirkc <- akgfmaps::get_crab_strata(select.unit = "pirkc", set.crs = "EPSG:32603");
-                      pibkc <- akgfmaps::get_crab_strata(select.unit = "pibkc", set.crs = "EPSG:32603");
-                      nsrkc  <- akgfmaps::get_crab_strata(select.unit = "nsrkc", set.crs = "EPSG:32603");
-                      bbrkc  <- akgfmaps::get_crab_strata(select.unit = "bbrkc", set.crs = "EPSG:32603");
-                      smbkc  <- akgfmaps::get_crab_strata(select.unit = "smbkc", set.crs = "EPSG:32603");
-                      ebssc  <- akgfmaps::get_crab_strata(select.unit = "ebssc", set.crs = "EPSG:32603");
-                      ebstc  <- akgfmaps::get_crab_strata(select.unit = "ebstc", set.crs = "EPSG:32603");
+                      pirkc <- akgfmaps::get_crab_strata(select.stock = "pirkc", set.crs = "EPSG:32603");
+                      pibkc <- akgfmaps::get_crab_strata(select.stock = "pibkc", set.crs = "EPSG:32603");
+                      nsrkc  <- akgfmaps::get_crab_strata(select.stock = "nsrkc", set.crs = "EPSG:32603");
+                      bbrkc  <- akgfmaps::get_crab_strata(select.stock = "bbrkc", set.crs = "EPSG:32603");
+                      smbkc  <- akgfmaps::get_crab_strata(select.stock = "smbkc", set.crs = "EPSG:32603");
+                      ebssc  <- akgfmaps::get_crab_strata(select.stock = "ebssc", set.crs = "EPSG:32603");
+                      ebstc  <- akgfmaps::get_crab_strata(select.stock = "ebstc", set.crs = "EPSG:32603");
                       expect(
                         all(
                           c(

@@ -1,3 +1,5 @@
+devtools::install_github(repo = "afsc-gap-products/akgfmaps@dev2")
+
 library(akgfmaps)
 
 ebs_stocks <- akgfmaps::get_crab_strata(select.region = "ebs", set.crs = "EPSG:3338")
