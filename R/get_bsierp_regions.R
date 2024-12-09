@@ -4,6 +4,17 @@
 #'
 #' @param set.crs Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area coordinate reference system (EPSG:3338) is automatically assigned.
 #' @export
+#' @examples \dontrun{
+#' library(akgfmaps)
+#'
+#' bsierp_regions <- get_bsierp_regions(set.crs = "EPSG:3338")
+#'
+#' bsierp_centroid <- sf::st_centroid(bsierp_regions)
+#'
+#' ggplot() +
+#'   geom_sf(data = bsierp_regions) +
+#'   geom_sf_text(data = bsierp_centroid,
+#'                mapping = aes(label = BSIERP_Region_Name))}
 
 get_bsierp_regions <- function(set.crs) {
 

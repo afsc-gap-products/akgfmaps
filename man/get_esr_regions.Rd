@@ -14,3 +14,29 @@ get_esr_regions(select.region = "esr_subarea", set.crs)
 \description{
 Retrieve Alaska Ecosystem Status Report area polygons.
 }
+\examples{
+\dontrun{
+library(akgfmaps)
+
+# ESR subareas
+esr_subareas <- get_esr_regions(select.region = "esr_subarea", set.crs = 3338)
+
+ggplot() +
+  geom_sf(data = esr_subareas,
+          mapping = aes(fill = AREA_NAME))
+
+# ESR regions
+esr_areas <- get_esr_regions(select.region = "esr_area", set.crs = 3338)
+
+ggplot() +
+  geom_sf(data = esr_areas,
+          mapping = aes(fill = AREA_NAME))
+
+# ESR subareas in the Gulf of Alaska that include inside waters
+esr_inside_subareas <- get_esr_regions(select.region = "esr_subarea_inside", set.crs = 3338)
+
+ggplot() +
+  geom_sf(data = esr_inside_subareas,
+          mapping = aes(fill = AREA_NAME))
+}
+}

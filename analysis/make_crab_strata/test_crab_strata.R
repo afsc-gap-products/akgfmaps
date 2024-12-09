@@ -21,6 +21,12 @@ ggplot() +
 
 akgfmaps::get_crab_strata(select.stock = "pirkc", set.crs = 4269)
 
+pirkc <- akgfmaps::get_crab_strata(select.stock = "pirkc", set.crs = "EPSG:3338")
+
+ggplot() +
+  geom_sf(data = pirkc,
+          mapping = aes(fill = STRATUM))
+
 akgfmaps::get_crab_strata(select.stock = "pibkc", set.crs = 4269)
 
 akgfmaps::get_crab_strata(select.stock = "ebstc", set.crs = 4269)

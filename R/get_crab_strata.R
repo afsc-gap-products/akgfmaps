@@ -2,24 +2,39 @@
 #'
 #' Load crab stratum polygons for EBS/NBS red king crab (Bristol Bay, Pribilof Islands, Norton Sound), EBS blue king crab (Pribilof Islands, St. Matthew Island), EBS snow crab, and EBS Tanner crab (West of 166W, East of 166W). Species and areas are described below.
 #'
-#' @param select.unit Character vector indicating the name of the stock(s) to return. Options are Bristol Bay RKC ('bbrkc'), Pribilof Islands RKC ('pirkc'), Pribilof Islands BKC ('pibkc'), St. Matthew's BKC ('smbkc'), Norton Sound RKC ('nsrkc'), eastern Bering Sea snow crab ('ebssc'), and eastern Bering Sea Tanner crab ('ebstc').
+#' @param select.stock Character vector indicating the name of the stock(s) to return. Options are Bristol Bay RKC ('bbrkc'), Pribilof Islands RKC ('pirkc'), Pribilof Islands BKC ('pibkc'), St. Matthew's BKC ('smbkc'), Norton Sound RKC ('nsrkc'), eastern Bering Sea snow crab ('ebssc'), and eastern Bering Sea Tanner crab ('ebstc').
 #' @param select.region Select region
 #' @param set.crs Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area coordinate reference system (EPSG:3338) is automatically assigned.
 #' @export
+#' @examples \dontrun{
+#' library(akgfmaps)
+#'
+#' # Get all stock stratum boundaries by region
+#' ebs_stocks <- akgfmaps::get_crab_strata(select.region = "ebs", set.crs = "EPSG:3338")
+#'
+#' ggplot() +
+#'   geom_sf(data = ebs_stocks,
+#'           mapping = aes(fill = STRATUM)) +
+#'   facet_wrap(~STOCK)
+#'
+#' # Get strata for a specific stock, such as Pribilof Islands red king crab ('pirkc')
+#' pirkc <- akgfmaps::get_crab_strata(select.stock = "pirkc", set.crs = "EPSG:3338")
+#'
+#' ggplot() +
+#'   geom_sf(data = pirkc,
+#'           mapping = aes(fill = STRATUM))}
 
 get_crab_strata <- function(select.stock = NULL,
                             select.region = "ebs",
                             set.crs) {
 
-  ###
-  # select.stock = NULL
-  # select.region = "ebs"
-  # set.crs = 3338
-  ###
-
   select_region <- tolower(select.region)
 
   stock_null <- is.null(select.stock)
+
+  if(set.crs == "auto") {
+    set.crs = "EPSG:3338"
+  }
 
   # Automatically select stocks when region is provided but select.stock is NULL
   if(select.region %in% c("bs.south", "sebs", "ebs", "bs.all") & stock_null)  {
@@ -43,13 +58,6 @@ get_crab_strata <- function(select.stock = NULL,
     stopifnot("get_crab_strata: Unit must be one of 'bbrkc', 'pirkc', 'pibkc', 'nsrkc', 'ebssc', 'ebstc', 'smbkc'" = all(select_stock %in% valid_stocks))
 
   }
-
-  # crab_strata <-
-  #   sf::st_read(
-  #     dsn = here::here("inst", "extdata", "all_crab_from_akgfmaps_grid.gpkg")
-  #   ) |>
-  #   sf::st_transform(crs = set.crs) |>
-  #   akgfmaps:::fix_geometry()
 
   crab_strata <-
     sf::st_read(
@@ -79,10 +87,6 @@ get_crab_strata <- function(select.stock = NULL,
     }
 
   }
-
-  # ggplot() +
-  #   geom_sf(data = output) +
-  #   facet_wrap(~STOCK)
 
   return(output)
 
