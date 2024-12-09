@@ -35,3 +35,76 @@ A list containing sf objects land, bathymetry, survey area boundary, survey stra
 \description{
 This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
 }
+\examples{
+\dontrun{
+library(akgfmaps)
+
+# EBS bottom trawl survey layers in Alaska Albers Equal Area projection (EPSG:3338)
+sebs <- get_base_layers(select.region = "sebs",
+                        set.crs = "EPSG:3338")
+
+ggplot() +
+  geom_sf(data = sebs$akland) +
+  geom_sf(data = sebs$survey.strata,
+          fill = NA,
+          mapping = aes(color = "Survey strata")) +
+  geom_sf(data = sebs$survey.grid,
+          fill = NA,
+          mapping = aes(color = "Station grid")) +
+  geom_sf(data = sebs$survey.area,
+          fill = NA,
+          mapping = aes(color = "Survey area")) +
+  geom_sf(data = sebs$graticule, alpha = 0.3, linewidth = 0.5) +
+  scale_x_continuous(limits = sebs$plot.boundary$x,
+                     breaks = sebs$lon.breaks) +
+  scale_y_continuous(limits = sebs$plot.boundary$y,
+                     breaks = sebs$lat.breaks) +
+  theme_bw()
+
+# EBS bottom trawl survey layers in NAD83 (EPSG:4269) with corner stations and high resolution coastline
+# High resolution coastline takes longer to load and plot but is recommended when land polygons are used for spatial analysis
+sebs_corners <- get_base_layers(select.region = "sebs",
+                                set.crs = "EPSG:4269",
+                                include.corners = TRUE,
+                                high.resolution.coast = TRUE)
+
+ggplot() +
+  geom_sf(data = sebs_corners$akland) +
+  geom_sf(data = sebs_corners$survey.strata,
+          fill = NA,
+          mapping = aes(color = "Survey strata")) +
+  geom_sf(data = sebs_corners$survey.grid,
+          fill = NA,
+          mapping = aes(color = "Station grid")) +
+  geom_sf(data = sebs_corners$survey.area,
+          fill = NA,
+          mapping = aes(color = "Survey area")) +
+  geom_sf(data = sebs_corners$graticule, alpha = 0.3, linewidth = 0.5) +
+  scale_x_continuous(limits = sebs_corners$plot.boundary$x,
+                     breaks = sebs_corners$lon.breaks) +
+  scale_y_continuous(limits = sebs_corners$plot.boundary$y,
+                     breaks = sebs_corners$lat.breaks) +
+  theme_bw()
+
+# EBS slope, Aleutian Islands, and Gulf of Alaska surveys have subarea options
+ai_west <- get_base_layers(select.region = "ai.west",
+                           set.crs = "EPSG:3338")
+
+ggplot() +
+  geom_sf(data = ai_west$akland) +
+  geom_sf(data = ai_west$survey.strata,
+          fill = NA,
+          mapping = aes(color = "Survey strata")) +
+  geom_sf(data = ai_west$survey.grid,
+          fill = NA,
+          mapping = aes(color = "Station grid")) +
+  geom_sf(data = ai_west$survey.area,
+          fill = NA,
+          mapping = aes(color = "Survey area")) +
+  geom_sf(data = ai_west$graticule, alpha = 0.3, linewidth = 0.5) +
+  scale_x_continuous(limits = ai_west$plot.boundary$x,
+                     breaks = ai_west$lon.breaks) +
+  scale_y_continuous(limits = ai_west$plot.boundary$y,
+                     breaks = ai_west$lat.breaks) +
+  theme_bw()}
+}
