@@ -37,9 +37,9 @@ get_crab_strata <- function(select.stock = NULL,
   }
 
   # Automatically select stocks when region is provided but select.stock is NULL
-  if(select.region %in% c("bs.south", "sebs", "ebs", "bs.all") & stock_null)  {
+  if(select.region %in% c("bs.south", "sebs") & stock_null)  {
 
-    select_stock <- c("bbrkc", "pirkc", "pibkc", "ebssc", "ebstc", "smbkc")
+    select_stock <- c("bbrkc", "pirkc", "pibkc", "smbkc", "ebssc", "ebstc")
 
   }
 
@@ -49,9 +49,16 @@ get_crab_strata <- function(select.stock = NULL,
 
   }
 
+  if(select.region %in% c("ebs", "bs.all") & stock_null) {
+
+    select_stock <- c("bbrkc", "pirkc", "nsrkc", "pibkc", "smbkc", "ebssc", "ebstc")
+
+  }
+
+
   if(!stock_null) {
 
-    valid_stocks <- c("bbrkc", "pirkc", "pibkc", "nsrkc", "ebssc", "ebstc", "smbkc")
+    valid_stocks <- c("bbrkc", "pirkc", "pibkc", "smbkc", "nsrkc", "ebssc", "ebstc")
 
     select_stock <- tolower(select.stock)
 
