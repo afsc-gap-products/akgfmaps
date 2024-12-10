@@ -1,0 +1,32 @@
+---
+title: "GOA Biomass Comparison Due to Survey Area Truncation"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+---
+
+```{r, echo = F}
+gapindex_data <- readRDS(file = "gapindex_data.RDS")
+truncated_cpue <- readRDS(file = "truncated_cpue.RDS")
+```
+
+## Summary of removed stations across years and stratum
+```{r, echo = F}
+flextable::flextable(data = as.data.frame.matrix(cbind("Year/Stratum" = paste(sort(unique(truncated_cpue$YEAR))), as.matrix(with(subset(truncated_cpue, SPECIES_CODE == 10110), table(YEAR, STRATUM)))) ))
+```
+
+```{r, results='asis', echo = F, fig.width=5, fig.height = 5}
+for( ispp in gapindex_data$species$SPECIES_CODE[order(gapindex_data$species$COMMON)] ) {
+  common_name <- gapindex_data$species$COMMON_NAME[
+    which(gapindex_data$species$SPECIES_CODE == ispp)
+  ]
+  cat( paste0('# ', common_name, " (", ispp, ")", '\n' ) ) 
+  cat(paste0("![](", "biomass_diff_", ispp,".png)"))
+  cat('\n')
+  cat("Top Row: Station-level catch per unit effort (CPUE) values removed from the WGOA and EGOA. See the table at the top of the document for the number of stations removed per year for each affected strata.\n
+Middle Row: Percent change in biomass estimate in the WGOA, EGOA, and Gulf of Alaska across three truncation scenarios (see legend). Solid horizontal lines are average percent changes across the time series. \n
+Bottom Row: Coefficient of variation (CV) associated with the biomass estimate in the WGOA, EGOA, and Gulf of Alaska across three truncation scenarios (see legend). The gray line is the “baseline” CV with all stations and stratum areas unchanged.\n
+")
+}
+```

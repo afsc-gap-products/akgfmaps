@@ -46,18 +46,14 @@ pdf(file = "analysis/goa_strata_2025/updated_strata.pdf",
 for (iarea in unique(x = depth_mods$NMFS_AREA)) { ## Loop over area -- start
   
   ## temporary objects
-  n_strata <- ifelse(test = iarea %in% c("NMFS519", "Southeast Inside"),
-                     no = with(depth_mods, table(NMFS_AREA))[iarea],
-                     yes = 2)
+  n_strata <- with(depth_mods, table(NMFS_AREA))[iarea]
   temp_strata <- depth_mods$STRATUM[depth_mods$NMFS_AREA == iarea]
   
-  if (iarea %in% c("NMFS519", "Southeast Inside")) {
-    stratum_cols <- c("red", adjustcolor(col = "darkgrey", alpha.f = 0.6))
-  } else stratum_cols <- c(RColorBrewer::brewer.pal(name = "Set1",
-                                                    n = n_strata - 1),
-                           "cyan", 
-                           adjustcolor(col = "darkgrey", alpha.f = 0.6))
-    
+  stratum_cols <- c(RColorBrewer::brewer.pal(name = "Set1",
+                                             n = n_strata - 1), "cyan"
+                    # , adjustcolor(col = "darkgrey", alpha.f = 0.6)
+  )
+  
   ## Plot blank 
   plot(strata_list[strata_list$NMFS_AREA == iarea], border = F, axes = F, 
        col = "white", lwd = 0.1)
@@ -71,26 +67,25 @@ for (iarea in unique(x = depth_mods$NMFS_AREA)) { ## Loop over area -- start
        lwd = 0.1, add = TRUE)
   
   ## Add Untrawlable Areas
-  plot(terra::crop(x = goa_stations_2025[goa_stations_2025$TRAWLABLE == "N"],
-                   y = strata_list[strata_list$NMFS_AREA == iarea]),
-       col =   adjustcolor( "darkgrey", alpha.f = 0.8), border = F,
-       add = TRUE)
+  # plot(terra::crop(x = goa_stations_2025[goa_stations_2025$TRAWLABLE == "N"],
+  #                  y = strata_list[strata_list$NMFS_AREA == iarea]),
+  #      col =   adjustcolor( "darkgrey", alpha.f = 0.8), border = F,
+  #      add = TRUE)
   
   ## Add outlines of stations
   plot(terra::crop(x = goa_stations_2025,
                    y = strata_list[strata_list$NMFS_AREA == iarea]),
-       border = T, lwd = 0.1, add = TRUE )
+       border = T, lwd = 0.05, add = TRUE )
   
   ## Legend
   legend_labels <- with(subset(depth_mods, NMFS_AREA == iarea),
                         paste0("Stratum ", STRATUM, ": ", 
                                DEPTH_MIN_M , " - ", DEPTH_MAX_M, " m"))
-  legend_labels <- c(legend_labels, "Untrawlable")
+  # legend_labels <- c(legend_labels, "Untrawlable")
   
   legend(c("Shumagin" = "topleft", "Chirikof" = "topleft",
            "Kodiak" = "bottomright", "West Yakutat" = "bottom",
-           "Southeast Outside" = "bottomleft", "NMFS519" = "topleft",
-           "Southeast Inside" = "bottomleft")[iarea],
+           "Southeast Outside" = "bottomleft")[iarea],
          legend = legend_labels,
          title = "Stratum Legend",
          fill = stratum_cols, 
