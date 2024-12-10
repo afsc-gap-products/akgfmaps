@@ -11,7 +11,9 @@
   survey <- c(
     "bs.south", "sebs", "bs.all", "ebs", "bs.north", "nbs", "ecs", "ebs.ecs", "ai", "ai.west",
     "ai.central", "ai.east", "goa", "goa.west", "goa.east", "ebs.slope", "bssa1", "bssa2",
-    "bssa3", "bssa4", "bssa5", "bssa6")
+    "bssa3", "bssa4", "bssa5", "bssa6", "ll.ebs", "ll.bssa1", "ll.bssa2", "ll.bssa3", "ll.bssa4",
+    "ll.bssa5", "ll.goa", "ll.goa.west", "ll.goa.central", "ll.goa.east", "ll.ai", "ll.ai.west",
+    "ll.ai.central")
 
   inpfc <- c("ai", "goa")
 
