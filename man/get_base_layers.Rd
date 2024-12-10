@@ -27,7 +27,7 @@ get_base_layers(
 
 \item{fix.invalid.geom}{Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?}
 
-\item{high.resolution.coast}{Should the State of Alaska polygon be a high resolution Alaska Department of Natural Resources 1:63360 scale polygon that includes smaller islands and a more detailed coastline? The higher resolution polygon (high.resolution.coast = TRUE) takes longer to load/plot and is recommended for spatial operations performed at high resolution (e.g., masking high resolution rasters). THe lower resolution polygon (high.resolution.coast = FALSE) is recommended for general mapping and visualization purposes. Default = FALSE.}
+\item{high.resolution.coast}{Should the State of Alaska polygon be a high resolution Alaska Department of Natural Resources 1:63360 scale polygon that includes smaller islands and a more detailed coastline? The higher resolution polygon (high.resolution.coast = TRUE) takes longer to load/plot and is recommended for spatial operations performed at high resolution (e.g., masking high resolution rasters). The lower resolution polygon (high.resolution.coast = FALSE) is recommended for general mapping and visualization purposes. Default = FALSE.}
 }
 \value{
 A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
@@ -61,8 +61,10 @@ ggplot() +
                      breaks = sebs$lat.breaks) +
   theme_bw()
 
-# EBS bottom trawl survey layers in NAD83 (EPSG:4269) with corner stations and high resolution coastline
-# High resolution coastline takes longer to load and plot but is recommended when land polygons are used for spatial analysis
+# EBS bottom trawl survey layers in NAD83 (EPSG:4269) with corner stations and high resolution
+# coastline. High resolution coastline takes longer to load and plot but is recommended when land
+# polygons are used for spatial analysis
+
 sebs_corners <- get_base_layers(select.region = "sebs",
                                 set.crs = "EPSG:4269",
                                 include.corners = TRUE,
