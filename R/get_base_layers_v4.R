@@ -659,38 +659,3 @@ get_base_layers_v4 <- function(select.region,
               lat.breaks = lat.breaks,
               inpfc.strata = inpfc.strata))
 }
-
-# test <- list(region = select.region,
-#      akland = akland,
-#      survey.area = survey.area,
-#      survey.strata = survey.strata,
-#      survey.grid = survey.grid,
-#      bathymetry = bathymetry,
-#      place.labels = place.labels,
-#      graticule = graticule,
-#      crs = set.crs,
-#      plot.boundary = plot.boundary,
-#      lon.breaks = lon.breaks,
-#      lat.breaks = lat.breaks,
-#      inpfc.strata = inpfc.strata)
-#
-# ggplot() +
-#   geom_sf(data = test$akland) +
-#   geom_sf(data = test$survey.area,
-#           mapping = aes(color = "Survey area",
-#                         fill = "Survey area"),
-#           alpha = 0.7) +
-#   geom_sf(data = test$survey.strata,
-#           mapping = aes(color = "Survey strata"),
-#           fill = NA) +
-#   geom_sf(data = test$survey.grid,
-#           mapping = aes(color = "Survey grid")) +
-#   geom_sf(data = test$graticule,
-#           alpha = 0.3) +
-#   scale_fill_colorblind() +
-#   scale_color_colorblind() +
-#   scale_x_continuous(limits = test$plot.boundary$x,
-#                      breaks = test$lon.breaks) +
-#   scale_y_continuous(limits = test$plot.boundary$y,
-#                      breaks = test$lat.breaks) +
-#   theme_bw()
