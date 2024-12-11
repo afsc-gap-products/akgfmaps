@@ -3,7 +3,7 @@ title: "Make inverse distance weighted maps using akgfmaps"
 author: "Sean Rohan"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{How to make IDW maps using akgfmaps}
+  %\VignetteIndexEntry{Make inverse distance weighted maps using akgfmaps}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---

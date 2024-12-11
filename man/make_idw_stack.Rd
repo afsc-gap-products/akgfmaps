@@ -62,7 +62,7 @@ Returns a list containing:
 (2) extrapolation.stack: a stack of extrapolated spatial objects with estimated values on a discrete scale as a 'stars' (when extrapolation.grid.type is "stars") or 'sf' (when extrapolation.grid.type is "sf" or "sf.simple") object;
 (3) continuous.grid: extrapolation grid with estimates on a continuous scale;
 (4) region: the region;
-(5) crs: coordinate reference system as a PROJ6 (WKT2:2019) string;
+(5) crs: coordinate reference system as a PROJ6 (WKT2:2019) string.
 }
 \description{
 This function can be used to make inverse-distance-weighted plots for the eastern Bering Sea and northern Bering Sea
