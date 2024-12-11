@@ -1,14 +1,15 @@
-#' Function to get base layers for groundfish survey regions, bathymetry, and land
+#' Function to get base layers for bottom trawl and longline survey regions, bathymetry, and land
 #'
-#' This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
-#' @param select.region Character vector indicating which region to retrieve. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6
+#' This function retrieves layers that are commonly used for mapping and spatial analysis of AFSC bottom trawl survey and longline survey data.
+#'
+#' @param select.region Character vector indicating which region to retrieve. Bottom trawl survey options: ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6. Longline survey options: ll.ebs, ll.bssa1, ll.bssa2, ll.bssa3, ll.bssa4, ll.bssa5, ll.ai, ll.ai.west, ll.ai.central, ll.goa, ll.goa.west, ll.goa.central, ll.goa.east
 #' @param set.crs Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area (EPSG:3338) will be used.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
 #' @param include.corners Logical. Should corner stations be returned in the survey grid? Only for the EBS.
 #' @param fix.invalid.geom Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?
 #' @param split.land.at.180 Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = TRUE.
 #' @param high.resolution.coast Should the State of Alaska polygon be a high resolution Alaska Department of Natural Resources 1:63360 scale polygon that includes smaller islands and a more detailed coastline? The higher resolution polygon (high.resolution.coast = TRUE) takes longer to load/plot and is recommended for spatial operations performed at high resolution (e.g., masking high resolution rasters). The lower resolution polygon (high.resolution.coast = FALSE) is recommended for general mapping and visualization purposes. Default = FALSE.
-#' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
+#' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (or survey stations for the longline survey), a data frame of feature labels (for the EBS shelf bottom trawl survey), coordinate reference system, plot boundaryies, axis label breaks, and graticule.
 #' @import sf
 #' @importFrom tools toTitleCase
 #' @export
