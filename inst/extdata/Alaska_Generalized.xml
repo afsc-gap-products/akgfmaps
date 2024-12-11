@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+    <idinfo>
+        <citation>
+            <citeinfo>
+                <title>Alaska Coastline</title>
+                <onlink>https://arcgis.dnr.alaska.gov/arcgis/rest/services/OpenData/Physical_AlaskaCoast/MapServer</onlink>
+            </citeinfo>
+        </citation>
+        <descript>
+            <abstract>A web map featuring Alaska Coastline, digitized from USGS Quad maps.</abstract>
+            <purpose>Web feature service depicting the Alaska Coast.</purpose>
+        </descript>
+        <keywords>
+            <theme>
+                <themekt>None</themekt>
+                <themekey>Alaska</themekey>
+                <themekey>Physical</themekey>
+                <themekey>ODP</themekey>
+                <themekey>Map Service</themekey>
+                <themekey>ADNR</themekey>
+                <themekey>Natural Resource</themekey>
+                <themekey>data.gov</themekey>
+            </theme>
+        </keywords>
+        <accconst>Other Constraints</accconst>
+        <useconst>The State of Alaska makes no expressed or implied warranties (including warranties of merchantability and fitness) with respect to the character, function, or capabilities of this product or its appropriateness for any user's purposes.  In no event, will the State of Alaska be liable for any incidental, indirect, special, consequential or other damages suffered by the user or any other person or entity whether from use of the product, any failure thereof or otherwise, and in no event, will the State of Alaska's liability to you or anyone else exceed the fee paid for the electronic service or product.</useconst>
+    </idinfo>
+    <metainfo>
+        <metd>20211105</metd>
+        <metc>
+            <cntinfo>
+                <cntorgp>
+                    <cntorg>Alaska Department of Natural Resources - Information Resource Management</cntorg>
+                </cntorgp>
+            </cntinfo>
+        </metc>
+        <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+        <metstdv>FGDC-STD-001-1998</metstdv>
+        <mettc>local time</mettc>
+    </metainfo>
+</metadata>
