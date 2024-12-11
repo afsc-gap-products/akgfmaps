@@ -17,3 +17,21 @@ INPFC strata as an sf POLYGON.
 \description{
 Create INPFC strata sf POLYGONs by dissolving GOA or AI bottom trawl survey strata POLYGONs based on numerical stratum codes.
 }
+\examples{
+\dontrun{
+library(akgfmaps)
+
+# INPFC strata for the Aleutian Islands (within AI bottom trawl survey extent)
+inpfc_ai <- get_inpfc_strata(select.region = "ai", set.crs = "EPSG:3338")
+
+ggplot() +
+  geom_sf(data = inpfc_ai,
+          mapping = aes(fill = INPFC_STRATUM))
+
+# INPFC strata for the Gulf of Alaska (within GOA bottom trawl survey extent)
+inpfc_goa <- get_inpfc_strata(select.region = "goa", set.crs = "EPSG:3338")
+
+ggplot() +
+  geom_sf(data = inpfc_goa,
+          mapping = aes(fill = INPFC_STRATUM))}
+}

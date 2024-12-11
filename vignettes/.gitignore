@@ -1,1 +1,5 @@
-
+*.html
+*.R
+*.md
+*.png
+figure

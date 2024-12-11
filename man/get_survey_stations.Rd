@@ -2,15 +2,17 @@
 % Please edit documentation in R/get_survey_stations.R
 \name{get_survey_stations}
 \alias{get_survey_stations}
-\title{Character vector of station ID codes}
+\title{Character vector of EBS/NBS bottom trawl survey station IDs}
 \usage{
-get_survey_stations(select.region)
+get_survey_stations(select.region, include.corners = TRUE)
 }
 \arguments{
 \item{select.region}{Choice of region. Options are "ebs", "bs.all", "sebs", "bs.south", "nbs", "bs.north"}
+
+\item{include.corners}{Logical. Should corner stations be returned in the survey grid? Only for the EBS.}
 }
 \value{
-A chracter vector of RACE station ID codes.
+A character vector of RACE station ID codes.
 }
 \description{
 Returns a character vector of station id codes in a region.

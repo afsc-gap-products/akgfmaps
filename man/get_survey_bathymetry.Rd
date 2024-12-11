@@ -7,13 +7,13 @@
 get_survey_bathymetry(select.region, set.crs)
 }
 \arguments{
-\item{select.region}{Region to select}
+\item{select.region}{Character vector indicating which region to retrieve. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north}
 
-\item{set.crs}{CRS to use}
+\item{set.crs}{Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area (EPSG:3338) will be used.}
 }
 \value{
 Returns an sf multiline object with survey contours.
 }
 \description{
-Retrieves bathymetric contours that have been used in tech memos and reports through 2019 for the EBS.
+Retrieves bathymetric contours that approximate groundfish bottom trawl survey stratum boundaries on the EBS shelf.
 }

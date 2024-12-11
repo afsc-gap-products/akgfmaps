@@ -6,8 +6,28 @@
 #' @param set.crs Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.
 #' @return INPFC strata as an sf POLYGON.
 #' @export
+#' @examples \dontrun{
+#' library(akgfmaps)
+#'
+#' # INPFC strata for the Aleutian Islands (within AI bottom trawl survey extent)
+#' inpfc_ai <- get_inpfc_strata(select.region = "ai", set.crs = "EPSG:3338")
+#'
+#' ggplot() +
+#'   geom_sf(data = inpfc_ai,
+#'           mapping = aes(fill = INPFC_STRATUM))
+#'
+#' # INPFC strata for the Gulf of Alaska (within GOA bottom trawl survey extent)
+#' inpfc_goa <- get_inpfc_strata(select.region = "goa", set.crs = "EPSG:3338")
+#'
+#' ggplot() +
+#'   geom_sf(data = inpfc_goa,
+#'           mapping = aes(fill = INPFC_STRATUM))}
 
 get_inpfc_strata <- function(select.region, set.crs) {
+
+  if(set.crs == "auto") {
+    set.crs = "EPSG:3338"
+  }
 
   select.region <- tolower(select.region)
 
@@ -31,8 +51,9 @@ get_inpfc_strata <- function(select.region, set.crs) {
     system.file("extdata",
                 path,
                 package = "akgfmaps"),
-    quiet = TRUE) |>
-    dplyr::filter(STRATUM != 0) # Remove land
+    quiet = TRUE)
+
+  strata <- strata[strata$STRATUM != 0, ] # Remove land
 
   # Assign strata based on numerical stratum codes
   strata$STRATUM <- formatC(strata$STRATUM, width = 3, flag = 0)
@@ -40,13 +61,15 @@ get_inpfc_strata <- function(select.region, set.crs) {
   strata$INPFC_STRATUM <- stratum_names[strata$INPFC_STRATUM-offset]
 
   # Combine strata
-  strata <- strata |>
-    dplyr::select(INPFC_STRATUM) |>
-    dplyr::group_by(INPFC_STRATUM) |>
-    dplyr::summarise() |>
-    dplyr::ungroup()
+  strata <- strata["INPFC_STRATUM"]
 
-  stata <- sf::st_transform(strata, crs = set.crs)
+  strata <- aggregate(strata["geometry"],
+                      by = list(INPFC_STRATUM = strata$INPFC_STRATUM),
+                      FUN = function(x) x[1],
+                      do_union = TRUE)
+
+  stata <- sf::st_transform(strata, crs = set.crs) |>
+    fix_geometry()
 
   return(strata)
 
