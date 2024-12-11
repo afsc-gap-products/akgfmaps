@@ -31,6 +31,7 @@
 #' (6) key.title: title for the legend;
 #' (7) crs: coordinate reference system as a PROJ6 (WKT2:2019) string;
 #' @author Sean Rohan \email{sean.rohan@@noaa.gov}
+#' @import gstat
 #' @importFrom classInt classIntervals
 #' @export
 
@@ -52,6 +53,8 @@ make_idw_map <- function(x = NA,
                          idw.nmax = 4,
                          use.survey.bathymetry = TRUE,
                          return.continuous.grid = TRUE) {
+
+  var1.var <- var1.pred <- id_temp <- NULL
 
   .check_region(select.region = region, type = "survey")
 
@@ -195,12 +198,29 @@ make_idw_map <- function(x = NA,
     vec <- as.character(vec)
     vec[grep("-1", vec)] <- "No catch"
     vec <- sub("\\(", "\\>", vec)
-    vec <- sub("\\,", "–", vec)
+    vec <- sub("\\,", "-", vec)
     vec <- sub("\\]", "", vec)
-    vec <- sub("-Inf", "", vec)
-    if(length(sig.dig) > 3) {
+
+    if(length(sig.dig) > 0) {
+
+      sig.dig.format <- trimws(
+        format(
+          sort(sig.dig,
+               decreasing = TRUE),
+          scientific = FALSE,
+          nsmall=0,
+          big.mark=",")
+      )
+
+      sig.dig.desc <- trimws(
+        format(
+          sort(sig.dig,
+               decreasing = TRUE),
+          scientific = FALSE)
+      )
+
       for(j in 1:length(sig.dig)) {
-        vec <- sub(sig.dig[j], format(sig.dig[j], nsmall=0, big.mark=","), vec)
+        vec <- sub(pattern = sig.dig.desc[j], replacement = sig.dig.format[j], x = vec)
       }
     }
     return(vec)
@@ -216,15 +236,21 @@ make_idw_map <- function(x = NA,
   # Make plot---------------------------------------------------------------------------------------
 
   if(extrapolation.grid.type %in% c("sf", "sf.simple")) {
-    extrap.grid <- extrap.grid |>
-      sf::st_as_sf() |>
-      dplyr::select(-var1.var) |>
-      dplyr::group_by(var1.pred) |>
-      dplyr::summarise(n = n()) |>
-      sf::st_intersection(map_layers$survey.area)
 
     extrap.grid <- extrap.grid |>
-      dplyr::select(which(names(extrap.grid) %in% c("var1.pred", "n", "SURVEY", "geometry")))
+      sf::st_as_sf()
+
+    extrap.grid <- subset(extrap.grid, select = -var1.var)
+
+    extrap.grid <- aggregate(extrap.grid,
+                             by = list(id_temp = extrap.grid$var1.pred),
+                             FUN = function(x) x[1],
+                             do_union = TRUE)
+
+    extrap.grid <- subset(extrap.grid, select = -id_temp) |>
+      sf::st_intersection(map_layers$survey.area)
+
+    extrap.grid <- extrap.grid[c("var1.pred", "SURVEY", "geometry")]
 
     # Simplify geometry using ms_simplify function from the rmapshaper package
     if(extrapolation.grid.type == "sf.simple") {

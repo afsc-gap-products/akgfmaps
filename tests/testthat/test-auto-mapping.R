@@ -1,6 +1,6 @@
 library(akgfmaps)
 
-testthat::test_that("Test auto-mapping functions interpolation",
+testthat::test_that("Test interpolation auto-mapping functions",
                     {test_map <- suppressWarnings(make_idw_map(x = akgfmaps::YFS2017, grid.cell = c(5000, 5000)));
                     test_labs <- suppressWarnings(add_map_labels(x = test_map));
                     test_resize <- suppressWarnings(akgfmaps::change_text_size(x = test_map, size.mult = 2));
@@ -18,3 +18,13 @@ testthat::test_that("Test auto-mapping functions interpolation",
                     expect_true(is.list(suppressWarnings(change_fill_color(x = test_map, new.scheme = "blue"))));
                     expect_true(test_resize$plot$theme$axis.text$size/test_map$plot$theme$axis.text$size == 2.25);
                     })
+
+testthat::test_that("Test sf.simple",
+                    {
+                      test_sf_simple <- suppressWarnings(
+                        make_idw_map(x = akgfmaps::YFS2017,
+                                     grid.cell = c(5000, 5000),
+                                     extrapolation.grid.type = "sf.simple"));
+                      expect_true(is(test_sf_simple$extrapolation.grid, "sf"));
+                    }
+)

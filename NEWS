@@ -1,75 +1,95 @@
-akgfmaps 4.0.0 (Planned release: December 15, 2024)
+akgfmaps 3.6.0
 ----------------------------------------------------------------
-
-This significant update replaces outdated shapefiles from multi-
-ple survey regions and standardizes spatial data structures
-across regions. This update helps harmonize survey spatial prod-
-ucts but breaks backwards compatibility.
-
-MAJOR CHANGES TO SHAPEFILES
-
-  1) Field names for STRATUM, STATIONID, and GRIDID fields have
-     been standardized across shapefiles and regions.
-  2) Added an AREAID fields to stratum shapefiles that correspond
-     with AREAIDs in AFSC/RACE/GAP's GAP_PRODUCTS schema.
-  2) Removed precalculated areas and perimeters from shapefiles
-     to address area calculation errors and inconsistencies.
-  3) Replaced 1998 GEBCO bathymetry linestring shapefiles with
-     a single file generated from the best available bathymetry,
-     i.e., a combination of 2024 GEBCO, 100-m resolution
-     bathymetry from Prescott and Zimmermann (2015), Zimmermann
-     and Prescott (2018), Zimmermann et al. (2019), and
-     Zimmermann and Prescott (2021).
-  4) Replaced EBS Slope stratum shapefiles with one dervied from
-     newer bathymetry. EBS shelf and slope stratum boundaries were
-     redefined to remove both gaps and overlap.
-  5) Replace deprecated 1998 Alaska Department of Natural
-     Resources coastline shapefile (1:63,360 scale) with a version
-     released in 2017.
-  6) Closed erroneous gap through the middle of Wrangel Island
-     (Russia) at 180 W/E.
-  7) Removed eastern portions of Canada shapefile.
-  8) Added crab stratum shapefiles for the EBS
 
 FUNCTIONALITY CHANGES
 
-- The use.survey.bathymetry argument in get_base_layers() is now
-  deprecated because they are unnecessary now that EBS bathymetry
-  files have been updated.
-- Added a split.lon.at.180 argument to get_base_layers(), which
-  splits the land shapefile at 180 longitude when a geographic
-  coordinate system is used.
+- rasterize_and_mask() no longer supports 'raster' class from
+  the raster package.
+- Functions that allow set.crs = "auto" now use Alaska Albers
+  Equal Area (EPSG:3338) by default instead of region-specific
+  PROJ4s strings. The change is intended to ensure forward
+  compatibility by using 'standard' coordinate reference
+  systems.
 
 NEW FEATURES
 
-- Added a new get_crab_strata() function that retrieves crab
-  stratum layers. Support for Bristol Bay RKC, Pribilof Islands
+- Added new functions to access layers that were included in
+  akmarineareas2 (github.com/MattCallahan-NOAA/akmarineareas2).
+
+  - get_adfg_areas(): Alaska Department of Fish and Game (ADFG)
+    Statistical Areas
+  - get_esr_regions(): Alaska Ecosystem Status Report (ESR)
+    regions
+  - get_bsierp_regions(): Bering Sea Integrated Ecosystem
+    Research Program (BSIERP) regions
+
+  Layers are retrieved from a file Geodatabase (.gdb;
+  inst/extdata/Alaska_Marine_Management_Areas.gdb) provided
+  by Matt Callahan -- thanks, Matt!
+
+- Added get_crab_strata() function to retrieve crab stratum
+  layers. Support for Bristol Bay RKC, Pribilof Islands
   RKC, Pribilof Islands BKC, St. Matthew's BKC, Norton Sound
   RKC, eastern Bering Sea snow crab, and eastern Bering Sea
-  Tanner crab.
+  Tanner crab. Layers provided by Emily Ryznar -- thanks,
+  Emily!
+- get_base_layers(high.resolution.coast = TRUE) returns
+  high resolution (1:63,360 scale) 2017 Alaska Department
+  of Natural Resources coastline shapefile
+  (https://tinyurl.com/4hvr3psb). The high resolution version
+  is recommended for spatial analyses that require masking.
+  The default option (high.resolution.coast = FALSE) returns
+  a lower resolution coastline that loads faster and is
+  suitable for general mapping/visualization.
 
-SEE ALSO
+IMPROVEMENTS
 
-Prescott, M.M. and Zimmermann, M. 2015. Smooth sheet bathymetry
-  of Norton Sound. http://doi.org/10.7289/V5V69GJ9
+- Removed dplyr and raster removed from imports/dependencies.
 
-Zimmermann, M., Prescott, M.M., 2018. Bathymetry and canyons of
-  the eastern Bering Sea slope. Geosci. 8.
-  https://doi.org/10.3390/geosciences8050184
+BUG FIX
 
-Zimmermann, M., Prescott, M.M., 2021. Passes of the Aleutian
-  Islands: First detailed description. Fish. Oceanogr. 30, 280–
-  299. https://doi.org/10.1111/fog.12519
-
-Zimmermann, M., Prescott, M.M., Haeussler, P.J., 2019. Bathymetry
-  and geomorphology of Shelikof Strait and the western Gulf of
-  Alaska. Geosci. 9, 1–31.
-  https://doi.org/10.3390/geosciences9100409
+- Rename inst/extadata/NMFS Reporting Areas.shp to
+  inst/extadata/NMFS_Reporting_Areas.shp to meet recommended
+  portability standards for R packages.
 
 
-
-akgfmaps 3.5.1 (March 25, 2024)
+akgfmaps 3.5.4 (September 23, 2024)
 ----------------------------------------------------------------
+
+BUG FIX
+
+- Fix label formatting issue in make_idw_map() and
+  make_idw_stack().
+
+
+akgfmaps 3.5.3 (May 22, 2024)
+----------------------------------------------------------------
+
+BUG FIX
+
+- NMFS Statistical Area 659 is now included in the output of
+  get_nmfs_areas(). It had been erroneously not included in the
+  output.
+
+
+akgfmaps 3.5.2 (May 20, 2024)
+----------------------------------------------------------------
+
+IMPROVEMENTS
+
+- Replace PROJ4 strings with EPSG IDs.
+
+
+akgfmaps 3.5.1 (April 10, 2024)
+----------------------------------------------------------------
+
+IMPROVEMENTS
+
+- get_base_layers() now accepts an argument to split land
+  polygons into east and west when set.crs is a geographic
+  coordinate system. The default is to split using
+  split.land.at.180 = TRUE. Set this to FALSE when shifting
+  coordinates afterwards.
 
 NEW FEATURES
 
@@ -77,7 +97,6 @@ NEW FEATURES
   simple features geometries in km^2, then converts simple
   features objects to data.frames where well-known text (WKT)
   strings represent geometries.
-
 
 
 akgfmaps 3.5.0 (March 19, 2024)
@@ -97,10 +116,10 @@ FUNCTIONALITY CHANGES
   See also:
 
   DeFilippo, L., Kotwicki, S., Barnett, L., Richar, J., Litzow,
-    M.A., Stockhausen, W.T., Palof, K., 2023. Evaluating the impacts
-    of reduced sampling density in a systematic fisheries-
-    independent survey design. Front. Mar. Sci. 10, 1–16.
-    https://doi.org/10.3389/fmars.2023.1219283
+    M.A., Stockhausen, W.T., Palof, K., 2023. Evaluating the
+    impacts of reduced sampling density in a systematic
+    fisheries- independent survey design. Front. Mar. Sci. 10,
+    1–16. https://doi.org/10.3389/fmars.2023.1219283
 
 
 akgfmaps 3.4.2 (January 16, 2024)

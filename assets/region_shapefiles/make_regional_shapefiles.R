@@ -1,5 +1,6 @@
 # Generate zip files with regional shapefiles
 # Run for every new release or when shapefiles are updated
+library(akgfmaps)
 
 todays_date <- gsub(x = Sys.Date(), pattern = "-", replacement = "")
 

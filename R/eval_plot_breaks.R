@@ -16,6 +16,8 @@ eval_plot_breaks <- function(CPUE,
                              styles = c("equal", "pretty", "quantile", "kmeans", "hclust", "fisher", "jenks", "dpih"),
                              log.scale.plot = FALSE) {
 
+  value <- name <- NULL
+
   eval_style <- data.frame(style = styles)
 
   eval_style.mat <- matrix(ncol = n.breaks+1, nrow = nrow(eval_style))

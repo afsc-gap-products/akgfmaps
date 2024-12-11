@@ -11,7 +11,7 @@ rasterize_and_mask(sgrid, amask, touches = FALSE)
 
 \item{amask}{Object to use as an area mask (simple features object or one of many sp objects)}
 
-\item{touches}{Passed to terra::mask(). Must be set to FALSE to replicate raster::mask()}
+\item{touches}{Passed to mask().}
 }
 \description{
 Function converts gridded spatial data with coordinates (eg. SpatialGrid) to a raster, then applies a spatial mask.
