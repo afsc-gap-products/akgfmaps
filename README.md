@@ -55,6 +55,9 @@ The table below lists the vector geometry layers (polygons) in the package by re
 | AI | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | AI | Groundfish survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | AI | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
+| AI/BSS/GOA | Longline survey stations | get_base_layers() | K. Echave (AFSC) | [Link](https://repository.library.noaa.gov/view/noaa/11869) |
+| AI/BSS/GOA | Longline survey strata | get_base_layers() | K. Echave (AFSC) | [Link](https://repository.library.noaa.gov/view/noaa/11869) |
+| AI/BSS/GOA | Longline survey area | get_base_layers() | K. Echave (AFSC) | [Link](https://repository.library.noaa.gov/view/noaa/11869) |
 | BSS/NBS/SEBS | BSIERP Regions | get_bsierp_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](https://doi.org/10.5065/D6DF6P6C) |
 | BSS | Groundfish survey area | get_base_layers() | A. Grieg (AFSC Ret.) | |
 | BSS | Groundfish survey strata | get_base_layers() | A. Grieg (AFSC Ret.) | |
