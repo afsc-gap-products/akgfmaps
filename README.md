@@ -4,7 +4,8 @@ The akgfmaps package is used to vector geometries ('shapefiles') that are common
 
 The package includes:
 
-- Layers for groundfish and crab bottom trawl survey regions in the eastern Bering Sea shelf (EBS), eastern Bering Sea slope (BSS), northern Bering Sea (NBS), eastern Chukchi Sea (ECS), Gulf of Alaska (GOA), and Aleutian Islands (AI).
+- Groundfish and crab bottom trawl survey areas in the eastern Bering Sea shelf (EBS), eastern Bering Sea slope (BSS), northern Bering Sea (NBS), eastern Chukchi Sea (ECS), Gulf of Alaska (GOA), and Aleutian Islands (AI).
+- Longline survey areas in the BSS, GOA, and AI.
 - National Marine Fisheries Service (NMFS) statistical area layer.
 - Alaska Department of Fish and Game (ADFG) management and statistical area layer.
 - Alaska Ecosystem Status Report (ESR) area and subarea layers.
