@@ -2,3 +2,12 @@
 ^\.Rproj\.user$
 ^doc$
 ^Meta$
+assets
+demo
+analysis
+paper
+plots
+archive
+NEWS
+LICENSE.md
+.github

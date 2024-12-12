@@ -70,11 +70,13 @@ make_2d_grid <- function(obj, resolution = c(3704, 3704), output_type = "point",
 
     coords_for_plots <- sf::st_centroid(interp_polygons) |>
       sf::st_coordinates() |>
-      as.data.frame() |>
-      dplyr::rename(lon_plot = X, lat_plot = Y)
+      as.data.frame()
+
+    names(coords_for_plots)[names(coords_for_plots) == "lon_plot"] <- "X"
+    names(coords_for_plots)[names(coords_for_plots) == "lat_plot"] <- "Y"
 
     interp_polygons <- interp_polygons |>
-      dplyr::bind_cols(coords_for_plots)
+      rbind(coords_for_plots)
 
   }
 

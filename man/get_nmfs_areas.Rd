@@ -13,5 +13,19 @@ get_nmfs_areas(set.crs)
 NMFS statistical areas in Alaska as an sf object.
 }
 \description{
-Load NMFS statistical areas shapefile.
+Load NMFS statistical areas polygons.
+}
+\examples{
+\dontrun{
+library(akgfmaps)
+
+# Get all NMFS Alaska areas
+
+nmfs_areas <- get_nmfs_areas(set.crs = "EPSG:3338")
+nmfs_areas_centroid <- sf::st_centroid(nmfs_areas)
+
+ggplot() +
+  geom_sf(data = nmfs_areas) +
+  geom_sf_text(data = nmfs_areas_centroid,
+               mapping = aes(label = REP_AREA))}
 }

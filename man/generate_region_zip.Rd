@@ -4,7 +4,7 @@
 \alias{generate_region_zip}
 \title{Save regional shapefiles to a zip file}
 \usage{
-generate_region_zip(select.region, set.crs = "EPSG:4326", zip.path = NULL)
+generate_region_zip(select.region, set.crs = "EPSG:4269", zip.path = NULL)
 }
 \arguments{
 \item{select.region}{Character vector indicating which region. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6}
@@ -17,5 +17,5 @@ generate_region_zip(select.region, set.crs = "EPSG:4326", zip.path = NULL)
 Write regional shapefiles returned by get_base_layers() and a README file with version information to a zip file.
 }
 \examples{
-# generate_region_zip(select.region = "ebs", set.crs = "WGS84")
+# generate_region_zip(select.region = "ebs")
 }
