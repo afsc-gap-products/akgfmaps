@@ -1,14 +1,15 @@
-#' Function to get base layers for groundfish survey regions, bathymetry, and land
+#' Function to get base layers for bottom trawl and longline survey regions, bathymetry, and land
 #'
-#' This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
-#' @param select.region Character vector indicating which region to retrieve. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6
+#' This function retrieves layers that are commonly used for mapping and spatial analysis of AFSC bottom trawl survey and longline survey data.
+#'
+#' @param select.region Character vector indicating which region to retrieve. Bottom trawl survey options: ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6. Longline survey options: ll.ebs, ll.bssa1, ll.bssa2, ll.bssa3, ll.bssa4, ll.bssa5, ll.ai, ll.ai.west, ll.ai.central, ll.goa, ll.goa.west, ll.goa.central, ll.goa.east
 #' @param set.crs Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area (EPSG:3338) will be used.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
 #' @param include.corners Logical. Should corner stations be returned in the survey grid? Only for the EBS.
 #' @param fix.invalid.geom Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?
 #' @param split.land.at.180 Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = TRUE.
 #' @param high.resolution.coast Should the State of Alaska polygon be a high resolution Alaska Department of Natural Resources 1:63360 scale polygon that includes smaller islands and a more detailed coastline? The higher resolution polygon (high.resolution.coast = TRUE) takes longer to load/plot and is recommended for spatial operations performed at high resolution (e.g., masking high resolution rasters). The lower resolution polygon (high.resolution.coast = FALSE) is recommended for general mapping and visualization purposes. Default = FALSE.
-#' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
+#' @return A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (or survey stations for the longline survey), a data frame of feature labels (for the EBS shelf bottom trawl survey), coordinate reference system, plot boundaryies, axis label breaks, and graticule.
 #' @import sf
 #' @importFrom tools toTitleCase
 #' @export
@@ -132,13 +133,15 @@ get_base_layers <- function(select.region,
                           quiet = TRUE)
 
     akland$COUNTRY <- c("RU", "US")
+
     akland$STATE_PROVINCE <- c(NA, "Alaska")
 
     bathymetry <- sf::st_read(system.file("extdata", "npac_0-200_meters.shp", package = "akgfmaps"),
                               quiet = TRUE)
 
   } else if(select.region %in%
-            c("ebs.slope", "bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6")) {
+            c("ebs.slope", "bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6", "ll.ebs", "ll.bssa1",
+              "ll.bssa2", "ll.bssa3", "ll.bssa4", "ll.bssa5")) {
 
     akland <- sf::st_read(system.file("extdata", "ak_russia.shp", package = "akgfmaps"),
                           quiet = TRUE)
@@ -151,7 +154,9 @@ get_base_layers <- function(select.region,
     akland$STATE_PROVINCE <- c(NA, "Alaska")
 
   } else if(select.region[1] %in%
-            c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east")) {
+            c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east", "ll.ai",
+              "ll.ai.west", "ll.ai.central", "ll.goa", "ll.goa.east", "ll.goa.west",
+              "ll.goa.central")) {
 
     akland <- sf::st_read(system.file("extdata", "alaska_canada_dcw.shp", package = "akgfmaps"),
                           quiet = TRUE)
@@ -179,8 +184,8 @@ get_base_layers <- function(select.region,
 
     alaska_dnr <-
       sf::st_read(
-      system.file("extdata", "Alaska_Coastline.shp", package = "akgfmaps"),
-      quiet = TRUE)
+        system.file("extdata", "Alaska_Coastline.shp", package = "akgfmaps"),
+        quiet = TRUE)
 
     alaska_dnr$COUNTRY <- "US"
 
@@ -198,7 +203,6 @@ get_base_layers <- function(select.region,
     akland <- rbind(akland, alaska_dnr)
 
   }
-
 
   # SEBS--------------------------------------------------------------------------------------------
   if(select.region[1] %in% c("bs.south", "sebs")) {
@@ -234,7 +238,6 @@ get_base_layers <- function(select.region,
   }
 
   # NBS --------------------------------------------------------------------------------------------
-
   if(select.region[1] %in% c("bs.north", "nbs")) {
     survey.area <- sf::st_read(system.file("extdata", "ebs_survey_boundary.shp", package = "akgfmaps"),
                                quiet = TRUE)
@@ -303,7 +306,6 @@ get_base_layers <- function(select.region,
   if(select.region[1] == "ai") {
     survey.area <- sf::st_read(system.file("extdata", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
     survey.strata <- sf::st_read(system.file("extdata", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.grid <- sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
 
     inpfc.strata <- get_inpfc_strata(select.region = "ai", set.crs = set.crs)
@@ -315,9 +317,7 @@ get_base_layers <- function(select.region,
   # Aleutian Islands - East ------------------------------------------------------------------------
   if(select.region[1] == "ai.east") {
     survey.area <- sf::st_read(system.file("extdata", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
-    
     survey.strata <- sf::st_read(system.file("extdata", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.grid <- sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
 
     inpfc.strata <- get_inpfc_strata(select.region = "ai", set.crs = set.crs)
@@ -329,7 +329,7 @@ get_base_layers <- function(select.region,
   # Aleutian Islands - Central ---------------------------------------------------------------------
   if(select.region[1] == "ai.central") {
     survey.area <- sf::st_read(system.file("extdata", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
-    
+
     survey.strata <- sf::st_read(system.file("extdata", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
 
     survey.grid <- sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
@@ -397,11 +397,201 @@ get_base_layers <- function(select.region,
     lat.breaks <- seq(52, 64, 2)
   }
 
-  # Make survey area polygon from union of stratum polygons ----------------------------------------
-  survey.area <- survey.strata |>
-    dplyr::select(geometry) |>
-    dplyr::mutate(ID = 1) |>
-    dplyr::summarise(do_union = TRUE)
+  # Longline EBS ------------------------------------------------------------------------------------
+  if(select.region[1] %in% c("ll.ebs", "ll.bssa1", "ll.bssa2", "ll.bssa3", "ll.bssa4", "ll.bssa5")) {
+
+    survey.strata <- sf::st_read(
+      system.file("extdata", "longline_survey", "LL_survey_Slope_and_Gullies.shp", package = "akgfmaps"),
+      quiet = TRUE)
+
+    survey.strata <- survey.strata[survey.strata$REGION == "EBS" & survey.strata$TYPE == "Slope", ]
+
+    survey.grid <- sf::st_read(
+      system.file("extdata", "longline_survey", "LL_Survey_Stations_Active2023.shp",
+                  package = "akgfmaps"),
+      quiet = TRUE)
+
+    survey.grid <- survey.grid[survey.grid$Region == "Eastern Bering Sea", ]
+
+    lon.breaks <- seq(-180, -155, 5)
+    lat.breaks <- seq(52, 64, 2)
+
+    if(select.region[1] %in% c("ll.bssa1", "ll.bssa2", "ll.bssa3", "ll.bssa4", "ll.bssa5")) {
+
+      subarea <- c("I", "II", "III", "IV", "V")[match(
+        select.region,
+        c("ll.bssa1", "ll.bssa2", "ll.bssa3", "ll.bssa4", "ll.bssa5")
+      )]
+      subarea <- paste0("Bering ", subarea)
+
+      stratum.extent <- survey.strata[survey.strata$AREA_DESC == subarea, ]
+
+      lon.breaks <- seq(-180, -155, 1)
+      lat.breaks <- seq(52, 64, 0.5)
+    }
+
+
+  }
+
+  # Longline Aleutian Islands ----------------------------------------------------------------------
+  if(select.region[1] == "ll.ai") {
+    survey.strata <- sf::st_read(
+      system.file("extdata", "longline_survey", "LL_survey_Slope_and_Gullies.shp", package = "akgfmaps"),
+      quiet = TRUE)
+
+    survey.strata <- survey.strata[survey.strata$REGION == "AI" & survey.strata$TYPE == "Slope", ]
+
+    survey.grid <- sf::st_read(
+      system.file("extdata", "longline_survey", "LL_Survey_Stations_Active2023.shp",
+                  package = "akgfmaps"),
+      quiet = TRUE)
+
+    survey.grid <- survey.grid[survey.grid$Region == "Aleutian Islands", ]
+
+    lon.breaks <- c(170, 175, -180, -175, -170, -165, -160)
+    lat.breaks <- seq(44, 56, 2)
+  }
+
+  # Longline Aleutian Islands subareas -------------------------------------------------------------
+  if(select.region[1] %in% c("ll.ai.west", "ll.ai.central")) {
+    survey.strata <- sf::st_read(
+      system.file("extdata", "longline_survey", "LL_survey_Slope_and_Gullies.shp", package = "akgfmaps"),
+      quiet = TRUE)
+
+    survey.strata <- survey.strata[survey.strata$REGION == "AI" & survey.strata$TYPE == "Slope", ]
+
+    area.desc <- switch(select.region,
+                        "ll.ai.central" = c("NE Aleutians", "NW Aleutians"),
+                        "ll.ai.west" = c("SE Aleutians", "SW Aleutians")
+    )
+
+    stratum.extent <- survey.strata[survey.strata$AREA_DESC %in% area.desc, ]
+
+    survey.grid <- sf::st_read(
+      system.file("extdata", "longline_survey", "LL_Survey_Stations_Active2023.shp",
+                  package = "akgfmaps"),
+      quiet = TRUE)
+
+    survey.grid <- survey.grid[survey.grid$Region == "Aleutian Islands", ]
+
+    lon.breaks <- switch(select.region,
+                         "ll.ai.central" = c(seq(170, 178, 2), seq(-178, -170, 2)),
+                         "ll.ai.west" = c(seq(168, 180, 2), seq(-178, -170, 2)),
+    )
+    lat.breaks <- seq(44, 56, 2)
+  }
+
+  # Longline Gulf of Alaska ------------------------------------------------------------------------
+  if(select.region[1] %in% "ll.goa") {
+    survey.strata <- sf::st_read(
+      system.file("extdata", "longline_survey", "LL_survey_Slope_and_Gullies.shp", package = "akgfmaps"),
+      quiet = TRUE)
+
+    survey.strata <- survey.strata[survey.strata$REGION == "GOA" & survey.strata$TYPE == "Slope", ]
+
+    survey.grid <- sf::st_read(
+      system.file("extdata", "longline_survey", "LL_Survey_Stations_Active2023.shp",
+                  package = "akgfmaps"),
+      quiet = TRUE)
+
+    survey.grid <- survey.grid[survey.grid$Region == "Gulf of Alaska", ]
+
+    lon.breaks <- seq(-175, -130, 5)
+    lat.breaks <- seq(52,64,2)
+  }
+
+  # Longline Gulf of Alaska subareas ---------------------------------------------------------------
+  if(select.region[1] %in% c("ll.goa.east", "ll.goa.central", "ll.goa.west")) {
+    survey.strata <- sf::st_read(
+      system.file("extdata", "longline_survey", "LL_survey_Slope_and_Gullies.shp", package = "akgfmaps"),
+      quiet = TRUE)
+
+    survey.strata <- survey.strata[survey.strata$REGION == "GOA" & survey.strata$TYPE == "Slope", ]
+
+    area.desc <- switch(select.region,
+                        "ll.goa.east" = c("East Yakutat", "Southeast", "West Yakutat"),
+                        "ll.goa.central" = c("Kodiak", "Chirikof"),
+                        "ll.goa.west" = "Shumagin"
+    )
+
+    stratum.extent <- survey.strata[survey.strata$AREA_DESC %in% area.desc, ]
+
+    survey.grid <- sf::st_read(
+      system.file("extdata", "longline_survey", "LL_Survey_Stations_Active2023.shp",
+                  package = "akgfmaps"),
+      quiet = TRUE)
+
+    survey.grid <- survey.grid[survey.grid$Region == "Gulf of Alaska", ]
+
+    lon.breaks <- seq(-175, -130, 2)
+    lat.breaks <- seq(52, 64, 2)
+  }
+
+  # Format longline survey columns
+  if(grepl(pattern = "ll.", x = select.region[1])) {
+
+    names(survey.grid)[
+      match(
+        c("Station_Nu",
+          "Region",
+          "Station_Ty",
+          "Station_De",
+          "Geographic",
+          "Geograph_1",
+          "NPFMC_Mana",
+          "NPFMC_Sabl",
+          "NMFS_Manag",
+          "FMP_Manage",
+          "INPFC_Mana",
+          "Habitat_Ty",
+          "LAT",
+          "LONG",
+          "Exploitabl",
+          "Active"),
+        names(survey.grid)
+        )
+      ] <- c("STATION_NUMBER",
+             "REGION",
+             "STATION_TYPE",
+             "STATION_DEPTH",
+             "GEOGRAPHIC_AREA",
+             "GEOGRAPHIC_AREA_NUMBER",
+             "NPFMC_MANAGEMENT_AREA",
+             "NPFMC_SABLEFISH_AREA",
+             "REP_AREA",
+             "FMP_MANAGEMENT_AREA",
+             "INPFC_MANAGEMENT_AREA",
+             "HABITAT_TYPE",
+             "LAT",
+             "LONG",
+             "EXPLOITABLE",
+             "ACTIVE")
+
+    survey.area <- survey.strata[, "geometry"] |>
+      sf::st_union(by_feature = FALSE) |>
+      sf::st_as_sf()
+
+    sf::st_geometry(survey.area) <- "geometry"
+
+    survey.area$REGION <- c(rep("EBS", 6), "AI", rep("GOA", 4))[
+      match(select.region,
+            c("ll.bssa1",
+              "ll.bssa2",
+              "ll.bssa3",
+              "ll.bssa4",
+              "ll.bssa5",
+              "ll.ebs",
+              "ll.ai",
+              "ll.goa",
+              "ll.goa.west",
+              "ll.goa.central",
+              "ll.goa.east"),
+      )
+    ]
+
+    names(survey.strata)[names(survey.strata) == "F_AREA"] <- "AREA_M2"
+
+  }
 
   # Set CRS-----------------------------------------------------------------------------------------
   if(tolower(class(set.crs)) != "crs") {
@@ -508,7 +698,10 @@ get_base_layers <- function(select.region,
                                 y = c(plot.boundary['ymin'], plot.boundary['ymax']))
 
 
-  } else if(select.region[1] %in% c("bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6")) {
+  } else if(select.region[1] %in% c("bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6",
+                                    "ll.bssa1", "ll.bssa2", "ll.bssa3", "ll.bssa4", "ll.bssa5",
+                                    "ll.goa.west", "ll.goa.central", "ll.goa.east", "ll.ai.central",
+                                    "ll.ai.west")) {
     plot.boundary <- sf::st_bbox(stratum.extent)
     plot.boundary <- data.frame(x = c(plot.boundary['xmin'], plot.boundary['xmax']),
                                 y = c(plot.boundary['ymin'], plot.boundary['ymax']))
