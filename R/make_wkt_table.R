@@ -10,8 +10,6 @@
 
 make_wkt_table <- function(x, area.crs, wkt.crs = "WGS84") {
 
-
-
   x$AREA_KM2 <- x |>
     sf::st_transform(crs = area.crs) |>
     sf::st_make_valid() |>
