@@ -11,7 +11,9 @@
   survey <- c(
     "bs.south", "sebs", "bs.all", "ebs", "bs.north", "nbs", "ecs", "ebs.ecs", "ai", "ai.west",
     "ai.central", "ai.east", "goa", "goa.west", "goa.east", "ebs.slope", "bssa1", "bssa2",
-    "bssa3", "bssa4", "bssa5", "bssa6")
+    "bssa3", "bssa4", "bssa5", "bssa6", "ll.ebs", "ll.bssa1", "ll.bssa2", "ll.bssa3", "ll.bssa4",
+    "ll.bssa5", "ll.goa", "ll.goa.west", "ll.goa.central", "ll.goa.east", "ll.ai", "ll.ai.west",
+    "ll.ai.central")
 
   inpfc <- c("ai", "goa")
 
@@ -70,4 +72,38 @@ fix_geometry <- function(x) {
 
   return(x)
 
+}
+
+#' Set decimal degree interval
+#'
+#' Set decimal degree interval based on the difference between minimum and maximum values
+#'
+#' @param deg_dif Difference in degrees between minimum and maximum coordinates as a positive number
+#' @noRd
+
+set_dd_interval <- function(deg_diff) {
+
+  interval <- 0.5
+
+  if(deg_diff > 2) {
+    interval <- 1
+  }
+
+  if(deg_diff > 8) {
+    interval <- 2
+  }
+
+  if(deg_diff > 12) {
+    interval <- 4
+  }
+
+  if(deg_diff > 20) {
+    interval <- 5
+  }
+
+  if(deg_diff > 50) {
+    interval <- 10
+  }
+
+  return(interval)
 }

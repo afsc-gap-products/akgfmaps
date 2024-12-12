@@ -4,7 +4,8 @@ The akgfmaps package is used to vector geometries ('shapefiles') that are common
 
 The package includes:
 
-- Layers for groundfish and crab bottom trawl survey regions in the eastern Bering Sea shelf (EBS), eastern Bering Sea slope (BSS), northern Bering Sea (NBS), eastern Chukchi Sea (ECS), Gulf of Alaska (GOA), and Aleutian Islands (AI).
+- Groundfish and crab bottom trawl survey areas in the eastern Bering Sea shelf (EBS), eastern Bering Sea slope (BSS), northern Bering Sea (NBS), eastern Chukchi Sea (ECS), Gulf of Alaska (GOA), and Aleutian Islands (AI).
+- Longline survey areas in the BSS, GOA, and AI.
 - National Marine Fisheries Service (NMFS) statistical area layer.
 - Alaska Department of Fish and Game (ADFG) management and statistical area layer.
 - Alaska Ecosystem Status Report (ESR) area and subarea layers.
@@ -55,6 +56,9 @@ The table below lists the vector geometry layers (polygons) in the package by re
 | AI | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | AI | Groundfish survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | AI | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
+| AI/BSS/GOA | Longline survey stations | get_base_layers() | K. Echave (AFSC) | [Link](https://repository.library.noaa.gov/view/noaa/11869) |
+| AI/BSS/GOA | Longline survey strata | get_base_layers() | K. Echave (AFSC) | [Link](https://repository.library.noaa.gov/view/noaa/11869) |
+| AI/BSS/GOA | Longline survey area | get_base_layers() | K. Echave (AFSC) | [Link](https://repository.library.noaa.gov/view/noaa/11869) |
 | BSS/NBS/SEBS | BSIERP Regions | get_bsierp_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](https://doi.org/10.5065/D6DF6P6C) |
 | BSS | Groundfish survey area | get_base_layers() | A. Grieg (AFSC Ret.) | |
 | BSS | Groundfish survey strata | get_base_layers() | A. Grieg (AFSC Ret.) | |

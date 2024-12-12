@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_base_layers.R
 \name{get_base_layers}
 \alias{get_base_layers}
-\title{Function to get base layers for groundfish survey regions, bathymetry, and land}
+\title{Function to get base layers for bottom trawl and longline survey regions, bathymetry, and land}
 \usage{
 get_base_layers(
   select.region,
@@ -15,7 +15,7 @@ get_base_layers(
 )
 }
 \arguments{
-\item{select.region}{Character vector indicating which region to retrieve. Options = ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6}
+\item{select.region}{Character vector indicating which region to retrieve. Bottom trawl survey options: ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6. Longline survey options: ll.ebs, ll.bssa1, ll.bssa2, ll.bssa3, ll.bssa4, ll.bssa5, ll.ai, ll.ai.west, ll.ai.central, ll.goa, ll.goa.west, ll.goa.central, ll.goa.east}
 
 \item{set.crs}{Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area (EPSG:3338) will be used.}
 
@@ -30,10 +30,10 @@ get_base_layers(
 \item{high.resolution.coast}{Should the State of Alaska polygon be a high resolution Alaska Department of Natural Resources 1:63360 scale polygon that includes smaller islands and a more detailed coastline? The higher resolution polygon (high.resolution.coast = TRUE) takes longer to load/plot and is recommended for spatial operations performed at high resolution (e.g., masking high resolution rasters). The lower resolution polygon (high.resolution.coast = FALSE) is recommended for general mapping and visualization purposes. Default = FALSE.}
 }
 \value{
-A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (optional), a data frame of feature labels, coordinate reference system for all objects, and a suggested boundary.
+A list containing sf objects land, bathymetry, survey area boundary, survey strata, survey grid (or survey stations for the longline survey), a data frame of feature labels (for the EBS shelf bottom trawl survey), coordinate reference system, plot boundaryies, axis label breaks, and graticule.
 }
 \description{
-This function loads often-used layers used for plotting the eastern Bering Sea continental shelf.
+This function retrieves layers that are commonly used for mapping and spatial analysis of AFSC bottom trawl survey and longline survey data.
 }
 \examples{
 \dontrun{

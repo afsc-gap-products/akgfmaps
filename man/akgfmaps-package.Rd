@@ -18,6 +18,7 @@ Other contributors:
   \item Matt Callahan \email{matt.callahan@noaa.gov} [contributor]
   \item Jason Conner \email{jason.conner@noaa.gov} [contributor]
   \item Emily Ryznar \email{emily.ryznar@noaa.gov} [contributor]
+  \item Katy Echave \email{katy.echave@noaa.gov} [contributor]
   \item Liz Dawson [contributor]
   \item Ned Laman \email{ned.laman@noaa.gov} [contributor]
 }
