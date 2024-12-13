@@ -1,0 +1,29 @@
+NMFS_AREA,REP_AREA,STRATUM,DEPTH_MIN_M,DEPTH_MAX_M
+Shumagin,610,14,1,50
+Shumagin,610,15,51,125
+Shumagin,610,113,126,225
+Shumagin,610,211,226,700
+Shumagin,610,511,701,1000
+Chirikof,620,23,1,50
+Chirikof,620,24,51,150
+Chirikof,620,123,151,250
+Chirikof,620,222,251,350
+Chirikof,620,321,351,700
+Chirikof,620,521,701,1000
+Kodiak,630,36,1,50
+Kodiak,630,37,51,75
+Kodiak,630,38,76,125
+Kodiak,630,135,126,150
+Kodiak,630,136,151,700
+Kodiak,630,531,701,1000
+West Yakutat,640,42,1,50
+West Yakutat,640,43,51,100
+West Yakutat,640,144,101,175
+West Yakutat,640,145,176,200
+West Yakutat,640,242,201,700
+West Yakutat,640,541,701,1000
+Southeast Outside,650,51,1,100
+Southeast Outside,650,152,101,200
+Southeast Outside,650,252,201,300
+Southeast Outside,650,352,301,700
+Southeast Outside,650,551,701,1000
