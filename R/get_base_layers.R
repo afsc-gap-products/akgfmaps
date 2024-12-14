@@ -214,7 +214,7 @@ get_base_layers <- function(select.region,
     survey.strata <- sf::st_read(system.file("extdata", "ebs_strata.shp", package = "akgfmaps"),
                                  quiet = TRUE)
 
-    survey.strata <- survey.strata[survey.strata$STRATUM %in% c(10, 20, 31, 32, 41, 42, 43, 50, 61, 62, 82, 90), ]
+    survey.strata <- survey.strata[survey.strata$Stratum %in% c(10, 20, 31, 32, 41, 42, 43, 50, 61, 62, 82, 90), ]
 
     survey.grid <- sf::st_read(system.file("extdata", grid.file, package = "akgfmaps"),
                                quiet = TRUE)
@@ -229,7 +229,6 @@ get_base_layers <- function(select.region,
                                quiet = TRUE)
     survey.strata <- sf::st_read(system.file("extdata", "ebs_strata.shp", package = "akgfmaps"),
                                  quiet = TRUE)
-
     survey.grid <- sf::st_read(system.file("extdata", grid.file, package = "akgfmaps"),
                                quiet = TRUE)
 
@@ -247,7 +246,7 @@ get_base_layers <- function(select.region,
     survey.strata <- sf::st_read(system.file("extdata", "ebs_strata.shp", package = "akgfmaps"),
                                  quiet = TRUE)
 
-    survey.strata <- survey.strata[survey.strata$STRATUM %in% c(81, 70, 71), ]
+    survey.strata <- survey.strata[survey.strata$Stratum %in% c(81,70,71), ]
 
     survey.grid <- sf::st_read(system.file("extdata", "bs_grid_w_corners.shp", package = "akgfmaps"),
                                quiet = TRUE)
@@ -308,6 +307,9 @@ get_base_layers <- function(select.region,
     survey.strata <- sf::st_read(system.file("extdata", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
     survey.grid <- sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
 
+    survey.strata <- survey.strata[survey.strata$STRATUM < 800 & survey.strata$STRATUM > 0, ]
+    survey.grid <- survey.grid[survey.grid$STRATUM < 800 & survey.grid$STRATUM > 0, ]
+
     inpfc.strata <- get_inpfc_strata(select.region = "ai", set.crs = set.crs)
 
     lon.breaks <- c(170, 175, -180, -175, -170, -165, -160)
@@ -320,6 +322,9 @@ get_base_layers <- function(select.region,
     survey.strata <- sf::st_read(system.file("extdata", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
     survey.grid <- sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
 
+    survey.strata <- survey.strata[survey.strata$STRATUM < 800 & survey.strata$STRATUM > 0, ]
+    survey.grid <- survey.grid[survey.grid$STRATUM < 800 & survey.grid$STRATUM > 0, ]
+
     inpfc.strata <- get_inpfc_strata(select.region = "ai", set.crs = set.crs)
 
     lon.breaks <- seq(-176, -164, 2)
@@ -329,10 +334,11 @@ get_base_layers <- function(select.region,
   # Aleutian Islands - Central ---------------------------------------------------------------------
   if(select.region[1] == "ai.central") {
     survey.area <- sf::st_read(system.file("extdata", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.strata <- sf::st_read(system.file("extdata", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.grid <- sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
+
+    survey.strata <- survey.strata[survey.strata$STRATUM < 800 & survey.strata$STRATUM > 0, ]
+    survey.grid <- survey.grid[survey.grid$STRATUM < 800 & survey.grid$STRATUM > 0, ]
 
     inpfc.strata <- get_inpfc_strata(select.region = "ai", set.crs = set.crs)
 
@@ -343,10 +349,11 @@ get_base_layers <- function(select.region,
   # Aleutian Islands - West ---------------------------------------------------------------------
   if(select.region[1] == "ai.west") {
     survey.area <- sf::st_read(system.file("extdata", "ai_area.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.strata <- sf::st_read(system.file("extdata", "ai_strata.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.grid <- sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"), quiet = TRUE)
+
+    survey.strata <- survey.strata[survey.strata$STRATUM < 800 & survey.strata$STRATUM > 0, ]
+    survey.grid <- survey.grid[survey.grid$STRATUM < 800 & survey.grid$STRATUM > 0, ]
 
     inpfc.strata <- get_inpfc_strata(select.region = "ai", set.crs = set.crs)
 
@@ -358,10 +365,11 @@ get_base_layers <- function(select.region,
   # Gulf of Alaska ---------------------------------------------------------------------------------
   if(select.region[1] == "goa") {
     survey.area <- sf::st_read(system.file("extdata", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.strata <- sf::st_read(system.file("extdata", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.grid <- sf::st_read(system.file("extdata", "goa_grid.shp", package = "akgfmaps"), quiet = TRUE)
+
+    survey.strata <- survey.strata[survey.strata$STRATUM > 0, ]
+    survey.grid <- survey.grid[survey.grid$STRATUM > 0, ]
 
     inpfc.strata <- get_inpfc_strata(select.region = "goa", set.crs = set.crs)
 
@@ -372,10 +380,11 @@ get_base_layers <- function(select.region,
   # Gulf of Alaska - West --------------------------------------------------------------------------
   if(select.region[1] == "goa.west") {
     survey.area <- sf::st_read(system.file("extdata", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.strata <- sf::st_read(system.file("extdata", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.grid <- sf::st_read(system.file("extdata", "goa_grid.shp", package = "akgfmaps"), quiet = TRUE)
+
+    survey.strata <- survey.strata[survey.strata$STRATUM > 0, ]
+    survey.grid <- survey.grid[survey.grid$STRATUM > 0, ]
 
     inpfc.strata <- get_inpfc_strata(select.region = "goa", set.crs = set.crs)
 
@@ -386,10 +395,11 @@ get_base_layers <- function(select.region,
   # Gulf of Alaska - East --------------------------------------------------------------------------
   if(select.region[1] == "goa.east") {
     survey.area <- sf::st_read(system.file("extdata", "goa_area.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.strata <- sf::st_read(system.file("extdata", "goa_strata.shp", package = "akgfmaps"), quiet = TRUE)
-
     survey.grid <- sf::st_read(system.file("extdata", "goa_grid.shp", package = "akgfmaps"), quiet = TRUE)
+
+    survey.strata <- survey.strata[survey.strata$STRATUM > 0, ]
+    survey.grid <- survey.grid[survey.grid$STRATUM > 0, ]
 
     inpfc.strata <- get_inpfc_strata(select.region = "goa", set.crs = set.crs)
 
@@ -549,23 +559,23 @@ get_base_layers <- function(select.region,
           "Exploitabl",
           "Active"),
         names(survey.grid)
-        )
-      ] <- c("STATION_NUMBER",
-             "REGION",
-             "STATION_TYPE",
-             "STATION_DEPTH",
-             "GEOGRAPHIC_AREA",
-             "GEOGRAPHIC_AREA_NUMBER",
-             "NPFMC_MANAGEMENT_AREA",
-             "NPFMC_SABLEFISH_AREA",
-             "REP_AREA",
-             "FMP_MANAGEMENT_AREA",
-             "INPFC_MANAGEMENT_AREA",
-             "HABITAT_TYPE",
-             "LAT",
-             "LONG",
-             "EXPLOITABLE",
-             "ACTIVE")
+      )
+    ] <- c("STATION_NUMBER",
+           "REGION",
+           "STATION_TYPE",
+           "STATION_DEPTH",
+           "GEOGRAPHIC_AREA",
+           "GEOGRAPHIC_AREA_NUMBER",
+           "NPFMC_MANAGEMENT_AREA",
+           "NPFMC_SABLEFISH_AREA",
+           "REP_AREA",
+           "FMP_MANAGEMENT_AREA",
+           "INPFC_MANAGEMENT_AREA",
+           "HABITAT_TYPE",
+           "LAT",
+           "LONG",
+           "EXPLOITABLE",
+           "ACTIVE")
 
     survey.area <- survey.strata[, "geometry"] |>
       sf::st_union(by_feature = FALSE) |>
@@ -719,7 +729,7 @@ get_base_layers <- function(select.region,
   place.labels <- akgfmaps::transform_data_frame_crs(place.labels, out.crs = set.crs)
 
 
-  # Correct remaining degenerate geometry and dateline wrapping issues -----------------------------
+  # Attempt to correct any remaining degenerate geometry and dateline wrapping issues --------------
 
   if(fix.invalid.geom) {
     akland <- fix_geometry(x = akland)
