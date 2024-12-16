@@ -1,4 +1,73 @@
-akgfmaps 3.6.0
+akgfmaps 4.0.0 (December 18, 2024)
+----------------------------------------------------------------
+
+This major update replaces and updates shapefiles from multiple
+bottom trawl survey regions and adopts standard field naming
+conventions across regions. This update ensure consistency
+across survey spatial products but breaks backwards
+compatibility.
+
+MAJOR CHANGES TO get_base_layers()
+
+  - The function can retrieve layers for multiple regions at
+    once, e.g.:
+        get_base_layers(select.region = c("ebs", "ai"))
+  - New design.year argument can retrieve layers for a specific
+    survey design, such as the Gulf of Alaska survey design that
+    was used from 1984-2023:
+        get_base_layers(select.region = "goa", design.year = 1984)
+
+    If not specified, returns the most recent design.
+  - The use.survey.bathymetry argument in get_base_layers() is now
+    deprecated because they are unnecessary now that EBS bathymetry
+    files have been updated.
+  - A legacy version of the function, get_base_layers_v3(), and
+    associated shapefiles are provided temporarily as a bridge
+    to help with backwards compatibility.
+  - Column names for sf objects returned by the function have
+    changed to match GAP_PRODUCTS and RACEBASE.
+    - survey.area columns:
+      - AREA_ID: AREA_ID used in GAP_PRODUCTS for the survey
+        area.
+      - SURVEY_DEFINITION_ID: Survey ID (6 = Chukchi,
+        47 = GOA, 52 = AI, 78 = EBS Slope, 98 = EBS shelf,
+        143 = NBS).
+      - SURVEY_NAME: Name of the survey as a character
+        vector (e.g., "Aleutian Islands Bottom Trawl Survey")
+      - DESIGN_YEAR: Year the design was implemented.
+      - AREA_M2: Area in m^2.
+      - geometry: simple features WKT geometry
+    - survey.strata columns:
+      - STRATUM: Survey stratum that corresponds with AREA_ID
+      in GAP_PRODUCTS or STRATUM in RACEBASE.
+      - SURVEY_DEFINITION_ID: Same as above.
+      - DESIGN_YEAR: Same as above.
+      - AREA_M2: Same as above.
+      - geometry: Same as above.
+    - survey.grid columns:
+      - SURVEY_DEFINITION_ID: Same as above.
+      - DESIGN_YEAR: Same as above.
+      - GRID_ID: Corresponds with AI_GRIDID or GOA_GRIDID
+        used by GAP.
+      - STATION: Corresponds with STATIONID field in RACEBASE
+        and STATION field in GAP_PRODUCTS.
+      - AREA_M2: Same as above.
+      - geometry: Same as above.
+
+
+MAJOR CHANGES TO VECTOR GEOMETRY FILES
+
+  1) Bottom trawl survey layer field names have been standardized
+     across regions.
+  2) Bottom trawl survey layers are provided in geopackages
+     (.gpkg) instead of standalone shapefiles.
+      - Groundfish/BTS:
+        - /inst/extdata/afsc_bottom_trawl_surveys.gpkg
+      - Crab strata:
+        - /inst/extdata/all_crab_from_akgfmaps_grid.gpkg
+
+
+akgfmaps 3.6.0 (December 11, 2024)
 ----------------------------------------------------------------
 
 FUNCTIONALITY CHANGES
