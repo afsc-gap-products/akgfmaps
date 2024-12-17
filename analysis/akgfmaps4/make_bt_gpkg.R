@@ -1,6 +1,8 @@
 library(akgfmaps)
 
-# Eastern Bering Sea and Northern Bering Sea
+# EBS 1987 design ----
+
+# Eastern Bering Sea and Northern Bering Sea 2022 calculations ----
 ebs_layers <- akgfmaps:::get_base_layers_v3(select.region = "ebs",
                                             set.crs = "EPSG:3338")
 
@@ -9,7 +11,7 @@ ebs_layers$survey.area |>
                 SURVEY_NAME = c("Eastern Bering Crab/Groundfish Bottom Trawl Survey", "Northern Bering Sea Crab/Groundfish Survey - Eastern Bering Sea Shelf Survey Extension"),
                 SURVEY_DEFINITION_ID = c(98, 143),
                 AREA_ID = c(99900, 99902),
-                DESIGN_YEAR = c(1987, 2010),
+                DESIGN_YEAR = c(2022, 2022),
                 AREA_TYPE = "REGION") |>
   dplyr::select(AREA_TYPE, SURVEY_NAME, DESIGN_YEAR, SURVEY_DEFINITION_ID, AREA_ID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
@@ -19,7 +21,7 @@ ebs_layers$survey.area |>
 ebs_layers$survey.strata |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
                 SURVEY_DEFINITION_ID = dplyr::if_else(Stratum %in% c(70, 71, 81), 143, 98),
-                DESIGN_YEAR = dplyr::if_else(Stratum %in% c(70, 71, 81), 2010, 1987),
+                DESIGN_YEAR = 2022,
                 AREA_ID = as.numeric(Stratum),
                 AREA_TYPE = "STRATUM") |>
   dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
@@ -28,9 +30,10 @@ ebs_layers$survey.strata |>
                delete_layer = TRUE,
                append = FALSE)
 
+
+# Eastern Bering Sea and Northern Bering Sea grid 2010 and 2014 designs ----
 ebs_layers$survey.grid |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
-                DESIGN_YEAR = 2024,
                 SURVEY_DEFINITION_ID = dplyr::if_else(STATIONID %in% akgfmaps::get_survey_stations(select.region = "nbs"), 143, 98),
                 GRID_ID = 999,
                 AREA_TYPE = "STATION",
@@ -41,14 +44,14 @@ ebs_layers$survey.grid |>
                delete_layer = TRUE,
                append = FALSE)
 
-# Eastern Bering Sea corners
+# Eastern Bering Sea grid w/ corners 2010 design ----
 ebs_corners <- akgfmaps:::get_base_layers_v3(select.region = "sebs",
                                              set.crs = "EPSG:3338",
                                              include.corners = TRUE)
 
 ebs_corners$survey.grid |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
-                DESIGN_YEAR = 1987,
+                DESIGN_YEAR = 2010,
                 AREA_TYPE = "STATION",
                 SURVEY_DEFINITION_ID = 98) |>
   dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, STATION = STATIONID, AREA_M2) |>
@@ -57,7 +60,7 @@ ebs_corners$survey.grid |>
                delete_layer = FALSE,
                append = TRUE)
 
-# Aleutian Islands
+# Aleutian Islands 1991 design ----
 ai_layers <- akgfmaps:::get_base_layers_v3(select.region = "ai",
                                            set.crs = "EPSG:3338")
 
@@ -93,19 +96,6 @@ sf::st_read(here::here("inst", "extdata", "ai_strata.shp"))  |>
 sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
   sf::st_transform(crs = "EPSG:3338") |>
   akgfmaps:::fix_geometry() |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
-                DESIGN_YEAR = 1980,
-                AREA_TYPE = "STATION",
-                SURVEY_DEFINITION_ID = 52) |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = AIGRID_ID, STATION = ID, AREA_M2) |>
-  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
-               layer = "survey_grid",
-               append = TRUE,
-               delete_dsn = FALSE)
-
-sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
-  sf::st_transform(crs = "EPSG:3338") |>
-  akgfmaps:::fix_geometry() |>
   dplyr::filter(STRATUM > 0, STRATUM < 800) |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
                 DESIGN_YEAR = 1991,
@@ -117,7 +107,55 @@ sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
                append = TRUE,
                delete_dsn = FALSE)
 
-# Gulf of ALaska 1984 ----
+
+# Aleutian Islands 1980 design ----
+sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
+  dplyr::filter(STRATUM > 0) |>
+  sf::st_transform(crs = "EPSG:3338") |>
+  akgfmaps:::fix_geometry() |>
+  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
+                DESIGN_YEAR = 1980,
+                AREA_TYPE = "STATION",
+                SURVEY_DEFINITION_ID = 52) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = AIGRID_ID, STATION = ID, AREA_M2) |>
+  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
+               layer = "survey_grid",
+               append = TRUE,
+               delete_dsn = FALSE)
+
+sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
+  dplyr::filter(STRATUM > 0) |>
+  sf::st_transform(crs = "EPSG:3338") |>
+  dplyr::select(STRATUM) |>
+  dplyr::group_by(STRATUM) |>
+  dplyr::summarise(do_union = TRUE) |>
+  akgfmaps:::fix_geometry() |>
+  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
+                DESIGN_YEAR = 1980,
+                AREA_TYPE = "STRATUM",
+                SURVEY_DEFINITION_ID = 52) |>
+  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
+               layer = "survey_strata",
+               append = TRUE,
+               delete_dsn = FALSE)
+
+sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
+  dplyr::filter(STRATUM > 0) |>
+  sf::st_transform(crs = "EPSG:3338") |>
+  dplyr::mutate(id = 1) |>
+  dplyr::select(id) |>
+  dplyr::summarise(do_union = TRUE) |>
+  akgfmaps:::fix_geometry() |>
+  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
+                DESIGN_YEAR = 1980,
+                AREA_TYPE = "REGION",
+                SURVEY_DEFINITION_ID = 52) |>
+  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
+               layer = "survey_area",
+               append = TRUE,
+               delete_dsn = FALSE)
+
+# Gulf of ALaska 1984 design ----
 goa_layers <- akgfmaps:::get_base_layers_v3(select.region = "goa",
                                             set.crs = "EPSG:3338")
 
@@ -206,7 +244,7 @@ goa_station_grid_2025 |>
                append = TRUE,
                delete_dsn = FALSE)
 
-# Eastern Chukchi Sea ----
+# Eastern Chukchi Sea 2012 design ----
 ecs_layers <- akgfmaps:::get_base_layers_v3(select.region = "ecs",
                                             set.crs = "EPSG:3338")
 
@@ -233,7 +271,7 @@ ecs_layers$survey.strata |>
                append = TRUE,
                delete_dsn = FALSE)
 
-# EBS slope ----
+# EBS slope 2023 area recalculation ----
 bss_layers <- akgfmaps:::get_base_layers_v3(select.region = "ebs.slope",
                                             set.crs = "EPSG:3338")
 
