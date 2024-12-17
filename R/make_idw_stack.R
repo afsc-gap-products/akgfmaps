@@ -253,7 +253,7 @@ make_idw_stack <- function(x = NA,
       extrap.grid <- subset(extrap.grid, select = -id_temp) |>
         sf::st_intersection(map_layers$survey.area)
 
-      extrap.grid <- extrap.grid[c("var1.pred", "SURVEY", "geometry")]
+      extrap.grid <- extrap.grid[c("var1.pred", "SURVEY_NAME", "SURVEY_DEFINITION_ID",  "geometry")]
 
       if(length(grouping.vars) > 1) {
 
