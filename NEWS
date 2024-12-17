@@ -1,4 +1,14 @@
-akgfmaps 3.6.0
+akgfmaps 3.6.1 (December XX, 2024)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Correct coordinates for longline survey station 20 by replacing
+  inst/extdata/LL_Survey_Stations_Active2023.shp with
+  inst/extdata/LonglineStationsActive.shp
+
+
+akgfmaps 3.6.0 (December 12, 2024)
 ----------------------------------------------------------------
 
 FUNCTIONALITY CHANGES
