@@ -89,75 +89,36 @@ goa_station_grid_2025 |>
                append = TRUE,
                delete_dsn = FALSE)
 
-# EBS 1993 design ----
-# ebs_survey_area_1993 <-
-#   sf::st_read(here::here("inst", "extdata", "ebs_shelf_strata_1987.shp"))
-#
-# ebs_survey_area_1993$AREA_KM2 <- sf::st_area(ebs_survey_area_1993)/1e6
-#
-# |>
-#   dplyr::group_by(AREA_TYPE = "REGION",
-#                   SURVEY_NAME = "Eastern Bering Crab/Groundfish Bottom Trawl Survey",
-#                   DESIGN_YEAR = 1982,
-#                   SURVEY_DEFINITION_ID = 98,
-#                   AREA_ID = 99901)  |>
-#   dplyr::summarise(AREA_M2 = sum(AREA),
-#                    do_union = TRUE)
-#
-# ebs_survey_area_1982 |>
-#   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
-#                layer = "survey_area",
-#                append = TRUE,
-#                delete_dsn = FALSE)
-#
-# sf::st_read(here::here("inst", "extdata", "ebs_shelf_strata_1982.shp")) |>
-#   sf::st_transform(crs = "EPSG:3338") |>
-#   dplyr::mutate(AREA_M2 = AREA,
-#                 AREA_ID = EBS_STRATU,
-#                 AREA_TYPE = "STRATUM",
-#                 DESIGN_YEAR = 1982,
-#                 SURVEY_DEFINITION_ID = 98) |>
-#   dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
-#   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
-#                layer = "survey_strata",
-#                append = TRUE,
-#                delete_dsn = FALSE)
-#
-# sf::st_read(here::here("inst", "extdata", "ebs_grid_1982.shp")) |>
-#   sf::st_transform(crs = "EPSG:3338") |>
-#   dplyr::filter(STATION_ID %in% akgfmaps::get_survey_stations(select.region = "sebs",
-#                                                               include.corners = FALSE)) |>
-#   dplyr::filter(!(STATION_ID %in% c(paste0("S-", 27:31),
-#                                     paste0("T-", 25:30),
-#                                     paste0("U-", 25:29),
-#                                     paste0("V-", 25:28)))
-#   ) |>
-#   dplyr::mutate(AREA_TYPE = "STATION",
-#                 SURVEY_DEFINITION_ID = 98,
-#                 DESIGN_YEAR = 1982) |>
-#   dplyr::select(AREA_TYPE,
-#                 SURVEY_DEFINITION_ID,
-#                 DESIGN_YEAR,
-#                 STATION = STATION_ID,
-#                 AREA_M2 = AREA)
-#
-#   ggplot() +
-#   geom_sf(data = test) +
-#   geom_sf_text(data = sf::st_centroid(test),
-#                mapping = aes(label = STATION_ID))
-#
-#   ebs_survey_area_1982
-#   sf::st_transform(crs = "EPSG:3338") |>
-#   dplyr::mutate(AREA_M2 = AREA,
-#                 AREA_ID = EBS_STRATU,
-#                 AREA_TYPE = "STRATUM",
-#                 DESIGN_YEAR = 1982,
-#                 SURVEY_DEFINITION_ID = 98) |>
-#   dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
-#   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
-#                layer = "survey_strata",
-#                append = TRUE,
-#                delete_dsn = FALSE)
+# EBS and NBS 2010 ----
+
+# EBS and NBS 2019 ----
+ebs_strata_2019 <- sf::st_read(dsn = here::here("inst", "extdata", "EBS_NBS_2019.shp")) |>
+  sf::st_transform(crs = "EPSG:3338") |>
+  dplyr::mutate(SURVEY_NAME = dplyr::if_else(STRATUM %in% c(70, 71, 82), "Northern Bering Sea Crab/Groundfish Survey - Eastern Bering Sea Shelf Survey Extension", "Eastern Bering Crab/Groundfish Bottom Trawl Survey"),
+                SURVEY_DEFINITION_ID = dplyr::if_else(STRATUM %in% c(70, 71, 82), 143, 98),
+                AREA_ID = dplyr::if_else(STRATUM %in% c(70, 71, 82), 99902, 99900),
+                AREA_TYPE = "REGION",
+                DESIGN_YEAR = 2019) |>
+  dplyr::group_by(AREA_TYPE, SURVEY_NAME, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID)  |>
+  dplyr::summarise(AREA_M2 = sum(AREA_KM2*1e6),
+                   do_union = TRUE) |>
+  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
+               layer = "survey_area",
+               append = TRUE,
+               delete_dsn = FALSE)
+
+sf::st_read(dsn = here::here("inst", "extdata", "EBS_NBS_2019.shp")) |>
+  sf::st_transform(crs = "EPSG:3338") |>
+  dplyr::mutate(AREA_M2 = AREA_KM2 * 1e6,
+                AREA_ID = STRATUM,
+                AREA_TYPE = "STRATUM",
+                DESIGN_YEAR = 2019,
+                SURVEY_DEFINITION_ID = dplyr::if_else(STRATUM %in% c(70, 71, 82), 143, 98)) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
+  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
+               layer = "survey_strata",
+               append = TRUE,
+               delete_dsn = FALSE)
 
 # Eastern Bering Sea and Northern Bering Sea 2022 calculations ----
 ebs_layers <- akgfmaps:::get_base_layers_v3(select.region = "ebs",
@@ -195,7 +156,7 @@ ebs_layers$survey.grid |>
                 SURVEY_DEFINITION_ID = dplyr::if_else(STATIONID %in% akgfmaps::get_survey_stations(select.region = "nbs"), 143, 98),
                 AREA_TYPE = "STATION",
                 DESIGN_YEAR = dplyr::if_else(STATIONID %in% akgfmaps::get_survey_stations(select.region = "nbs"), 2010, 2024)) |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID, STATION = STATIONID, AREA_M2) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, STATION = STATIONID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_grid",
                append = TRUE,
@@ -283,14 +244,15 @@ sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
 sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
   dplyr::filter(STRATUM > 0) |>
   sf::st_transform(crs = "EPSG:3338") |>
-  dplyr::select(STRATUM) |>
-  dplyr::group_by(STRATUM) |>
+  dplyr::select(AREA_ID = STRATUM) |>
+  dplyr::group_by(AREA_ID) |>
   dplyr::summarise(do_union = TRUE) |>
   akgfmaps:::fix_geometry() |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
                 DESIGN_YEAR = 1980,
                 AREA_TYPE = "STRATUM",
-                SURVEY_DEFINITION_ID = 52) |>
+                SURVEY_DEFINITION_ID = 52,
+                AREA_ID) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_strata",
                append = TRUE,
