@@ -1,11 +1,11 @@
 library(akgfmaps)
 
-# Gulf of ALaska 1984 design ----
+# Gulf of Alaska 1984 design ----
 goa_layers <- akgfmaps:::get_base_layers_v3(select.region = "goa",
                                             set.crs = "EPSG:3338")
 
 goa_layers$survey.area |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
+  dplyr::mutate(AREA_M2 = AREA_KM2*1e6,
                 SURVEY_DEFINITION_ID = 47,
                 DESIGN_YEAR = 1984,
                 AREA_ID = 99903,
@@ -20,6 +20,8 @@ goa_layers$survey.area |>
 goa_layers$survey.strata |>
   sf::st_transform(crs = "EPSG:3338") |>
   akgfmaps:::fix_geometry() |>
+  dplyr::group_by(STRATUM) |>
+  dplyr::summarise(AREA_M2 = sum(AREA_KM2*1e6), do_union = TRUE) |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
                 DESIGN_YEAR = 1984,
                 AREA_TYPE = "STRATUM",
@@ -33,20 +35,8 @@ goa_layers$survey.strata |>
                append = FALSE,
                delete_dsn = FALSE)
 
-goa_layers$survey.strata |>
-  sf::st_transform(crs = "EPSG:3338") |>
-  akgfmaps:::fix_geometry() |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
-                DESIGN_YEAR = 1984,
-                AREA_TYPE = "STRATUM",
-                SURVEY_DEFINITION_ID = 47) |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, AREA_M2) |>
-  dplyr::group_by(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID) |>
-  dplyr::summarise(AREA_M2 = sum(AREA_M2), do_union = TRUE) |>
-  dplyr::ungroup()
-
 goa_layers$survey.grid |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
+  dplyr::mutate(AREA_M2 = AREA_KM2*1e6,
                 DESIGN_YEAR = 1984,
                 AREA_TYPE = "STATION",
                 SURVEY_DEFINITION_ID = 47) |>
