@@ -3,7 +3,7 @@
 #' This function retrieves layers that are commonly used for mapping and spatial analysis of AFSC bottom trawl survey and longline survey data.
 #'
 #' @param select.region Character vector indicating which region to retrieve. Bottom trawl survey options: ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6. Longline survey options: ll.ebs, ll.bssa1, ll.bssa2, ll.bssa3, ll.bssa4, ll.bssa5, ll.ai, ll.ai.west, ll.ai.central, ll.goa, ll.goa.west, ll.goa.central, ll.goa.east
-#' @param design.year Survey design year for files to retrieve. Returns the most recent year when NULL.
+#' @param design.year Survey design year for files to retrieve. Returns the most recent year when NULL or closest year before the design year when there isn't an exact match.
 #' @param set.crs Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area (EPSG:3338) is used.
 #' @param use.survey.bathymetry Should survey bathymetry be used?
 #' @param include.corners Logical. Should corner stations be returned in the survey grid? Only for the EBS.
@@ -235,7 +235,7 @@ get_base_layers <- function(select.region,
 
   }
 
-  # Query layers from built-in geopackage ----
+  # Query bottom trawl survey layers from built-in geopackage and filter by design.year ----
   if(!is.null(survey_definition_id)) {
 
     survey.area <- sf::st_read(
@@ -244,8 +244,12 @@ get_base_layers <- function(select.region,
                       DESIGN_YEAR, AREA_ID, AREA_M2, GEOM AS geometry
                      FROM SURVEY_AREA WHERE SURVEY_DEFINITION_ID IN (",
                      paste(survey_definition_id, collapse = ", "), ")"
-                     ),
+      ),
       quiet = TRUE
+    ) |>
+      select_design_year(
+        design.year = design.year,
+        layer.type = "survey.area"
       )
 
     survey.grid <- sf::st_read(
@@ -254,47 +258,27 @@ get_base_layers <- function(select.region,
                       STATION, AREA_M2, GEOM AS geometry
                      FROM SURVEY_GRID WHERE SURVEY_DEFINITION_ID IN (",
                      paste(survey_definition_id, collapse = ", "), ")"
-                     ),
+      ),
       quiet = TRUE
+    ) |>
+      select_design_year(
+        design.year = design.year,
+        layer.type = "survey.grid"
       )
+
 
     survey.strata <- sf::st_read(
       system.file("extdata", "afsc_bottom_trawl_surveys.gpkg", package = "akgfmaps"),
       query = paste0("SELECT SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID AS STRATUM,
                       AREA_M2, GEOM AS geometry FROM SURVEY_STRATA WHERE SURVEY_DEFINITION_ID IN (",
                      paste(survey_definition_id, collapse = ", "), ")"
-                     ),
+      ),
       quiet = TRUE
+    ) |>
+      select_design_year(
+        design.year = design.year,
+        layer.type = "survey.strata"
       )
-
-  }
-
-  # Filter by design.year ----
-
-  if(!is.null(design.year)) {
-
-    survey.area <- survey.area[survey.area$DESIGN_YEAR == design.year, ]
-
-    survey.grid <- survey.grid[survey.grid$DESIGN_YEAR == design.year, ]
-
-    survey.strata <- survey.strata[survey.strata$DESIGN_YEAR == design.year, ]
-
-  } else {
-    # Return the current design when design.year is NULL
-    survey.area <- survey.area[
-      with(survey.area,
-           ave(DESIGN_YEAR, SURVEY_DEFINITION_ID, FUN = function(v) v == max(v))) == 1,
-      ]
-
-    survey.grid <- survey.grid[
-      with(survey.grid,
-           ave(DESIGN_YEAR, SURVEY_DEFINITION_ID, FUN = function(v) v == max(v))) == 1,
-    ]
-
-    survey.strata <- survey.strata[
-      with(survey.strata,
-           ave(DESIGN_YEAR, SURVEY_DEFINITION_ID, FUN = function(v) v == max(v))) == 1,
-    ]
 
   }
 

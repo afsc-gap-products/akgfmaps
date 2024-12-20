@@ -2,12 +2,35 @@
 
 library(akgfmaps)
 library(ggthemes)
+library(navmaps)
 
-test_gbl_v4 <- function(select.region, set.crs, ...) {
+test_gbl_v4 <- function(select.region, set.crs, design.year = NULL, channel = NULL, ...) {
 
   layers <- get_base_layers(select.region = select.region,
                             set.crs = set.crs,
-                            ...)
+                            design.year = design.year)
+
+  if(!is.null(channel)) {
+
+    strata <- RODBC::sqlQuery(channel = channel,
+                              query = paste0("SELECT SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID AS STRATUM, AREA_NAME, AREA_TYPE AS GP_AREA_TYPE, AREA_KM2 AS GP_AREA_KM2 FROM GAP_PRODUCTS.AREA
+  WHERE SURVEY_DEFINITION_ID IN (", paste(unique(layers$survey.strata$SURVEY_DEFINITION_ID), collapse = ", "),
+                                             ") AND DESIGN_YEAR IN (", paste(unique(layers$survey.strata$DESIGN_YEAR), collapse = ", "),
+                                             ") AND AREA_ID IN (", paste(unique(layers$survey.strata$STRATUM), collapse = ", "), ")")
+    )
+
+    layers$survey.strata <- dplyr::left_join(layers$survey.strata, strata)
+
+    area <- RODBC::sqlQuery(channel = channel,
+                            query = paste0("SELECT SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_NAME, AREA_TYPE AS GP_AREA_TYPE, AREA_KM2 AS GP_AREA_KM2 FROM GAP_PRODUCTS.AREA
+  WHERE SURVEY_DEFINITION_ID IN (", paste(unique(layers$survey.area$SURVEY_DEFINITION_ID), collapse = ", "),
+                                           ") AND DESIGN_YEAR IN (", paste(unique(layers$survey.area$DESIGN_YEAR), collapse = ", "),
+                                           ") AND AREA_ID IN (", paste(unique(layers$survey.area$AREA_ID), collapse = ", "), ")")
+    )
+
+    layers$survey.area <- dplyr::left_join(layers$survey.area, area)
+
+  }
 
   p1 <- ggplot() +
     geom_sf(data = layers$akland) +
@@ -52,11 +75,18 @@ test_gbl_v4 <- function(select.region, set.crs, ...) {
 
 }
 
-goa_layers <- test_gbl_v4(select.region = "goa", set.crs = "EPSG:3338")
+channel <- navmaps::get_connected(schema = "AFSC")
+
+channel <- NULL
+
+goa_layers <- test_gbl_v4(select.region = "goa",
+                          set.crs = "EPSG:3338",
+                          design.year = 1999,
+                          channel = channel)
 goa_layers$plot_all
 goa_layers$plot_stratum
 
-goa_layers_1984 <- test_gbl_v4(select.region = "goa", set.crs = "EPSG:3338", design.year = 1984)
+goa_layers_1984 <- test_gbl_v4(select.region = "goa", set.crs = "EPSG:3338", design.year = 1984, channel = channel)
 goa_layers_1984$plot_all
 goa_layers_1984$plot_stratum
 

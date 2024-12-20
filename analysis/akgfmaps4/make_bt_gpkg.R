@@ -11,7 +11,7 @@ goa_layers$survey.area |>
                 AREA_ID = 99903,
                 AREA_TYPE = "REGION",
                 SURVEY_NAME = "Gulf of Alaska Bottom Trawl Survey") |>
-  dplyr::select(AREA_TYPE, SURVEY_NAME, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_M2) |>
+  dplyr::select(AREA_TYPE, SURVEY_NAME, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_area",
                append = FALSE,
@@ -25,10 +25,25 @@ goa_layers$survey.strata |>
                 AREA_TYPE = "STRATUM",
                 SURVEY_DEFINITION_ID = 47) |>
   dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, AREA_M2) |>
+  dplyr::group_by(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID) |>
+  dplyr::summarise(AREA_M2 = sum(AREA_M2), do_union = TRUE) |>
+  dplyr::ungroup() |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_strata",
                append = FALSE,
-               delete_dsn = TRUE)
+               delete_dsn = FALSE)
+
+goa_layers$survey.strata |>
+  sf::st_transform(crs = "EPSG:3338") |>
+  akgfmaps:::fix_geometry() |>
+  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
+                DESIGN_YEAR = 1984,
+                AREA_TYPE = "STRATUM",
+                SURVEY_DEFINITION_ID = 47) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, AREA_M2) |>
+  dplyr::group_by(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID) |>
+  dplyr::summarise(AREA_M2 = sum(AREA_M2), do_union = TRUE) |>
+  dplyr::ungroup()
 
 goa_layers$survey.grid |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
@@ -39,7 +54,7 @@ goa_layers$survey.grid |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_grid",
                append = FALSE,
-               delete_dsn = TRUE)
+               delete_dsn = FALSE)
 
 
 # Gulf of ALaska 2025 ----
@@ -126,10 +141,11 @@ ebs_layers <- akgfmaps:::get_base_layers_v3(select.region = "ebs",
 
 ebs_layers$survey.area |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
-                SURVEY_NAME = c("Eastern Bering Crab/Groundfish Bottom Trawl Survey", "Northern Bering Sea Crab/Groundfish Survey - Eastern Bering Sea Shelf Survey Extension"),
-                SURVEY_DEFINITION_ID = c(98, 143),
-                AREA_ID = c(99900, 99902),
-                DESIGN_YEAR = c(2022, 2022),
+                SURVEY_NAME = c("Northern Bering Sea Crab/Groundfish Survey - Eastern Bering Sea Shelf Survey Extension",
+                                "Eastern Bering Crab/Groundfish Bottom Trawl Survey"),
+                SURVEY_DEFINITION_ID = c(143, 98),
+                AREA_ID = c(99902, 99900),
+                DESIGN_YEAR = 2022,
                 AREA_TYPE = "REGION") |>
   dplyr::select(AREA_TYPE, SURVEY_NAME, DESIGN_YEAR, SURVEY_DEFINITION_ID, AREA_ID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
@@ -206,6 +222,9 @@ sf::st_read(here::here("inst", "extdata", "ai_strata.shp"))  |>
                 AREA_TYPE = "STRATUM",
                 SURVEY_DEFINITION_ID = 52) |>
   dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, AREA_M2) |>
+  dplyr::group_by(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID) |>
+  dplyr::summarise(AREA_M2 = sum(AREA_M2), do_union = TRUE) |>
+  dplyr::ungroup() |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_strata",
                append = TRUE,
@@ -253,6 +272,9 @@ sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
                 AREA_TYPE = "STRATUM",
                 SURVEY_DEFINITION_ID = 52,
                 AREA_ID) |>
+  dplyr::group_by(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID) |>
+  dplyr::summarise(AREA_M2 = sum(AREA_M2), do_union = TRUE) |>
+  dplyr::ungroup() |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_strata",
                append = TRUE,

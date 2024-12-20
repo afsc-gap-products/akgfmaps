@@ -26,3 +26,6 @@ dplyr::bind_rows(
 ) |>
   sf::st_write(here::here("analysis", "bering_sea_spatial_2022", "ebs_survey_boundary.shp"),
                append = FALSE)
+
+conner_2019_slope <- sf::st_read(here::here("analysis", "bering_sea_spatial_2022", "Bering_Sea_Spatial_Products_2022.gdb"),
+                                 layer = "EBS_slope_strata_Conner2019")
