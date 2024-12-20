@@ -12,6 +12,12 @@ test_gbl_v4 <- function(select.region, set.crs, design.year = NULL, channel = NU
 
   if(!is.null(channel)) {
 
+    layers$survey.strata$SF_AREA_M2 <- sf::st_area(layers$survey.strata) |>
+      as.numeric()
+
+    layers$survey.area$SF_AREA_M2 <- sf::st_area(layers$survey.area) |>
+      as.numeric()
+
     strata <- RODBC::sqlQuery(channel = channel,
                               query = paste0("SELECT SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID AS STRATUM, AREA_NAME, AREA_TYPE AS GP_AREA_TYPE, AREA_KM2 AS GP_AREA_KM2 FROM GAP_PRODUCTS.AREA
   WHERE SURVEY_DEFINITION_ID IN (", paste(unique(layers$survey.strata$SURVEY_DEFINITION_ID), collapse = ", "),
@@ -21,6 +27,10 @@ test_gbl_v4 <- function(select.region, set.crs, design.year = NULL, channel = NU
 
     layers$survey.strata <- dplyr::left_join(layers$survey.strata, strata)
 
+    layers$survey.strata$PCT_DIFF_SHP_GP <- (layers$survey.strata$AREA_M2 - layers$survey.strata$GP_AREA_KM2*1e6)/layers$survey.strata$AREA_M2*100
+    layers$survey.strata$PCT_DIFF_SHP_SF <- (layers$survey.strata$AREA_M2 - layers$survey.strata$SF_AREA_M2)/layers$survey.strata$AREA_M2*100
+    layers$survey.strata$PCT_DIFF_GP_SF <- (layers$survey.strata$GP_AREA_KM2*1e6 - layers$survey.strata$SF_AREA_M2)/(layers$survey.strata$GP_AREA_KM2*1e6)*100
+
     area <- RODBC::sqlQuery(channel = channel,
                             query = paste0("SELECT SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_NAME, AREA_TYPE AS GP_AREA_TYPE, AREA_KM2 AS GP_AREA_KM2 FROM GAP_PRODUCTS.AREA
   WHERE SURVEY_DEFINITION_ID IN (", paste(unique(layers$survey.area$SURVEY_DEFINITION_ID), collapse = ", "),
@@ -29,6 +39,12 @@ test_gbl_v4 <- function(select.region, set.crs, design.year = NULL, channel = NU
     )
 
     layers$survey.area <- dplyr::left_join(layers$survey.area, area)
+
+    layers$survey.area$PCT_DIFF_SHP_GP <- (layers$survey.area$AREA_M2 - layers$survey.area$GP_AREA_KM2*1e6)/layers$survey.area$AREA_M2*100
+    layers$survey.area$PCT_DIFF_SHP_SF <- (layers$survey.area$AREA_M2 - layers$survey.area$SF_AREA_M2)/layers$survey.area$AREA_M2*100
+    layers$survey.area$PCT_DIFF_GP_SF <- (layers$survey.area$GP_AREA_KM2*1e6 - layers$survey.area$SF_AREA_M2)/layers$survey.area$GP_AREA_KM2*100
+
+
 
   }
 
@@ -77,31 +93,37 @@ test_gbl_v4 <- function(select.region, set.crs, design.year = NULL, channel = NU
 
 channel <- navmaps::get_connected(schema = "AFSC")
 
-channel <- NULL
+# channel <- NULL
 
 goa_layers <- test_gbl_v4(select.region = "goa",
                           set.crs = "EPSG:3338",
-                          design.year = 1999,
+                          design.year = 2025,
                           channel = channel)
 goa_layers$plot_all
 goa_layers$plot_stratum
 
+goa_layers$layers$survey.strata |>
+  sf::st_write(dsn = "examine_goa_2025.gpkg")
+
 goa_layers_1984 <- test_gbl_v4(select.region = "goa", set.crs = "EPSG:3338", design.year = 1984, channel = channel)
 goa_layers_1984$plot_all
 goa_layers_1984$plot_stratum
+goa_layers_1984$layers$survey.strata
 
-ai_layers <- test_gbl_v4(select.region = "ai", set.crs = "EPSG:3338")
+ai_layers <- test_gbl_v4(select.region = "ai", set.crs = "EPSG:3338", channel = channel)
 ai_layers$plot
 ai_layers$plot_all
+ai_layers$layers$survey.strata$PCT_DIFF_SHP_GP
 
 ai_sebs_layers <- test_gbl_v4(select.region = c("ai", "sebs"), set.crs = "EPSG:3338")
-ai_sebs_layers$plot
+ai_sebs_layers$plot_all
 
 ai_sebs_layers <- test_gbl_v4(select.region = c("ai", "sebs", "goa"), set.crs = "EPSG:3338")
 ai_sebs_layers$plot
 
-ebs_layers <- test_gbl_v4(select.region = "ebs", set.crs = "EPSG:3338")
-ebs_layers$plot
+ebs_layers <- test_gbl_v4(select.region = "ebs", set.crs = "EPSG:3338", channel = channel)
+ebs_layers$plot_all
+ebs_layers$layers$survey.strata$PCT_DIFF_SHP_GP
 
 ai_west_layers <- test_gbl_v4(select.region = c("ai.west", "ai.central"), set.crs = "EPSG:3338")
 ai_west_layers$plot
@@ -112,8 +134,8 @@ ai_goa_layers <- test_gbl_v4(select.region = c("ai.east", "goa.west"), set.crs =
 
 ai_goa_layers$p2
 
-ggplot() +
-  geom_sf(data = ai_goa_layers$layers$inpfc.strata,
-          mapping = aes(fill = INPFC_STRATUM)) +
-  coord_sf(xlim = ai_goa_layers$layers$plot.boundary$x,
-           ylim = ai_goa_layers$layers$plot.boundary$y)
+# ggplot() +
+#   geom_sf(data = ai_goa_layers$layers$inpfc.strata,
+#           mapping = aes(fill = INPFC_STRATUM)) +
+#   coord_sf(xlim = ai_goa_layers$layers$plot.boundary$x,
+#            ylim = ai_goa_layers$layers$plot.boundary$y)

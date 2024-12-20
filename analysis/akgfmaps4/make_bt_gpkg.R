@@ -1,3 +1,5 @@
+# Add bottom trawl survey layers to .gpkg
+
 library(akgfmaps)
 
 # Gulf of Alaska 1984 design ----
@@ -22,8 +24,8 @@ goa_layers$survey.strata |>
   akgfmaps:::fix_geometry() |>
   dplyr::group_by(STRATUM) |>
   dplyr::summarise(AREA_M2 = sum(AREA_KM2*1e6), do_union = TRUE) |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
-                DESIGN_YEAR = 1984,
+  dplyr::ungroup() |>
+  dplyr::mutate(DESIGN_YEAR = 1984,
                 AREA_TYPE = "STRATUM",
                 SURVEY_DEFINITION_ID = 47) |>
   dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, AREA_M2) |>
@@ -191,7 +193,7 @@ ai_layers <- akgfmaps:::get_base_layers_v3(select.region = "ai",
 sf::st_read(here::here("inst", "extdata", "ai_area.shp"))  |>
   sf::st_transform(crs = "EPSG:3338") |>
   akgfmaps:::fix_geometry() |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
+  dplyr::mutate(AREA_M2 = AREA_KM2*1e6,
                 SURVEY_DEFINITION_ID = 52,
                 DESIGN_YEAR = 1991,
                 AREA_ID = 99904,
@@ -207,14 +209,13 @@ sf::st_read(here::here("inst", "extdata", "ai_strata.shp"))  |>
   sf::st_transform(crs = "EPSG:3338") |>
   akgfmaps:::fix_geometry() |>
   dplyr::filter(STRATUM > 0, STRATUM < 800) |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
-                DESIGN_YEAR = 1991,
+  dplyr::group_by(STRATUM) |>
+  dplyr::summarise(AREA_M2 = sum(AREA)) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(DESIGN_YEAR = 1991,
                 AREA_TYPE = "STRATUM",
                 SURVEY_DEFINITION_ID = 52) |>
   dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, AREA_M2) |>
-  dplyr::group_by(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID) |>
-  dplyr::summarise(AREA_M2 = sum(AREA_M2), do_union = TRUE) |>
-  dplyr::ungroup() |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_strata",
                append = TRUE,
@@ -224,7 +225,7 @@ sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
   sf::st_transform(crs = "EPSG:3338") |>
   akgfmaps:::fix_geometry() |>
   dplyr::filter(STRATUM > 0, STRATUM < 800) |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
+  dplyr::mutate(AREA_M2 = AREA,
                 DESIGN_YEAR = 1991,
                 AREA_TYPE = "STATION",
                 SURVEY_DEFINITION_ID = 52) |>
@@ -240,7 +241,7 @@ sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
   dplyr::filter(STRATUM > 0) |>
   sf::st_transform(crs = "EPSG:3338") |>
   akgfmaps:::fix_geometry() |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
+  dplyr::mutate(AREA_M2 = AREA,
                 DESIGN_YEAR = 1980,
                 AREA_TYPE = "STATION",
                 SURVEY_DEFINITION_ID = 52) |>
@@ -253,18 +254,14 @@ sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
 sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
   dplyr::filter(STRATUM > 0) |>
   sf::st_transform(crs = "EPSG:3338") |>
-  dplyr::select(AREA_ID = STRATUM) |>
-  dplyr::group_by(AREA_ID) |>
-  dplyr::summarise(do_union = TRUE) |>
   akgfmaps:::fix_geometry() |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
-                DESIGN_YEAR = 1980,
-                AREA_TYPE = "STRATUM",
-                SURVEY_DEFINITION_ID = 52,
-                AREA_ID) |>
-  dplyr::group_by(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID) |>
-  dplyr::summarise(AREA_M2 = sum(AREA_M2), do_union = TRUE) |>
+  dplyr::group_by(AREA_ID = STRATUM) |>
+  dplyr::summarise(AREA_M2 = sum(AREA), do_union = TRUE) |>
   dplyr::ungroup() |>
+  dplyr::mutate(DESIGN_YEAR = 1980,
+                AREA_TYPE = "STRATUM",
+                SURVEY_DEFINITION_ID = 52) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_strata",
                append = TRUE,
@@ -274,13 +271,14 @@ sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
   dplyr::filter(STRATUM > 0) |>
   sf::st_transform(crs = "EPSG:3338") |>
   dplyr::mutate(id = 1) |>
-  dplyr::select(id) |>
-  dplyr::summarise(do_union = TRUE) |>
+  dplyr::summarise(AREA_M2 = sum(AREA), do_union = TRUE) |>
   akgfmaps:::fix_geometry() |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
                 DESIGN_YEAR = 1980,
                 AREA_TYPE = "REGION",
+                AREA_ID = 99904,
                 SURVEY_DEFINITION_ID = 52) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_area",
                append = TRUE,
