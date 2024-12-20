@@ -7,6 +7,8 @@ BUG FIX
   inst/extdata/LL_Survey_Stations_Active2023.shp with
   inst/extdata/LonglineStationsActive.shp
 - Revert EBS shelf stratum shapefile to 2022 version.
+- Remove land area from GOA survey area polygon in
+  inst/extdata/goa_area.shp
 
 
 akgfmaps 3.6.0 (December 12, 2024)
