@@ -1,4 +1,4 @@
-akgfmaps 3.6.1 (In development)
+akgfmaps 3.6.1 (December 20, 2024)
 ----------------------------------------------------------------
 
 BUG FIX
@@ -7,6 +7,10 @@ BUG FIX
   inst/extdata/LL_Survey_Stations_Active2023.shp with
   inst/extdata/LonglineStationsActive.shp
 - Revert EBS shelf stratum shapefile to 2022 version.
+- Remove land area (STRATUM = 0) from GOA survey area polygon in
+  inst/extdata/goa_area.shp
+- Remove land area (STRATUM = 0) from AI survey area polygon in
+  inst/extdata/ai_area.shp
 
 
 akgfmaps 3.6.0 (December 12, 2024)
