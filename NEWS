@@ -1,3 +1,11 @@
+akgfmaps 3.6.2 (January 2, 2024)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fixed gap in GOA stratum polygon around Samalga Pass to close
+  issue #104.
+
 akgfmaps 3.6.1 (December 20, 2024)
 ----------------------------------------------------------------
 
