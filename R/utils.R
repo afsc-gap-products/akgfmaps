@@ -139,6 +139,13 @@ select_design_year <- function(x, design.year = NULL, layer.type = NA) {
 
   stopifnot("select_design_year: No DESIGN_YEAR column in x" = "DESIGN_YEAR" %in% names(x))
 
+  if(nrow(x) < 1) {
+
+    warning("select_design_year: No geometries in x.")
+
+    return(NULL)
+  }
+
   survey_definition_id <- unique(x[['SURVEY_DEFINITION_ID']])
 
   output <- NULL
