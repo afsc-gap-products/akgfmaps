@@ -89,7 +89,7 @@ ggplot() +
   theme_bw()
 
 # EBS slope, Aleutian Islands, and Gulf of Alaska surveys have subarea options
-ai_west <- get_base_layers(select.region = "ai.west",
+ai_west <- get_base_layers_v3(select.region = "ai.west",
                            set.crs = "EPSG:3338")
 
 ggplot() +

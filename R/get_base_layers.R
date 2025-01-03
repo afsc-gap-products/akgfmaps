@@ -184,34 +184,45 @@ get_base_layers <- function(select.region,
 
   akland <- rbind(akland, canada_russia)
 
-  if(
-    !any(select.region %in%
-         c("bs.south", "sebs", "bs.all", "ebs", "nbs", "bs.north", "ecs", "ebs.ecs", "ebs.slope",
-           "bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6", "ll.ebs", "ll.bssa1", "ll.bssa2",
-           "ll.bssa3", "ll.bssa4", "ll.bssa5")
-    )
+  if(!any(select.region %in%
+          c("bs.south", "sebs", "bs.all", "ebs", "nbs", "bs.north", "ecs", "ebs.ecs")
+  )
   ) {
     akland <- akland["Russia" != akland$COUNTRY, ]
+
+    bathymetry <- sf::st_read(
+      system.file("extdata", "npac_0-200_meters.shp", package = "akgfmaps"),
+      quiet = TRUE
+    )
   }
 
-  if(
-    !any(select.region %in%
-         c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east", "ll.ai",
-           "ll.ai.west", "ll.ai.central", "ll.goa", "ll.goa.east", "ll.goa.west",
-           "ll.goa.central")
-    )
+  if(!any(select.region %in%
+          c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east", "ll.ai",
+            "ll.ai.west", "ll.ai.central", "ll.goa", "ll.goa.east", "ll.goa.west",
+            "ll.goa.central")
+  )
   ) {
     akland <- akland["Canada" != akland$COUNTRY, ]
+
+    bathymetry <- sf::st_read(
+      system.file("extdata", "alaska_race.shp", package = "akgfmaps"),
+      quiet = TRUE
+    )
+
   }
 
-  # bathymetry <- sf::st_read(system.file("extdata", "npac_0-1000_meters.shp", package = "akgfmaps"),
-  #                           quiet = TRUE)
-  #
-  # bathymetry <- sf::st_read(system.file("extdata", "alaska_race.shp", package = "akgfmaps"),
-  #                           quiet = TRUE)
+  if(!any(select.region %in%
+          c("ebs.slope","bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6", "ll.ebs", "ll.bssa1",
+            "ll.bssa2", "ll.bssa3", "ll.bssa4", "ll.bssa5")
+  )
+  ) {
+    akland <- akland["Russia" != akland$COUNTRY, ]
 
-  bathymetry <- sf::st_read(system.file("extdata", "npac_0-200_meters.shp", package = "akgfmaps"),
-                            quiet = TRUE)
+    bathymetry <- sf::st_read(
+      system.file("extdata", "npac_0-1000_meters.shp", package = "akgfmaps"),
+      quiet = TRUE
+    )
+  }
 
   # Query bottom trawl survey layers from built-in geopackage and filter by design.year ----
   if(!is.null(survey_definition_id)) {
