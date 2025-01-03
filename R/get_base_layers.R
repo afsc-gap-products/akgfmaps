@@ -99,7 +99,7 @@ get_base_layers <- function(select.region,
 
   select.region <- tolower(select.region)
 
-  .check_region(select.region = select.region[1], type = "survey")
+  .check_region(select.region = select.region, type = "survey")
 
   # Set CRS-----------------------------------------------------------------------------------------
   if(set.crs == "auto") {
@@ -156,84 +156,62 @@ get_base_layers <- function(select.region,
 
   survey_definition_id <- unique(survey_definition_id)
 
-  # Bathymetry and land shapefiles ---------------------------------------------------------------
-  if(select.region[1] %in%
-     c("bs.south", "sebs", "bs.all", "ebs", "nbs", "bs.north", "ecs", "ebs.ecs")) {
+  # Land layers ------------------------------------------------------------------------------------
+  # Only load the land that is needed for a region to reduce loading an anlyses times
 
-    akland <- sf::st_read(system.file("extdata", "ak_russia.shp", package = "akgfmaps"),
-                          quiet = TRUE)
-
-    akland$COUNTRY <- c("RU", "US")
-
-    akland$STATE_PROVINCE <- c(NA, "Alaska")
-
-    bathymetry <- sf::st_read(system.file("extdata", "npac_0-200_meters.shp", package = "akgfmaps"),
-                              quiet = TRUE)
-
-  } else if(select.region[1] %in%
-            c("ebs.slope", "bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6", "ll.ebs", "ll.bssa1",
-              "ll.bssa2", "ll.bssa3", "ll.bssa4", "ll.bssa5")) {
-
-    akland <- sf::st_read(system.file("extdata", "ak_russia.shp", package = "akgfmaps"),
-                          quiet = TRUE)
-
-    bathymetry <- sf::st_read(system.file("extdata", "npac_0-1000_meters.shp", package = "akgfmaps"),
-                              quiet = TRUE)
-
-    akland$COUNTRY <- c("RU", "US")
-
-    akland$STATE_PROVINCE <- c(NA, "Alaska")
-
-  } else if(select.region[1] %in%
-            c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east", "ll.ai",
-              "ll.ai.west", "ll.ai.central", "ll.goa", "ll.goa.east", "ll.goa.west",
-              "ll.goa.central")) {
-
-    akland <- sf::st_read(system.file("extdata", "alaska_canada_dcw.shp", package = "akgfmaps"),
-                          quiet = TRUE)
-
-    akland <- akland[akland$POPYADMIN %in%
-                       c("ALBERTA",
-                         "BRITISH COLUMBIA",
-                         "YUKON TERRITORY",
-                         "NORTHWEST TERRITORIES",
-                         "ALASKA"), ]
-
-    akland$COUNTRY <- akland$POPYCOUN
-
-    akland$STATE_PROVINCE <- akland$POPYADMIN |>
-      tolower() |>
-      tools::toTitleCase()
-
-    bathymetry <- sf::st_read(system.file("extdata", "alaska_race.shp", package = "akgfmaps"),
-                              quiet = TRUE)
-
-  }
-
-  # Use higher resolution coastline polygon when user sets high.resolution.coast = TRUE
   if(high.resolution.coast) {
-
-    alaska_dnr <-
-      sf::st_read(
-        system.file("extdata", "Alaska_Coastline.shp", package = "akgfmaps"),
-        quiet = TRUE)
-
-    alaska_dnr$COUNTRY <- "US"
-
-    alaska_dnr$STATE_PROVINCE <- "Alaska"
-
-    alaska_dnr <- alaska_dnr[c("COUNTRY", "STATE_PROVINCE", "geometry")]
-
-    akland <- akland[c("COUNTRY", "STATE_PROVINCE", "geometry")]
-
-    akland <- akland[!(akland$STATE_PROVINCE == "Alaska"), ]
-
-    akland <- sf::st_transform(akland,
-                               crs = sf::st_crs(alaska_dnr))
-
-    akland <- rbind(akland, alaska_dnr)
-
+    akland <- sf::st_read(
+      dsn = system.file("extdata", "land_layers.gpkg", package = "akgfmaps"),
+      query = "SELECT COUNTRY, STATE_PROVINCE, GEOM AS geometry
+                FROM HIRES_LAND WHERE STATE_PROVINCE = 'Alaska'",
+      quiet = TRUE
+    )
+  } else {
+    akland <- sf::st_read(
+      dsn = system.file("extdata", "land_layers.gpkg", package = "akgfmaps"),
+      query = "SELECT COUNTRY, STATE_PROVINCE, GEOM AS geometry
+                FROM LORES_LAND WHERE STATE_PROVINCE = 'Alaska'",
+      quiet = TRUE
+    )
   }
+
+  canada_russia <- sf::st_read(
+    dsn = system.file("extdata", "land_layers.gpkg", package = "akgfmaps"),
+    query = "SELECT COUNTRY, STATE_PROVINCE, GEOM AS geometry
+              FROM LORES_LAND WHERE COUNTRY IN ('Russia', 'Canada')",
+    quiet = TRUE
+  )
+
+  akland <- rbind(akland, canada_russia)
+
+  if(
+    !any(select.region %in%
+         c("bs.south", "sebs", "bs.all", "ebs", "nbs", "bs.north", "ecs", "ebs.ecs", "ebs.slope",
+           "bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6", "ll.ebs", "ll.bssa1", "ll.bssa2",
+           "ll.bssa3", "ll.bssa4", "ll.bssa5")
+    )
+  ) {
+    akland <- akland["Russia" != akland$COUNTRY, ]
+  }
+
+  if(
+    !any(select.region %in%
+         c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east", "ll.ai",
+           "ll.ai.west", "ll.ai.central", "ll.goa", "ll.goa.east", "ll.goa.west",
+           "ll.goa.central")
+    )
+  ) {
+    akland <- akland["Canada" != akland$COUNTRY, ]
+  }
+
+  # bathymetry <- sf::st_read(system.file("extdata", "npac_0-1000_meters.shp", package = "akgfmaps"),
+  #                           quiet = TRUE)
+  #
+  # bathymetry <- sf::st_read(system.file("extdata", "alaska_race.shp", package = "akgfmaps"),
+  #                           quiet = TRUE)
+
+  bathymetry <- sf::st_read(system.file("extdata", "npac_0-200_meters.shp", package = "akgfmaps"),
+                            quiet = TRUE)
 
   # Query bottom trawl survey layers from built-in geopackage and filter by design.year ----
   if(!is.null(survey_definition_id)) {
@@ -282,21 +260,12 @@ get_base_layers <- function(select.region,
 
   }
 
-  # Get INPFC strata for the GOA and AI bottom trawl surveys ---------------------------------------
-  if(any(c("ai", "ai.west", "ai.central", "ai.east") %in% select.region)) {
-    inpfc.strata <- get_inpfc_strata(select.region = "ai", set.crs = set.crs)
-  }
-
-  if(any(c("goa", "goa.west", "goa.east") %in% select.region)) {
-    if(is(inpfc.strata, "sf")) {
-      inpfc.strata <- get_inpfc_strata(select.region = "goa",
-                                       set.crs = set.crs) |>
-        sf::st_transform(crs = sf::st_crs(inpfc.strata)) |>
-        rbind(inpfc.strata)
-    } else {
-      inpfc.strata <- get_inpfc_strata(select.region = "goa", set.crs = set.crs)
-    }
-  }
+  # Get INPFC strata for GOA and AI bottom trawl surveys -------------------------------------------
+  inpfc.strata <- suppressWarnings(
+    get_inpfc_strata(select.region = select.region,
+                     set.crs = set.crs,
+                     design.year = NULL)
+  )
 
   # Set EBS slope extent when only subareas are selected -------------------------------------------
 
@@ -558,7 +527,7 @@ get_base_layers <- function(select.region,
 
   }
 
-  # Setup plot boundaries and axis labels ("breaks") -----------------------------------------------
+  # Setup plot boundaries and axis labels (axis "breaks") ------------------------------------------
   if(exists("stratum.extent")) {
     stratum.extent <- sf::st_transform(stratum.extent, crs = set.crs)
     plot.boundary <- sf::st_bbox(stratum.extent)
@@ -596,11 +565,13 @@ get_base_layers <- function(select.region,
   # Get place labels--------------------------------------------------------------------------------
   place.labels <- utils::read.csv(file = system.file("extdata", "placenames.csv", package = "akgfmaps"))
 
-  place.labels <- place.labels[place.labels$region == select.region[1], ]
+  place.labels <- place.labels[place.labels$region %in% select.region, ]
   place.labels <- akgfmaps::transform_data_frame_crs(place.labels, out.crs = set.crs)
 
 
-  # Attempt to correct any remaining degenerate geometries and dateline wrapping issues --------------
+  # Correct remaining degenerate geometries and dateline wrapping issues ---------------------------
+  # This may not correct all issues if users select an unusual CRS, i.e., not a typical projected
+  # (AEA, UTM) or geographic (NAD83 base, WGS) coordinate reference system.
 
   if(fix.invalid.geom) {
     akland <- fix_geometry(x = akland)
@@ -620,7 +591,7 @@ get_base_layers <- function(select.region,
 
     akland <- rbind(west, east)
 
-    akland <- akland[which(sf::st_geometry_type(akland$geometry) %in% c("POLYGON", "MULTIPOLYGON")), ]
+    akland <- akland[which(sf::st_geometry_type(akland) %in% c("POLYGON", "MULTIPOLYGON")), ]
 
   }
 

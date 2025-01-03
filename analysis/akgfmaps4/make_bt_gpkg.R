@@ -101,9 +101,9 @@ goa_station_grid_2025 |>
 # EBS and NBS 2019 ----
 ebs_strata_2019 <- sf::st_read(dsn = here::here("inst", "extdata", "EBS_NBS_2019.shp")) |>
   sf::st_transform(crs = "EPSG:3338") |>
-  dplyr::mutate(SURVEY_NAME = dplyr::if_else(STRATUM %in% c(70, 71, 82), "Northern Bering Sea Crab/Groundfish Survey - Eastern Bering Sea Shelf Survey Extension", "Eastern Bering Crab/Groundfish Bottom Trawl Survey"),
-                SURVEY_DEFINITION_ID = dplyr::if_else(STRATUM %in% c(70, 71, 82), 143, 98),
-                AREA_ID = dplyr::if_else(STRATUM %in% c(70, 71, 82), 99902, 99900),
+  dplyr::mutate(SURVEY_NAME = dplyr::if_else(STRATUM %in% c(70, 71, 81), "Northern Bering Sea Crab/Groundfish Survey - Eastern Bering Sea Shelf Survey Extension", "Eastern Bering Crab/Groundfish Bottom Trawl Survey"),
+                SURVEY_DEFINITION_ID = dplyr::if_else(STRATUM %in% c(70, 71, 81), 143, 98),
+                AREA_ID = dplyr::if_else(STRATUM %in% c(70, 71, 81), 99902, 99900),
                 AREA_TYPE = "REGION",
                 DESIGN_YEAR = 2019) |>
   dplyr::group_by(AREA_TYPE, SURVEY_NAME, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID)  |>
@@ -120,7 +120,7 @@ sf::st_read(dsn = here::here("inst", "extdata", "EBS_NBS_2019.shp")) |>
                 AREA_ID = STRATUM,
                 AREA_TYPE = "STRATUM",
                 DESIGN_YEAR = 2019,
-                SURVEY_DEFINITION_ID = dplyr::if_else(STRATUM %in% c(70, 71, 82), 143, 98)) |>
+                SURVEY_DEFINITION_ID = dplyr::if_else(STRATUM %in% c(70, 71, 81), 143, 98)) |>
   dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_strata",
@@ -276,6 +276,7 @@ sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
                 DESIGN_YEAR = 1980,
                 AREA_TYPE = "REGION",
+                SURVEY_NAME = "Aleutian Islands Bottom Trawl Survey",
                 AREA_ID = 99904,
                 SURVEY_DEFINITION_ID = 52) |>
   dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
@@ -336,5 +337,55 @@ bss_layers$survey.strata |>
   dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_strata",
+               append = TRUE,
+               delete_dsn = FALSE)
+
+
+# Historical GOA and AI INPFC strata ----
+
+get_inpfc_strata(
+  select.region = "goa",
+  set.crs = "EPSG:3338",
+  use.v3 = TRUE
+) |>
+  dplyr::select(AREA_NAME = INPFC_STRATUM) |>
+  dplyr::mutate(SURVEY_DEFINITION_ID = 47,
+                DESIGN_YEAR = 1984,
+                AREA_M2 = as.numeric(sf::st_area(geometry))) |>
+  dplyr::inner_join(data.frame(AREA_NAME =
+                                 c("Chirikof",
+                                   "Kodiak",
+                                   "Shumagin",
+                                   "Southeastern",
+                                   "Yakutat"),
+                               AREA_ID = c(929, 939, 919, 959, 949),
+                               AREA_TYPE = "INPFC"),
+                    by = "AREA_NAME") |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_NAME, AREA_ID, AREA_M2) |>
+  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
+               layer = "inpfc_strata",
+               append = FALSE,
+               delete_dsn = FALSE)
+
+get_inpfc_strata(
+  select.region = "ai",
+  set.crs = "EPSG:3338",
+  use.v3 = TRUE
+) |>
+  dplyr::select(AREA_NAME = INPFC_STRATUM) |>
+  dplyr::mutate(SURVEY_DEFINITION_ID = 52,
+                DESIGN_YEAR = 1991,
+                AREA_M2 = as.numeric(sf::st_area(geometry))) |>
+  dplyr::inner_join(data.frame(AREA_NAME =
+                                 c("Western Aleutians",
+                                   "Southern Bering Sea",
+                                   "Central Aleutians",
+                                   "Eastern Aleutians"),
+                               AREA_ID = c(299, 799, 6499, 5699),
+                               AREA_TYPE = "INPFC"),
+                    by = "AREA_NAME") |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_NAME, AREA_ID, AREA_M2) |>
+  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
+               layer = "inpfc_strata",
                append = TRUE,
                delete_dsn = FALSE)

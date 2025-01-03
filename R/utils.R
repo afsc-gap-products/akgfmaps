@@ -35,7 +35,7 @@
     valid_regions <- "nmfs"
   }
 
-  flag <- !any(select.region == valid_regions)
+  flag <- !any(select.region %in% valid_regions)
 
   if(flag) {
     stop(
