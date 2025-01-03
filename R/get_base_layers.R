@@ -287,7 +287,7 @@ get_base_layers <- function(select.region,
     survey.strata <- survey.strata[survey.strata$REGION == "EBS" & survey.strata$TYPE == "Slope", ]
 
     survey.grid <- sf::st_read(
-      system.file("extdata", "longline_survey", "LL_Survey_Stations_Active2023.shp",
+      system.file("extdata", "longline_survey", "LonglineStationsActive.shp",
                   package = "akgfmaps"),
       quiet = TRUE)
 
@@ -322,7 +322,7 @@ get_base_layers <- function(select.region,
     survey.strata <- survey.strata[survey.strata$REGION == "AI" & survey.strata$TYPE == "Slope", ]
 
     survey.grid <- sf::st_read(
-      system.file("extdata", "longline_survey", "LL_Survey_Stations_Active2023.shp",
+      system.file("extdata", "longline_survey", "LonglineStationsActive.shp",
                   package = "akgfmaps"),
       quiet = TRUE)
 
@@ -346,7 +346,7 @@ get_base_layers <- function(select.region,
     stratum.extent <- survey.strata[survey.strata$AREA_DESC %in% area.desc, ]
 
     survey.grid <- sf::st_read(
-      system.file("extdata", "longline_survey", "LL_Survey_Stations_Active2023.shp",
+      system.file("extdata", "longline_survey", "LonglineStationsActive.shp",
                   package = "akgfmaps"),
       quiet = TRUE)
 
@@ -368,7 +368,7 @@ get_base_layers <- function(select.region,
     survey.strata <- survey.strata[survey.strata$REGION == "GOA" & survey.strata$TYPE == "Slope", ]
 
     survey.grid <- sf::st_read(
-      system.file("extdata", "longline_survey", "LL_Survey_Stations_Active2023.shp",
+      system.file("extdata", "longline_survey", "LonglineStationsActive.shp",
                   package = "akgfmaps"),
       quiet = TRUE)
 
@@ -393,7 +393,7 @@ get_base_layers <- function(select.region,
     stratum.extent <- survey.strata[survey.strata$AREA_DESC %in% area.desc, ]
 
     survey.grid <- sf::st_read(
-      system.file("extdata", "longline_survey", "LL_Survey_Stations_Active2023.shp",
+      system.file("extdata", "longline_survey", "LonglineStationsActive.shp",
                   package = "akgfmaps"),
       quiet = TRUE)
 

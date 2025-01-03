@@ -1,8 +1,13 @@
 Package: akgfmaps
 Type: Package
 Title: Alaska Groundfish and Ecosystem Survey Area Mapping
+<<<<<<< HEAD
 Version: 4.0.0
 Date: 2025-01-03
+=======
+Version: 3.6.2
+Date: 2025-01-02
+>>>>>>> main
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
     person("Emily", "Markowitz", email = "emily.markowitz@noaa.gov", role = "ctb"),
     person("Zack", "Oyafuso", email = "zack.oyafuso@noaa.gov", role = "ctb"),

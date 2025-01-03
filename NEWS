@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 akgfmaps 4.0.0 (January 3, 2025)
 ----------------------------------------------------------------
 
@@ -69,6 +70,32 @@ MAJOR CHANGES TO VECTOR GEOMETRY FILES
 
 
 akgfmaps 3.6.0 (December 11, 2024)
+=======
+akgfmaps 3.6.2 (January 2, 2024)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fixed gap in GOA stratum polygon around Samalga Pass to close
+  issue #104.
+
+akgfmaps 3.6.1 (December 20, 2024)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Correct coordinates for longline survey station 20 by replacing
+  inst/extdata/LL_Survey_Stations_Active2023.shp with
+  inst/extdata/LonglineStationsActive.shp
+- Revert EBS shelf stratum shapefile to 2022 version.
+- Remove land area (STRATUM = 0) from GOA survey area polygon in
+  inst/extdata/goa_area.shp
+- Remove land area (STRATUM = 0) from AI survey area polygon in
+  inst/extdata/ai_area.shp
+
+
+akgfmaps 3.6.0 (December 12, 2024)
+>>>>>>> main
 ----------------------------------------------------------------
 
 FUNCTIONALITY CHANGES
