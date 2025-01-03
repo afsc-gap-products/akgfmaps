@@ -1,4 +1,4 @@
-akgfmaps 4.0.0 (January 6, 2025)
+akgfmaps 4.0.0 (January 3, 2025)
 ----------------------------------------------------------------
 
 This major update replaces and updates shapefiles from multiple
@@ -54,7 +54,6 @@ MAJOR CHANGES TO get_base_layers()
       - AREA_M2: Same as above.
       - geometry: Same as above.
 
-
 MAJOR CHANGES TO VECTOR GEOMETRY FILES
 
   1) Bottom trawl survey layer field names have been standardized
@@ -67,6 +66,7 @@ MAJOR CHANGES TO VECTOR GEOMETRY FILES
         - /inst/extdata/all_crab_from_akgfmaps_grid.gpkg
   3) INPFC strata for bottom trawl surveys are in
       /inst/extdata/afsc_bottom_trawl_surveys.gpkg
+
 
 akgfmaps 3.6.0 (December 11, 2024)
 ----------------------------------------------------------------
