@@ -36,6 +36,13 @@ goa_layers <- akgfmaps::get_base_layers(
 
 plot(goa_layers$akland)
 
+ai_layers <- akgfmaps::get_base_layers(
+  select.region = "ai",
+  set.crs = "EPSG:3338"
+)
+
+plot(ai_layers$akland)
+
 nbs_goa_layers <- akgfmaps::get_base_layers(
   select.region = c("nbs", "goa"),
   set.crs = "WGS84"

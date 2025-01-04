@@ -34,6 +34,7 @@
 /analysis/goaai_grid_2025/Fishnets
 /analysis/goaai_grid_2025/grid_options
 /analysis/make_crab_strata/*.gpkg
+/tests/testthat/Rplots.pdf
 
 # Temporary files created by R markdown
 *.utf8.md
