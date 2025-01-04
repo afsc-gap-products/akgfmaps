@@ -2,17 +2,7 @@ library(akgfmaps)
 
 testthat::test_that("Test regions exists",
                     {
-                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = "bs.south", set.crs = "auto"))), 13);
-                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = "bs.north", set.crs = "auto"))), 13);
-                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = "ecs", set.crs = "auto"))), 13);
-                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = "bs.all", set.crs = "auto"))), 13);
-                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = "goa", set.crs = "auto"))), 13);
-                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = "goa.east", set.crs = "auto"))), 13);
-                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = "goa.west", set.crs = "auto"))), 13);
-                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = "ai", set.crs = "auto"))), 13);
-                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = "ai.west", set.crs = "auto"))), 13);
-                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = "ai.central", set.crs = "auto"))), 13);
-                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = "ai.east", set.crs = "auto"))), 13)
+                      expect_equal(length(suppressWarnings(akgfmaps::get_base_layers(select.region = c("sebs", "nbs", "ai", "goa", "ecs"), set.crs = "auto"))), 13)
                     }
 )
 

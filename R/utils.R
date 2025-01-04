@@ -35,7 +35,7 @@
     valid_regions <- "nmfs"
   }
 
-  flag <- !any(select.region == valid_regions)
+  flag <- !any(select.region %in% valid_regions)
 
   if(flag) {
     stop(
@@ -106,4 +106,92 @@ set_dd_interval <- function(deg_diff) {
   }
 
   return(interval)
+}
+
+
+#' Filter survey layer based on design year
+#'
+#' Retrieve the matching or closest available design.year to the specified year from an sf or data.frame with a column named DESIGN_YEAR.
+#'
+#' @param x An sf object or data.frame
+#' @param design.year Design year as a 1L numeric.
+#' @param layer.type Optional character vector indicating the name of the input layer.
+#' @examples \dontrun{
+#' loc <- data.frame(DESIGN_YEAR = c(1987, 2010, 1984, 2025),
+#'                   SURVEY_DEFINITION_ID = c(98, 98, 47, 47),
+#'                   x = 1,
+#'                   y = 1) |>
+#'   sf::st_as_sf(coords = c("x", "y"), crs = "WGS84")
+#'
+#' # Case where design.year is specified
+#' select_design_year(x = loc,
+#'                    design.year = 2010,
+#'                    layer.type = "survey.grid")
+#'
+#' # Return the most recent design when design.year is NULL
+#' select_design_year(x = loc,
+#'                    design.year = NULL,
+#'                    layer.type = "survey.grid")
+#' }
+#' @noRd
+
+select_design_year <- function(x, design.year = NULL, layer.type = NA) {
+
+  stopifnot("select_design_year: No DESIGN_YEAR column in x" = "DESIGN_YEAR" %in% names(x))
+
+  if(nrow(x) < 1) {
+
+    warning("select_design_year: No geometries in x.")
+
+    return(NULL)
+  }
+
+  survey_definition_id <- unique(x[['SURVEY_DEFINITION_ID']])
+
+  output <- NULL
+
+  design_year_null <- is.null(design.year)
+
+  for(ii in 1:length(survey_definition_id)) {
+
+    x_sel <- x[x[['SURVEY_DEFINITION_ID']] == survey_definition_id[ii], ]
+
+    # Case where design.year is NULL returns the most recent DESIGN_YEAR
+    if(design_year_null) {
+      design.year <- max(x_sel[['DESIGN_YEAR']])
+    }
+
+    if(design.year %in% x_sel[['DESIGN_YEAR']]) {
+
+      # Case where design.year exactly matches a design.year for a layer returns the specified year
+      sel_design_year <- x_sel[x_sel[['DESIGN_YEAR']] == design.year, ]
+
+    } else if(any(x_sel[['DESIGN_YEAR']] < design.year)) {
+
+      # Case where there isn't an exact match, but there is a DESIGN_YEAR earlier than design.year
+      new_design_year <- x_sel[['DESIGN_YEAR']][x_sel[['DESIGN_YEAR']] < design.year]
+
+      new_design_year <- max(new_design_year)
+
+      sel_design_year <- x_sel[x_sel[['DESIGN_YEAR']] == new_design_year, ]
+
+      warning("get_base_layers: Chosen design.year (", design.year, ") does not exist for ",
+              layer.type,
+              ". Returning ", layer.type, " with design.year ", new_design_year, ".")
+
+    } else {
+
+      # Case where there isn't a year available before the selected year causes and error
+      earliest_year <- min(x_sel[['DESIGN_YEAR']])
+
+      stop("get_base_layers: Cannot retrieve design.year ", design.year, " for ", layer.type,
+           ". The earliest available design.year is ", earliest_year, ".")
+    }
+
+    output <- rbind(output, sel_design_year)
+
+  }
+
+  return(output)
+
 }

@@ -6,18 +6,21 @@
 \usage{
 get_base_layers(
   select.region,
+  design.year = NULL,
   set.crs = "EPSG:4269",
   use.survey.bathymetry = TRUE,
-  include.corners = NULL,
+  include.corners = FALSE,
   split.land.at.180 = TRUE,
   fix.invalid.geom = TRUE,
   high.resolution.coast = FALSE
 )
 }
 \arguments{
-\item{select.region}{Character vector indicating which region to retrieve. Bottom trawl survey options: ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ebs.ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6. Longline survey options: ll.ebs, ll.bssa1, ll.bssa2, ll.bssa3, ll.bssa4, ll.bssa5, ll.ai, ll.ai.west, ll.ai.central, ll.goa, ll.goa.west, ll.goa.central, ll.goa.east}
+\item{select.region}{Character vector indicating which region to retrieve. Bottom trawl survey options: ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6. Longline survey options: ll.ebs, ll.bssa1, ll.bssa2, ll.bssa3, ll.bssa4, ll.bssa5, ll.ai, ll.ai.west, ll.ai.central, ll.goa, ll.goa.west, ll.goa.central, ll.goa.east}
 
-\item{set.crs}{Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area (EPSG:3338) will be used.}
+\item{design.year}{Survey design year for files to retrieve. Returns the most recent year when NULL or closest year before the design year when there isn't an exact match.}
+
+\item{set.crs}{Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area (EPSG:3338) is used.}
 
 \item{use.survey.bathymetry}{Should survey bathymetry be used?}
 
