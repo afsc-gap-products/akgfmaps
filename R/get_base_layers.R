@@ -515,6 +515,10 @@ get_base_layers <- function(select.region,
     inpfc.strata <- sf::st_transform(inpfc.strata, crs = set.crs)
   }
 
+  if(!is.null(survey.grid)) {
+    survey.grid <- sf::st_transform(survey.grid, crs = set.crs)
+  }
+
   # Set plot boundary ------------------------------------------------------------------------------
   if(all(select.region %in% c("ai.east", "ai.west", "ai.central", "goa.west", "goa.east"))) {
 
