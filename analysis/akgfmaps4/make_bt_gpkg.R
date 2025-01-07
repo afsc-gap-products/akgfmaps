@@ -81,14 +81,13 @@ goa_stratum_2025 |>
                append = TRUE,
                delete_dsn = FALSE)
 
-
 goa_station_grid_2025 <-
-  sf::st_read(here::here("analysis", "goa_strata_2025", "goaai_grid_2025.shp")) |>
-  sf::st_intersection(goa_stratum_2025) |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
-                STATION = paste0(AREA_ID, "-", GRIDID),
+  sf::st_read(here::here("analysis", "goa_strata_2025", "goa_stations_2025.gpkg")) |>
+  dplyr::mutate(AREA_M2 = AREA_KM2*1e6,
+                SURVEY_DEFINITION_ID = 47,
+                DESIGN_YEAR = 2025,
                 AREA_TYPE = "STATION") |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = id, STATION, AREA_M2)
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = GRIDID, STATION, AREA_M2)
 
 goa_station_grid_2025 |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
