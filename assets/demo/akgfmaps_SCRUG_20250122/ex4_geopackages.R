@@ -1,6 +1,12 @@
 # Example: Access data directly from a geopackage
 # SCRUG, akgfmaps, January 22, 2025
-# Created by Sean Rohan <sean.rohan@noaa.gov>
+# Created by Sean Rohan (GitHub: sean-rohan-noaa)
+
+# akgfmaps installs layer files locally
+# Layers used to include a variety of formats; starting with akgfmaps v4, layers will be included in
+# geopackage (.gpkg) files.
+list.files(system.file("extdata", package = "akgfmaps"),
+           full.names = TRUE)
 
 # Loading layers directly from built-in Geopackage
 # Geopackages are an open, standards-based, platform-independent format for storing geospatial data.
