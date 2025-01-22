@@ -24,6 +24,6 @@ session$loadedOnly$akgfmaps$Version > 4
 #   here, ggspatial, rmapshaper, shadowtext, ggthemes, classInt (>= 0.4-1), units
 #
 # 2. Download the akgfmaps tarball from:
-#
+#  https://drive.google.com/file/d/1hBuW2cXv0MvbOIforIrRSX4zwc_ZI0B0/view?usp=drive_link
 #
 # 3. Install the akgmaps tarball using install.packages()

@@ -1,20 +1,12 @@
 # Example: Using the old get_base_layers() function
-# SCRUG, akgfmaps, January 22, 2025
+# SCRUG: akgfmaps, January 22, 2025
 # Created by Sean Rohan (GitHub: sean-rohan-noaa)
 
-# Through the end of 2025, an option will be provided to use the old interface and layers using
-# get_base_layers_v3(). The function is limited to the functionality and layers that were avaialble
-# in akgfmaps v 3.6.2
+# Through the end of 2025, get_base_layers_v3() will provide access to the old interface and layers.
+# The function is limited to the functionality and layers that were available in akgfmaps v 3.6.2
 #
-# The old version has the following limitations:
-# - No access to design years (e.g., the most recent GOA BT survey stratum shapefile will be 1984)
-# - Cannot select multiple regions at the same time
-# - Field names differ among shapefiles
-# - No correspondence with GAP_PRODUCTS
-# - Access to longline
-
-# Recommendation: Don't use this version unless you can't replace with the new version due to time
-# and reliance on fields in specific shapefiles.
+# Recommendation: Don't use this version unless you have to-- it won't be updated and will be phased
+# out.
 
 library(akgfmaps)
 

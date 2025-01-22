@@ -1,8 +1,6 @@
-# Making grids with akgfmaps, sf, and terra
-# Sean Rohan <sean.rohan@noaa.gov>
-# Survey-Centric R Users Group
-# December 13, 2023
-# https://github.com/afsc-gap-products/akgfmaps
+# Example: Using the old get_base_layers() function
+# SCRUG: akgfmaps, January 22, 2025
+# Created by Sean Rohan (GitHub: sean-rohan-noaa)
 
 
 library(akgfmaps)

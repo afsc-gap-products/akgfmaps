@@ -1,3 +1,12 @@
+akgfmaps 4.0.2 (January 22, 2025)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fix bug in make_2d_grid() that was causing errors for certain
+  combinations of inputs.
+
+
 akgfmaps 4.0.1 (January 7, 2025)
 ----------------------------------------------------------------
 
