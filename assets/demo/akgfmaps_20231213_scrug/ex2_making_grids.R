@@ -13,11 +13,11 @@ nbs_layers <- akgfmaps::get_base_layers(select.region = "nbs",
 
 # make_2d_grid() -----------------------------------------------------------------------------------
 #
-# Make a grid using a polygon as a template. This works similar to the
+# Make a grid using a polygon as a template.
 
 nbs_stratum_7071 <- nbs_layers$survey.strata |>
-  dplyr::select(Stratum, geometry) |>
-  dplyr::filter(Stratum %in% c(70, 71))
+  dplyr::select(STRATUM, geometry) |>
+  dplyr::filter(STRATUM %in% c(70, 71))
 
 ggplot() +
   geom_sf(data = nbs_stratum_7071)

@@ -76,7 +76,7 @@ make_2d_grid <- function(obj, resolution = c(3704, 3704), output_type = "point",
     names(coords_for_plots)[names(coords_for_plots) == "lat_plot"] <- "Y"
 
     interp_polygons <- interp_polygons |>
-      rbind(coords_for_plots)
+      cbind(coords_for_plots)
 
   }
 

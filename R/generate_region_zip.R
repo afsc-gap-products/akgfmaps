@@ -11,7 +11,7 @@
 #' @examples
 #' # generate_region_zip(select.region = "ebs")
 
-generate_region_zip <- function(select.region, set.crs = "EPSG:4269", zip.path = NULL) {
+generate_region_zip <- function(select.region, set.crs = "EPSG:3338", zip.path = NULL) {
 
   zip_path <- zip.path
 
@@ -47,7 +47,7 @@ generate_region_zip <- function(select.region, set.crs = "EPSG:4269", zip.path =
 
   on_fail <- function(x, fail_file, tmp_path) {
 
-    if(any(class(x) == "try-error")) {
+    if(is(x, "try-error")) {
 
       unlink(tmp_path, recursive = TRUE)
 
@@ -79,24 +79,24 @@ generate_region_zip <- function(select.region, set.crs = "EPSG:4269", zip.path =
 
   keep_names <- layer_names[which(layer_names %in% names(map_layers))]
 
-  tmp_files <- character()
-
+  tmp_files <- here::here(tmp_path, paste0(select.region, ".gpkg"))
 
   for(ii in 1:length(layer_names)) {
-
-    tmp_files <- c(tmp_files,
-                   here::here(tmp_path,
-                              paste0(
-                                gsub(x = layer_names[ii],
-                                     pattern = "\\.",
-                                     replacement = "_"), ".shp")
-                   ))
 
     if(!("sf" %in% class(map_layers[[layer_names[ii]]]))) {
       next
     }
 
-    try_write <- try(sf::st_write(obj = map_layers[[layer_names[ii]]], tmp_files[ii]), silent = TRUE)
+    try_write <- try(
+      sf::st_write(
+        obj = map_layers[[layer_names[ii]]],
+        dsn = tmp_files,
+      layer = layer_names[ii],
+      silent = TRUE,
+      append = FALSE,
+      delete_dsn = ifelse(ii == 1, TRUE, FALSE)
+      )
+    )
 
     on_fail(x = try_write, fail_file = tmp_files[ii], tmp_path = tmp_path)
 
@@ -105,7 +105,7 @@ generate_region_zip <- function(select.region, set.crs = "EPSG:4269", zip.path =
 
   pkg_info <- sessionInfo(package = "akgfmaps")
 
-  readme_lines <- c(paste0("Dataset name: Shapefiles for the NOAA/AFSC ", survey_title),
+  readme_lines <- c(paste0("Dataset name: Geopackage for NOAA/AFSC ", survey_title),
                     "Created by: NOAA Fisheries Alaska Fisheries Science Center, Resource Assessment and Conservation Engineering Division, Groundfish Assessment Program",
                     paste0("Description: Created on ", Sys.Date(), " using akgfmaps version ", pkg_info$otherPkgs$akgfmaps$Version),
                     "Website: https://github.com/afsc-gap-products/akgfmaps",
@@ -131,10 +131,6 @@ generate_region_zip <- function(select.region, set.crs = "EPSG:4269", zip.path =
   on_fail(x = try_copy, fail_file = tmp_files[ii], tmp_path = tmp_path)
 
   setwd(base_path)
-
-  print(here::here(tmp_path, zip_path))
-  print(here::here(zip_path))
-  file.rename(from = here::here(tmp_path, zip_path), to = here::here(zip_path))
 
   unlink(tmp_path, recursive = TRUE)
 
