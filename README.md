@@ -25,7 +25,7 @@ The package can installed for R versions >= 4.0 using the using the following co
 devtools::install_github("afsc-gap-products/akgfmaps", build_vignettes = TRUE)
 ```
 
-Layers in the package are saved locally during installation. Therefore, the package must be re-installed to access new geometries when they become available.
+Spatial features are saved locally during package installation. Therefore, the package must be re-installed to access newer versions of spatial features when they are updated.
 
 # Vignettes
 
@@ -35,9 +35,9 @@ Vignettes can be accessed using:
 browseVignettes('akgfmaps')
 ```
 
-# Download shapefiles without installation
+# Download spatial features in geopackages
 
-The package is intended for users to install and access layers using the package to ensure vector geometries are version-controlled for code-based analyses and visualizations. However, zip files containing the most recent versions of the bottom trawl survey shapefiles and associated metadata are provided for download [here](./assets/region_shapefiles).
+The package is intended for users to install and access layers using the package to facilitate version control. However, geopackages containing [bottom trawl survey features](./inst/extdata/afsc_bottom_trawl_surveys.gpkg), [EBS/NBS crab stratum polygons](./inst/all_crab_from_akgfmaps_grid.gpkg), and [land/coastline polygons](./inst/extdata/land_layers.gpkg) are also available for download.
 
 # Vector geometries in the package
 
