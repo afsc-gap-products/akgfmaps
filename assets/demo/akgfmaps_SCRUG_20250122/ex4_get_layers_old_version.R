@@ -1,4 +1,4 @@
-# Example: Using the old get_base_layers() function
+# Example: akgfmaps v3 layers using get_base_layers_v3()
 # SCRUG: akgfmaps, January 22, 2025
 # Created by Sean Rohan (GitHub: sean-rohan-noaa)
 
