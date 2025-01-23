@@ -14,7 +14,7 @@ library(akgfmaps)
 
 # Get layers for one survey region
 ebs_layers <- akgfmaps::get_base_layers(
-  select.region = "sebs", # EBS shelf bottom traw survey regions
+  select.region = "sebs", # EBS shelf bottom trawl survey regions
   set.crs = "EPSG:3338", # Coordinate reference system, in this case Alaska Albers Equal Area
   high.resolution.coast = FALSE, # Set to TRUE when coast is used for analyses, e.g. raster masking
   design.year = NULL # Return the most recent/current survey design
@@ -92,17 +92,17 @@ goa_1984_2025_strata <- rbind(
 
 # Plot 1984 and 2025 survey strata for the WGOA
 ggplot() +
-  geom_sf(data = goa_1984$akland) +
+  geom_sf(data = goa_1984_layers$akland) +
   geom_sf(data = goa_1984_2025_strata,
           mapping = aes(color = factor(DESIGN_YEAR)),
           fill = NA,
           alpha = 0.5) +
   scale_color_manual(name = "Design year",
                      values = c("red", "black")) +
-  scale_x_continuous(limits = goa_1984$plot.boundary$x,
-                     breaks = goa_1984$lon.breaks) +
-  scale_y_continuous(limits = goa_1984$plot.boundary$y,
-                     breaks = goa_1984$lat.breaks) +
+  scale_x_continuous(limits = goa_1984_layers$plot.boundary$x,
+                     breaks = goa_1984_layers$lon.breaks) +
+  scale_y_continuous(limits = goa_1984_layers$plot.boundary$y,
+                     breaks = goa_1984_layers$lat.breaks) +
   theme_bw()
 
 goa_1984_2025_grid <- rbind(
@@ -112,17 +112,17 @@ goa_1984_2025_grid <- rbind(
 
 # Plot 1984 and 2025 survey grid for the WGOA
 ggplot() +
-  geom_sf(data = goa_1984$akland) +
+  geom_sf(data = goa_1984_layers$akland) +
   geom_sf(data = goa_1984_2025_grid,
           mapping = aes(color = factor(DESIGN_YEAR)),
           fill = NA,
           alpha = 0.5) +
   scale_color_manual(name = "Design year",
                      values = c("red", "black")) +
-  scale_x_continuous(limits = goa_1984$plot.boundary$x,
-                     breaks = goa_1984$lon.breaks) +
-  scale_y_continuous(limits = goa_1984$plot.boundary$y,
-                     breaks = goa_1984$lat.breaks) +
+  scale_x_continuous(limits = goa_1984_layers$plot.boundary$x,
+                     breaks = goa_1984_layers$lon.breaks) +
+  scale_y_continuous(limits = goa_1984_layers$plot.boundary$y,
+                     breaks = goa_1984_layers$lat.breaks) +
   theme_bw()
 
 # EBS shelf survey with corner stations for the 2023 survey
