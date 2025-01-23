@@ -27,6 +27,8 @@ noodles_sf <- akgfmaps::NOODLES |>
   dplyr::rename(STATION = STATIONID) |>
   dplyr::mutate(Present = CPUE_KGHA > 0) # Plot presence/absence
 
+nbs_layers <- get_base_layers(select.region = "nbs", set.crs = "EPSG:3338")
+
 # spatially join survey grid polygons to noodle CPUE points data
 noodles_grid <- sf::st_join(nbs_layers$survey.grid,
                             noodles_sf)
