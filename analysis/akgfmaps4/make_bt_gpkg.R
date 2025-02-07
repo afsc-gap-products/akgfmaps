@@ -2,6 +2,52 @@
 
 library(akgfmaps)
 
+# Gulf of ALaska 2025 ----
+goa_stratum_2025 <- sf::st_read(here::here("analysis", "goa_strata_2025", "goa_strata_2025.gpkg")) |>
+  sf::st_set_geometry( "geometry") |>
+  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
+                DESIGN_YEAR = 2025,
+                AREA_TYPE = "STRATUM",
+                SURVEY_DEFINITION_ID = 47) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, AREA_M2)
+
+goa_stratum_2025 |>
+  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
+               layer = "survey_strata",
+               append = FALSE,
+               delete_dsn = TRUE)
+
+goa_stratum_2025 |>
+  dplyr::select(SURVEY_DEFINITION_ID) |>
+  dplyr::group_by(SURVEY_DEFINITION_ID) |>
+  dplyr::summarise() |>
+  dplyr::mutate(AREA_TYPE = "REGION",
+                AREA_M2 = sf::st_area(geometry),
+                SURVEY_DEFINITION_ID = 47,
+                DESIGN_YEAR = 2025,
+                AREA_ID = 99903,
+                AREA_TYPE = "REGION",
+                SURVEY_NAME = "Gulf of Alaska Bottom Trawl Survey") |>
+  dplyr::select(AREA_TYPE, SURVEY_NAME, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
+  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
+               layer = "survey_area",
+               append = FALSE,
+               delete_dsn = FALSE)
+
+goa_station_grid_2025 <-
+  sf::st_read(here::here("analysis", "goa_strata_2025", "goa_stations_2025.gpkg")) |>
+  dplyr::mutate(AREA_M2 = AREA_KM2*1e6,
+                SURVEY_DEFINITION_ID = 47,
+                DESIGN_YEAR = 2025,
+                AREA_TYPE = "STATION") |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = GRIDID, STATION, TRAWLABLE, AREA_M2)
+
+goa_station_grid_2025 |>
+  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
+               layer = "survey_grid",
+               append = FALSE,
+               delete_dsn = FALSE)
+
 # Gulf of Alaska 1984 design ----
 goa_layers <- akgfmaps:::get_base_layers_v3(select.region = "goa",
                                             set.crs = "EPSG:3338")
@@ -16,8 +62,8 @@ goa_layers$survey.area |>
   dplyr::select(AREA_TYPE, SURVEY_NAME, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_area",
-               append = FALSE,
-               delete_dsn = TRUE)
+               append = TRUE,
+               delete_dsn = FALSE)
 
 goa_layers$survey.strata |>
   sf::st_transform(crs = "EPSG:3338") |>
@@ -34,62 +80,16 @@ goa_layers$survey.strata |>
   dplyr::ungroup() |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_strata",
-               append = FALSE,
+               append = TRUE,
                delete_dsn = FALSE)
 
 goa_layers$survey.grid |>
   dplyr::mutate(AREA_M2 = AREA_KM2*1e6,
                 DESIGN_YEAR = 1984,
                 AREA_TYPE = "STATION",
-                SURVEY_DEFINITION_ID = 47) |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = GOAGRID_ID, STATION = ID, AREA_M2) |>
-  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
-               layer = "survey_grid",
-               append = FALSE,
-               delete_dsn = FALSE)
-
-
-# Gulf of ALaska 2025 ----
-goa_stratum_2025 <- sf::st_read(here::here("analysis", "goa_strata_2025", "goa_strata_2025.gpkg")) |>
-  sf::st_set_geometry( "geometry") |>
-  dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
-                DESIGN_YEAR = 2025,
-                AREA_TYPE = "STRATUM",
-                SURVEY_DEFINITION_ID = 47) |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, AREA_M2)
-
-goa_stratum_2025 |>
-  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
-               layer = "survey_strata",
-               append = TRUE,
-               delete_dsn = FALSE)
-
-goa_stratum_2025 |>
-  dplyr::select(SURVEY_DEFINITION_ID) |>
-  dplyr::group_by(SURVEY_DEFINITION_ID) |>
-  dplyr::summarise() |>
-  dplyr::mutate(AREA_TYPE = "REGION",
-                AREA_M2 = sf::st_area(geometry),
                 SURVEY_DEFINITION_ID = 47,
-                DESIGN_YEAR = 2025,
-                AREA_ID = 99903,
-                AREA_TYPE = "REGION",
-                SURVEY_NAME = "Gulf of Alaska Bottom Trawl Survey") |>
-  dplyr::select(AREA_TYPE, SURVEY_NAME, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
-  sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
-               layer = "survey_area",
-               append = TRUE,
-               delete_dsn = FALSE)
-
-goa_station_grid_2025 <-
-  sf::st_read(here::here("analysis", "goa_strata_2025", "goa_stations_2025.gpkg")) |>
-  dplyr::mutate(AREA_M2 = AREA_KM2*1e6,
-                SURVEY_DEFINITION_ID = 47,
-                DESIGN_YEAR = 2025,
-                AREA_TYPE = "STATION") |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = GRIDID, STATION, AREA_M2)
-
-goa_station_grid_2025 |>
+                TRAWLABLE = NA) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = GOAGRID_ID, STATION = ID, TRAWLABLE, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_grid",
                append = TRUE,
