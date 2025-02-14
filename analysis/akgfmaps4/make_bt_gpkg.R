@@ -278,7 +278,7 @@ sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
                 SURVEY_NAME = "Aleutian Islands Bottom Trawl Survey",
                 AREA_ID = 99904,
                 SURVEY_DEFINITION_ID = 52) |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
+  dplyr::select(AREA_TYPE, SURVEY_NAME, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_area",
                append = TRUE,
