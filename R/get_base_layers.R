@@ -578,6 +578,7 @@ get_base_layers <- function(select.region,
                                 y = c(plot.boundary['ymin'], plot.boundary['ymax']))
     bbox <- stratum.extent |>
       sf::st_transform(crs = 4269) |>
+      sf::st_shift_longitude() |>
       sf::st_bbox()
 
   } else {
@@ -586,13 +587,12 @@ get_base_layers <- function(select.region,
                                 y = c(plot.boundary['ymin'], plot.boundary['ymax']))
     bbox <- survey.area |>
       sf::st_transform(crs = 4269) |>
+      sf::st_shift_longitude() |>
       sf::st_bbox()
   }
 
   # Axis breaks in decimal degrees
-  xmin <- ifelse(sign(bbox['xmin']) == 1, bbox['xmin'], bbox['xmin'] + 360)
-  xmax <- ifelse(sign(bbox['xmax']) == 1, bbox['xmax'], bbox['xmax'] + 360)
-  x_interval <- set_dd_interval(xmax - xmin)
+  x_interval <- set_dd_interval(bbox['xmax'] - bbox['xmin'])
 
   lon.breaks <- seq(-180, 180 - x_interval, x_interval)
 

@@ -6,6 +6,11 @@ BUG FIX
 - Fix bug caused by GDAL 3.10.1 not handling transformations for
   bbox class (issue #145).
 
+FUNCTIONALITY CHANGES
+
+- Change latitude and longitude break intervals to use wider
+  spacing.
+
 
 akgfmaps 4.0.2 (January 22, 2025)
 ----------------------------------------------------------------
