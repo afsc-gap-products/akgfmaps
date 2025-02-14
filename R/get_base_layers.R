@@ -570,23 +570,26 @@ get_base_layers <- function(select.region,
   }
 
   # Setup plot boundaries and axis labels (axis "breaks") ------------------------------------------
+
   if(exists("stratum.extent")) {
     stratum.extent <- sf::st_transform(stratum.extent, crs = set.crs)
     plot.boundary <- sf::st_bbox(stratum.extent)
     plot.boundary <- data.frame(x = c(plot.boundary['xmin'], plot.boundary['xmax']),
                                 y = c(plot.boundary['ymin'], plot.boundary['ymax']))
-    bbox <- sf::st_bbox(stratum.extent)
+    bbox <- stratum.extent |>
+      sf::st_transform(crs = 4269) |>
+      sf::st_bbox()
 
   } else {
     plot.boundary <- sf::st_bbox(survey.area)
     plot.boundary <- data.frame(x = c(plot.boundary['xmin'], plot.boundary['xmax']),
                                 y = c(plot.boundary['ymin'], plot.boundary['ymax']))
-    bbox <- sf::st_bbox(survey.area)
+    bbox <- survey.area |>
+      sf::st_transform(crs = 4269) |>
+      sf::st_bbox()
   }
 
   # Axis breaks in decimal degrees
-  bbox <- sf::st_transform(bbox, crs = "NAD83")
-
   xmin <- ifelse(sign(bbox['xmin']) == 1, bbox['xmin'], bbox['xmin'] + 360)
   xmax <- ifelse(sign(bbox['xmax']) == 1, bbox['xmax'], bbox['xmax'] + 360)
   x_interval <- set_dd_interval(xmax - xmin)

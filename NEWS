@@ -1,3 +1,12 @@
+akgfmaps 4.0.3 (February 14, 2025)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fix bug caused by GDAL 3.10.1 not handling transformations for
+  bbox class (issue #145).
+
+
 akgfmaps 4.0.2 (January 22, 2025)
 ----------------------------------------------------------------
 
