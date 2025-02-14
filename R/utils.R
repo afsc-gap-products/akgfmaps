@@ -89,7 +89,7 @@ set_dd_interval <- function(deg_diff) {
     interval <- 1
   }
 
-  if(deg_diff > 8) {
+  if(deg_diff > 6) {
     interval <- 2
   }
 
