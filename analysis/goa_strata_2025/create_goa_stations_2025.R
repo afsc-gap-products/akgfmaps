@@ -71,6 +71,12 @@ goa_stations_2025 <- sf::st_intersection(
   y = goa_strata_2025[, c("NMFS_AREA", "REP_AREA", "STRATUM")]
 )
 
+## Filter stations that are only polygons or multipolygons
+goa_stations_2025 <- goa_stations_2025[
+  sf::st_geometry_type(x = goa_stations_2025) %in% 
+    c("POLYGON", "MULTIPOLYGON"), 
+]
+
 goa_stations_2025$STATION <- paste0(goa_stations_2025$GRIDID, "-", 
                                     goa_stations_2025$STRATUM)
 
@@ -150,8 +156,13 @@ units(x = goa_stations_2025_trawl$AREA_KM2) <- "km2"
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Resolve stations with mixed trawlability information. First identify
 ##   which stations have mixed trawlability info (`stns_idx_mixed_trawl_info`)
+##   Filter stations that are only polygons or multipolygons
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-new_goa_stations_2025 <- goa_stations_2025_trawl
+new_goa_stations_2025 <- goa_stations_2025_trawl[
+  sf::st_geometry_type(x = goa_stations_2025_trawl) %in% 
+    c("POLYGON", "MULTIPOLYGON"), 
+]
+
 ## Query 2025 stations that inherited > 1 trawlability statuses from the 
 ## legacy GOA survey stations 
 stns_mixed_trawl_info <- 
