@@ -1,3 +1,13 @@
+akgfmaps 4.0.4 (March 24, 2025)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fixed overlapping GOA 2025 survey stratum boundaries that
+  occurred along the edges of NMFS areas and added the updated
+  strata to the built-in data.
+
+
 akgfmaps 4.0.3 (February 14, 2025)
 ----------------------------------------------------------------
 

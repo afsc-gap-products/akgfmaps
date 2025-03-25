@@ -34,7 +34,8 @@ bathy <-
 
 ## `goa_base` are basic shape layers from the akgfmaps package
 goa_base <- akgfmaps::get_base_layers(select.region = "goa", 
-                                      set.crs = terra::crs(x = bathy))
+                                      set.crs = terra::crs(x = bathy), 
+                                      design.year = 1984)
 
 ## `ak_land` is the extracted land/coastline shapefile from `goa_base` 
 ak_land <- terra::vect(x = goa_base$akland[goa_base$akland$POPYADMIN %in% 
@@ -134,7 +135,9 @@ for (idistrict in unique(x = depth_mods$NMFS_AREA)) { ## Loop over area --st.
                                     include.lowest=TRUE)
   
   ## Convert discretized raster to polygon based on those discrete values
-  strata_poly_agg <- terra::as.polygons(x = district_bathy)
+  strata_poly_agg <- terra::as.polygons(x = district_bathy) |>  
+    terra::crop(y = district_outline)
+  
   # strata_poly_agg <-
   #   terra::vect(x = rmapshaper::ms_simplify(
   #     input = sf::st_as_sf(strata_poly_agg),
