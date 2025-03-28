@@ -81,7 +81,7 @@ get_crab_strata <- function(select.stock = NULL,
                          "pirkc" = "Pribilof Islands RKC",
                          "pibkc" = "Pribilof Islands BKC",
                          "nsrkc" = "Norton Sound RKC",
-                         "ebssc" = "snow crab",
+                         "ebssc" = "EBS snow crab",
                          "ebstc" = c("Tanner E", "Tanner W"),
                          "smbkc" = "St. Matthew BKC")
 
