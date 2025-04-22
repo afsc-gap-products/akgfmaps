@@ -270,7 +270,8 @@ new_goa_stations_2025 <- dplyr::bind_rows(
 )
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##   
+##   Any leftover stations that intersect with the midpoints of good tows
+##   are turned trawlable. 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 T_areas <- sf::st_intersects(
   x = new_goa_stations_2025[new_goa_stations_2025$TRAWLABLE == "Y", ],
