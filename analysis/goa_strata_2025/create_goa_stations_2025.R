@@ -72,10 +72,12 @@ goa_stations_2025 <- sf::st_intersection(
 )
 
 ## Filter stations that are only polygons or multipolygons
-goa_stations_2025 <- goa_stations_2025[
-  sf::st_geometry_type(x = goa_stations_2025) %in% 
-    c("POLYGON", "MULTIPOLYGON"), 
-]
+goa_stations_2025 <- 
+  sf::st_collection_extract(x = goa_stations_2025, "POLYGON")
+# goa_stations_2025 <- goa_stations_2025[
+#   sf::st_geometry_type(x = goa_stations_2025) %in% 
+#     c("POLYGON", "MULTIPOLYGON"), 
+# ]
 
 goa_stations_2025$STATION <- paste0(goa_stations_2025$GRIDID, "-", 
                                     goa_stations_2025$STRATUM)
@@ -268,7 +270,8 @@ new_goa_stations_2025 <- dplyr::bind_rows(
 )
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##   
+##   Any leftover stations that intersect with the midpoints of good tows
+##   are turned trawlable. 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 T_areas <- sf::st_intersects(
   x = new_goa_stations_2025[new_goa_stations_2025$TRAWLABLE == "Y", ],
