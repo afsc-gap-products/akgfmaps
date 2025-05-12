@@ -33,10 +33,11 @@ goa_2024 <- sf::st_intersection(x = goa_1984$survey.strata,
 goa_2024 <- aggregate(x = goa_2024[, c("STRATUM", "AREA_M2")], 
                       by = list(goa_2024$STRATUM), 
                       FUN = sum)
+goa_2024$STRATUM <- goa_2024$Group.1
 
 ## Recalculate Stratum Area
-goa_2024$AREA_M2 <- as.numeric(sf::st_area(goa_2024))
-goa_2024$AREA_KM2 <- as.numeric(sf::st_area(goa_2024)) / 1e6
+goa_2024$AREA_M2 <- as.numeric(x = sf::st_area(goa_2024))
+goa_2024$AREA_KM2 <- as.numeric(x = sf::st_area(goa_2024)) / 1e6
 goa_2024$SURVEY_DEFINITION_ID <- 47
 goa_2024$DESIGN_YEAR <- 2024
 
