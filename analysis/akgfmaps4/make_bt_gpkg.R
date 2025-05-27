@@ -42,7 +42,7 @@ goa_layers$survey.grid |>
                 DESIGN_YEAR = 1984,
                 AREA_TYPE = "STATION",
                 SURVEY_DEFINITION_ID = 47) |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = GOAGRID_ID, STATION = ID, AREA_M2) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, GRID_ID = GOAGRID_ID, STATION = ID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_grid",
                append = FALSE,
@@ -87,7 +87,7 @@ goa_station_grid_2025 <-
                 SURVEY_DEFINITION_ID = 47,
                 DESIGN_YEAR = 2025,
                 AREA_TYPE = "STATION") |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = GRIDID, STATION, AREA_M2)
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, GRID_ID = GRIDID, STATION, AREA_M2)
 
 goa_station_grid_2025 |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
@@ -162,8 +162,9 @@ ebs_layers$survey.grid |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
                 SURVEY_DEFINITION_ID = dplyr::if_else(STATIONID %in% akgfmaps::get_survey_stations(select.region = "nbs"), 143, 98),
                 AREA_TYPE = "STATION",
+                AREA_ID = NA,
                 DESIGN_YEAR = dplyr::if_else(STATIONID %in% akgfmaps::get_survey_stations(select.region = "nbs"), 2010, 2024)) |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, STATION = STATIONID, AREA_M2) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, STATION = STATIONID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_grid",
                append = TRUE,
@@ -178,8 +179,9 @@ ebs_corners$survey.grid |>
   dplyr::mutate(AREA_M2 = as.numeric(sf::st_area(geometry)),
                 DESIGN_YEAR = 2010,
                 AREA_TYPE = "STATION",
+                AREA_ID = NA,
                 SURVEY_DEFINITION_ID = 98) |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, STATION = STATIONID, AREA_M2) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID, STATION = STATIONID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_grid",
                append = TRUE,
@@ -228,7 +230,7 @@ sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
                 DESIGN_YEAR = 1991,
                 AREA_TYPE = "STATION",
                 SURVEY_DEFINITION_ID = 52) |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = AIGRID_ID, STATION = ID, AREA_M2) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, GRID_ID = AIGRID_ID, STATION = ID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_grid",
                append = TRUE,
@@ -244,7 +246,7 @@ sf::st_read(system.file("extdata", "ai_grid.shp", package = "akgfmaps"))  |>
                 DESIGN_YEAR = 1980,
                 AREA_TYPE = "STATION",
                 SURVEY_DEFINITION_ID = 52) |>
-  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID = AIGRID_ID, STATION = ID, AREA_M2) |>
+  dplyr::select(AREA_TYPE, SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID = STRATUM, GRID_ID = AIGRID_ID, STATION = ID, AREA_M2) |>
   sf::st_write(dsn = here::here("inst", "extdata", "afsc_bottom_trawl_surveys.gpkg"),
                layer = "survey_grid",
                append = TRUE,

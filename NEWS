@@ -1,3 +1,18 @@
+akgfmaps 4.0.7 (May 27, 2025)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Refix stratum values for a few AI station grid cells
+  (#158/#30).
+
+FUNCTIONALITY CHANGES
+
+- get_base_layers() station.grid output includes STRATUM.
+- Add AREA_ID field to survey_grid in
+  afsc_bottom_trawl_surveys.gpkg.
+
+
 akgfmaps 4.0.6 (May 7, 2025)
 ----------------------------------------------------------------
 
