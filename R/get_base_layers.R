@@ -271,7 +271,7 @@ get_base_layers <- function(select.region,
     survey.grid <- sf::st_read(
       system.file("extdata", "afsc_bottom_trawl_surveys.gpkg", package = "akgfmaps"),
       query = paste0("SELECT SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID,
-                      STATION, AREA_M2, GEOM AS geometry
+                      STATION, AREA_ID AS STRATUM, AREA_M2, GEOM AS geometry
                      FROM SURVEY_GRID WHERE SURVEY_DEFINITION_ID IN (",
                      paste(survey_definition_id, collapse = ", "), ")"
       ),
