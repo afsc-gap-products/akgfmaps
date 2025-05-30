@@ -1,10 +1,11 @@
-akgfmaps 4.0.7 (May 27, 2025)
+akgfmaps 4.0.7 (May 29, 2025)
 ----------------------------------------------------------------
 
 BUG FIX
 
 - Refix stratum values for a few AI station grid cells
   (#158/#30).
+- Change GRID_ID type to character.
 
 FUNCTIONALITY CHANGES
 
