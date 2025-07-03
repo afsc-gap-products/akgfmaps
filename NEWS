@@ -1,3 +1,13 @@
+akgfmaps 4.0.8 (July 3, 2025)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Remove depreated include.corners argument from get_base_layers()
+  to align with the DESIGN_YEAR approach adopted in akgfmaps v4
+  (#163).
+
+
 akgfmaps 4.0.7 (May 29, 2025)
 ----------------------------------------------------------------
 

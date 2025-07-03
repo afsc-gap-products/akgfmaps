@@ -24,8 +24,6 @@ get_base_layers(
 
 \item{use.survey.bathymetry}{Should survey bathymetry be used?}
 
-\item{include.corners}{Logical. Should corner stations be returned in the survey grid? Only for the EBS.}
-
 \item{split.land.at.180}{Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = TRUE.}
 
 \item{fix.invalid.geom}{Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?}
@@ -64,13 +62,13 @@ ggplot() +
                      breaks = sebs$lat.breaks) +
   theme_bw()
 
-# EBS bottom trawl survey layers in NAD83 (EPSG:4269) with corner stations and high resolution
+# EBS bottom trawl survey layers in NAD83 (EPSG:4269) with corner stations, 2022 design year survey strata, and high resolution
 # coastline. High resolution coastline takes longer to load and plot but is recommended when land
 # polygons are used for spatial analysis
 
 sebs_corners <- get_base_layers(select.region = "sebs",
                                 set.crs = "EPSG:4269",
-                                include.corners = TRUE,
+                                design.year = 2022,
                                 high.resolution.coast = TRUE)
 
 ggplot() +
