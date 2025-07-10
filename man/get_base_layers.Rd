@@ -9,7 +9,6 @@ get_base_layers(
   design.year = NULL,
   set.crs = "EPSG:4269",
   use.survey.bathymetry = TRUE,
-  include.corners = FALSE,
   split.land.at.180 = TRUE,
   fix.invalid.geom = TRUE,
   high.resolution.coast = FALSE
