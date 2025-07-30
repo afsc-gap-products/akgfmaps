@@ -37,14 +37,9 @@ browseVignettes('akgfmaps')
 
 # GeoPackage downloads
 
-[GeoPackages](https://www.geopackage.org/) containing [current and historical bottom trawl survey features](./inst/extdata/afsc_bottom_trawl_surveys.gpkg), [current EBS/NBS crab stratum polygons](./inst/all_crab_from_akgfmaps_grid.gpkg), and [current coastline polygons](./inst/extdata/land_layers.gpkg) are available for download.
+akgfmaps primarily uses [GeoPackages (.gpkg)](https://www.geopackage.org/) for storing spatial data because they can store vector and raster data in a single SQLite database file and support large datasets, rich attribute types, and full Unicode. This makes them suitable for long-term data management and ensures field names and attributes are consistent with other AFSC data products.
 
-Zip files containing GeoPackages and version metadata for AFSC bottom trawl survey regions are also available [here](https://github.com/afsc-gap-products/akgfmaps/tree/main/assets/bts_geopackages).
-
-# Why GeoPackages?
-
-akgfmaps primarily uses [GeoPackages (.gpkg)](https://www.geopackage.org/) instead of [shapefiles (.shp)](https://en.wikipedia.org/wiki/Shapefile) because they provide a more efficient and reliable format for storing geospatial data. Unlike shapefiles, which require multiple files and have strict limitations on field names, character encoding, and file size, GeoPackages can store vector and raster data in a single SQLite database file. GeoPackages support larger datasets, richer attribute types, and full Unicode, which makes them suitable for long-term data management and ensures consistency with other AFSC data products.
-
+Users who do not wish to install the package can download geopackages containing [current and historical bottom trawl survey features](./inst/extdata/afsc_bottom_trawl_surveys.gpkg), [current EBS/NBS crab stratum features](./inst/all_crab_from_akgfmaps_grid.gpkg), and [coastline features](./inst/extdata/land_layers.gpkg). Zip files containing GeoPackages and metadata for AFSC groundfish bottom trawl survey regions are also available [here](https://github.com/afsc-gap-products/akgfmaps/tree/main/assets/bts_geopackages).
 
 # Vector geometries in the package
 
