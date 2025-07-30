@@ -22,7 +22,7 @@ See [NEWS](./NEWS) for information about package updates.
 The package can installed for R versions >= 4.0 using the using the following code:
 
 ```{r}
-devtools::install_github("afsc-gap-products/akgfmaps", build_vignettes = TRUE)
+remotes::install_github("afsc-gap-products/akgfmaps", build_vignettes = TRUE)
 ```
 
 Spatial features are saved locally during package installation. Therefore, the package must be re-installed to access newer versions of spatial features when they are updated.
@@ -35,9 +35,16 @@ Vignettes can be accessed using:
 browseVignettes('akgfmaps')
 ```
 
-# Download spatial features in geopackages
+# GeoPackage downloads
 
-The package is intended for users to install and access layers using the package to facilitate version control. However, geopackages containing [bottom trawl survey features](./inst/extdata/afsc_bottom_trawl_surveys.gpkg), [EBS/NBS crab stratum polygons](./inst/all_crab_from_akgfmaps_grid.gpkg), and [land/coastline polygons](./inst/extdata/land_layers.gpkg) are also available for download.
+[GeoPackages](https://www.geopackage.org/) containing [current and historical bottom trawl survey features](./inst/extdata/afsc_bottom_trawl_surveys.gpkg), [current EBS/NBS crab stratum polygons](./inst/all_crab_from_akgfmaps_grid.gpkg), and [current coastline polygons](./inst/extdata/land_layers.gpkg) are available for download.
+
+Zip files containing GeoPackages and version metadata for AFSC bottom trawl survey regions are also available [here](https://github.com/afsc-gap-products/akgfmaps/tree/main/assets/bts_geopackages).
+
+# Why GeoPackages?
+
+akgfmaps primarily uses [GeoPackages (.gpkg)](https://www.geopackage.org/) instead of [shapefiles (.shp)](https://en.wikipedia.org/wiki/Shapefile) because they provide a more efficient and reliable format for storing geospatial data. Unlike shapefiles, which require multiple files and have strict limitations on field names, character encoding, and file size, GeoPackages can store vector and raster data in a single SQLite database file. GeoPackages support larger datasets, richer attribute types, and full Unicode, which makes them suitable for long-term data management and ensures consistency with other AFSC data products.
+
 
 # Vector geometries in the package
 
