@@ -1,6 +1,6 @@
 # akgfmaps
 
-The akgfmaps package is used to vector geometries ('shapefiles') that are commonly needed for mapping and spatial analysis in Alaska marine management areas, marine statistical areas, and fishery-independent survey regions in Alaska. 
+The akgfmaps package is used to vector geometries that are commonly needed for mapping and spatial analysis in Alaska marine management areas, marine statistical areas, and fishery-independent survey regions in Alaska. 
 
 The package includes:
 
