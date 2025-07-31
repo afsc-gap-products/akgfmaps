@@ -1,12 +1,18 @@
 # Bathymetry in akgfmaps
 
-## Raster
+As of August 2025, bathymetry data in akgfmaps cover the eastern Bering Sea shelf, eastern Bering sea slope, northern Bering Sea, Gulf of Alaska, and Aleutian Islands from 0-3000 m. Coverage does not include Chukchi Sea, Beaufort Sea, western Bering Sea, Prince William Sound, interior southeast Alaska, and basins deeper than 3000 m.
 
-Bathymetry rasters in akgfmaps are compiled from digital terrain models (DTMs) covering the eastern Bering Sea shelf, eastern Bering Sea ([GEBCO Bathymetric Compilation Group 2024, 2024](https://doi.org/10.5285/1c44ce99-0a0d-5f4f-e063-7086abc0ea0f); [Zimmermann and Prescott, 2018](https://doi.org/10.3390/geosciences8050184)), Norton Sound ([Prescott and Zimmermann, 2015](https://doi.org/10.7289/V5V69GJ9)), Aleutian Islands ([Zimmermann et al., 2013](https://repository.library.noaa.gov/view/noaa/4426); [Zimmermann and Prescott, 2021](https://doi.org/10.1111/fog.12519)), and Gulf of Alaska ([Zimmermann et al., 2019](https://doi.org/10.3390/geosciences9100409)). Spatial coverage of individual DTMs overlap and the depth value for each location is assigned using the DTM that corroborates most closely with nearby bottom trawl survey depth observations.
+## Raster (1 x 1 km)
+
+![](/assets/bathy_images/akgfmaps_raster.png)
+
+The 1 x 1 km bathymetry raster in akgfmaps was derived from a compilation of digital terrain models (DTMs) of the eastern Bering Sea and northern Bering Sea ([GEBCO Bathymetric Compilation Group 2024, 2024](https://doi.org/10.5285/1c44ce99-0a0d-5f4f-e063-7086abc0ea0f); [Zimmermann and Prescott, 2018](https://doi.org/10.3390/geosciences8050184)), Norton Sound ([Prescott and Zimmermann, 2015](https://doi.org/10.7289/V5V69GJ9)), Aleutian Islands ([Zimmermann et al., 2013](https://repository.library.noaa.gov/view/noaa/4426); [Zimmermann and Prescott, 2021](https://doi.org/10.1111/fog.12519)), and Gulf of Alaska ([Zimmermann et al., 2019](https://doi.org/10.3390/geosciences9100409)). The native resolution of DTMs was either 100 x 100 m or 15 arc-seconds (GEBCO). Spatial coverage of individual DTMs overlap and the depth value for each location is assigned using the DTM that corroborates most closely with nearby bottom trawl survey depth observations.
 
 ## Contours
 
-[Bathymetry contours](./inst/extdata/bathymetry.gpkg) in akgfmaps were derived from 1 x 1 km rasters by using the Contour List tool in ArcGIS Pro (ESRI, 2024) to obtain depth contour lines for 50, 100, 200, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000, and 3000 m isobaths. Contour lines were simplified using the Douglas-Peuker algorithm with a 0.1 retention proportion using ms_simplify() in the rmapshaper package. Contours with length \< 50 km were removed and obvious errors were manually removed.
+![](/assets/bathy_images/akgfmaps_contours.png)
+
+[Bathymetry contours/isolines](./inst/extdata/bathymetry.gpkg) in were calculated from the 100 x 100 m raster using as.contour() from the [terra R package](https://rspatial.org/) to obtain depth contour lines for 50, 100, 200, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000, and 3000 m isobaths. Contour lines were simplified using the Douglas-Peuker algorithm with a 0.3 retention proportion using ms_simplify() in the [rmapshaper package](https://andyteucher.ca/rmapshaper/). Contours with length \< 40 km were removed.
 
 ## Disclaimer
 
@@ -14,9 +20,9 @@ Bathymetric data in akgfmaps are not to be used for navigation. For navigation p
 
 ## References
 
-ESRI, 2024. *ArcGIS Pro 3.4.0.*
-
 GEBCO Bathymetric Compilation Group 2024, 2024. *The GEBCO_2024 Grid - a continuous terrain model of the global oceans and land.* <https://doi.org/10.5285/1c44ce99-0a0d-5f4f-e063-7086abc0ea0f>
+
+Hijmans R (2025). *terra: Spatial Data Analysis*. R package version 1.8-61. <https://rspatial.org/>
 
 Prescott, M.M., Zimmermann, M., 2015. *Smooth sheet bathymetry of Norton Sound.* U.S. Dep. Commer., NOAA Tech. Memo. NMFS-AFSC-298. 23. <https://doi.org/10.7289/V5V69GJ9>
 
