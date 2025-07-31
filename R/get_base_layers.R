@@ -5,7 +5,6 @@
 #' @param select.region Character vector indicating which region to retrieve. Bottom trawl survey options: ebs or bs.all, sebs or bs.south, nbs or bs.north, ecs, ai, ai.west, ai.central, ai.east, goa, goa.west, goa.east, ebs.slope, bssa1, bssa2, bssa3, bssa4, bssa5, bssa6. Longline survey options: ll.ebs, ll.bssa1, ll.bssa2, ll.bssa3, ll.bssa4, ll.bssa5, ll.ai, ll.ai.west, ll.ai.central, ll.goa, ll.goa.west, ll.goa.central, ll.goa.east
 #' @param design.year Survey design year for files to retrieve. Returns the most recent year when NULL or closest year before the design year when there isn't an exact match.
 #' @param set.crs Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area (EPSG:3338) is used.
-#' @param use.survey.bathymetry Should survey bathymetry be used?
 #' @param fix.invalid.geom Should invalid geometries be corrected using st_make_valid() and st_wrap_dateline()?
 #' @param split.land.at.180 Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = TRUE.
 #' @param high.resolution.coast Should the State of Alaska polygon be a high resolution Alaska Department of Natural Resources 1:63360 scale polygon that includes smaller islands and a more detailed coastline? The higher resolution polygon (high.resolution.coast = TRUE) takes longer to load/plot and is recommended for spatial operations performed at high resolution (e.g., masking high resolution rasters). The lower resolution polygon (high.resolution.coast = FALSE) is recommended for general mapping and visualization purposes. Default = FALSE.
@@ -90,7 +89,6 @@
 get_base_layers <- function(select.region,
                             design.year = NULL,
                             set.crs = "EPSG:4269",
-                            use.survey.bathymetry = TRUE,
                             split.land.at.180 = TRUE,
                             fix.invalid.geom = TRUE,
                             high.resolution.coast = FALSE) {
@@ -199,55 +197,35 @@ get_base_layers <- function(select.region,
 
   }
 
-  if(!any(select.region %in%
-          c("ebs.slope","bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6", "ll.ebs", "ll.bssa1",
-            "ll.bssa2", "ll.bssa3", "ll.bssa4", "ll.bssa5")
-  )
+  # Retrieve bathymetry contours -------------------------------------------------------------------
+  # Different contours are used for different regions
+
+  contours <- c(50, 100, 200)
+
+  if(
+    any(select.region %in% c("goa", "goa.west", "goa.east", "ai", "ai.west", "ai.central", "ai.east"))
+    ) {
+    contours <- c(100, 200, 300, 500, 700, 1000)
+  }
+
+  if(
+    any(
+      select.region %in%
+         c("ll.ai", "ll.ai.west", "ll.ai.central", "ll.goa", "ll.goa.east", "ll.goa.west",
+           "ll.goa.central", "ebs.slope","bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6",
+           "ll.ebs", "ll.bssa1", "ll.bssa2", "ll.bssa3", "ll.bssa4", "ll.bssa5")
+      )
   ) {
-    akland <- akland["Russia" != akland$COUNTRY, ]
-
-    bathymetry <- sf::st_read(
-      system.file("extdata", "npac_0-1000_meters.shp", package = "akgfmaps"),
-      quiet = TRUE
-    )
+    contours <- c(50, 100, 200, 400, 500, 600, 800, 1000)
   }
 
-  # Retrieve bathymetry layers ---------------------------------------------------------------------
-  # Different contours are used for different regions; Refactor when new bathymetry is available
-
-  if(any(
-    select.region %in% c("bs.south", "sebs", "bs.all", "ebs", "nbs", "bs.north", "ecs", "ebs.ecs")
-  )
-  ) {
-    bathymetry <- sf::st_read(
-      system.file("extdata", "npac_0-200_meters.shp", package = "akgfmaps"),
-      quiet = TRUE
+  bathymetry <-
+    sf::st_read(
+      system.file("extdata", "bathymetry.gpkg", package = "akgfmaps"),
+      query = "SELECT DEPTH_M, GEOM as geometry FROM CONTOURS"
     )
-  }
 
-  if(any(
-    select.region %in%
-    c("ai","ai.west", "ai.central", "ai.east", "goa", "goa.west", "goa.east", "ll.ai",
-      "ll.ai.west", "ll.ai.central", "ll.goa", "ll.goa.east", "ll.goa.west",
-      "ll.goa.central")
-  )) {
-    bathymetry <- sf::st_read(
-      system.file("extdata", "alaska_race.shp", package = "akgfmaps"),
-      quiet = TRUE
-    )
-  }
-
-  if(any(
-    select.region %in%
-    c("ebs.slope","bssa1", "bssa2", "bssa3", "bssa4", "bssa5", "bssa6", "ll.ebs", "ll.bssa1",
-      "ll.bssa2", "ll.bssa3", "ll.bssa4", "ll.bssa5")
-  )
-  ) {
-    bathymetry <- sf::st_read(
-      system.file("extdata", "npac_0-1000_meters.shp", package = "akgfmaps"),
-      quiet = TRUE
-    )
-  }
+  bathymetry <- bathymetry[bathymetry[['DEPTH_M']] %in% contours, ]
 
   # Query bottom trawl survey layers from built-in geopackage and filter by design.year ----
   if(!is.null(survey_definition_id)) {

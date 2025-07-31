@@ -12,7 +12,7 @@ The 1 x 1 km bathymetry raster in akgfmaps was derived from a compilation of dig
 
 ![](/assets/bathy_images/akgfmaps_contours.png)
 
-[Bathymetry contours/isolines](./inst/extdata/bathymetry.gpkg) in were calculated from the 100 x 100 m raster using as.contour() from the [terra R package](https://rspatial.org/) to obtain depth contour lines for 50, 100, 200, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000, and 3000 m isobaths. Contour lines were simplified using the Douglas-Peuker algorithm with a 0.3 retention proportion using ms_simplify() in the [rmapshaper package](https://andyteucher.ca/rmapshaper/). Contours with length \< 40 km were removed.
+[Bathymetry contours/isolines](./inst/extdata/bathymetry.gpkg) in were calculated from a 100 x 100 m raster using `as.contour()` from the [terra R package](https://rspatial.org/) to obtain depth contour lines for 50, 100, 200, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000, and 3000 m isobaths. Contour lines were simplified using the Douglas-Peuker algorithm with a 0.3 retention proportion using `ms_simplify()` in the [rmapshaper package](https://andyteucher.ca/rmapshaper/). Contours with length \< 40 km were removed.
 
 ## Disclaimer
 

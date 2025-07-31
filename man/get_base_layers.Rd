@@ -8,7 +8,6 @@ get_base_layers(
   select.region,
   design.year = NULL,
   set.crs = "EPSG:4269",
-  use.survey.bathymetry = TRUE,
   split.land.at.180 = TRUE,
   fix.invalid.geom = TRUE,
   high.resolution.coast = FALSE
@@ -20,8 +19,6 @@ get_base_layers(
 \item{design.year}{Survey design year for files to retrieve. Returns the most recent year when NULL or closest year before the design year when there isn't an exact match.}
 
 \item{set.crs}{Which coordinate reference system should be used? If 'auto', Alaska Albers Equal Area (EPSG:3338) is used.}
-
-\item{use.survey.bathymetry}{Should survey bathymetry be used?}
 
 \item{split.land.at.180}{Logical. If set.crs is a geographic coordinate system, should the land polygon be split at 180 degrees to prevent polygons from wrapping around the world? Default = TRUE.}
 
