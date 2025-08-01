@@ -1,6 +1,8 @@
 # Bathymetry in akgfmaps
 
-As of August 2025, bathymetry data in akgfmaps cover the eastern Bering Sea shelf, eastern Bering sea slope, northern Bering Sea, Gulf of Alaska, and Aleutian Islands from 0-3000 m. Coverage does not include Chukchi Sea, Beaufort Sea, western Bering Sea, Prince William Sound, interior southeast Alaska, and basins deeper than 3000 m.
+**Last update: August 2025**
+
+Bathymetry data in akgfmaps cover the eastern Bering Sea shelf, eastern Bering sea slope, northern Bering Sea, Gulf of Alaska, and Aleutian Islands from 0-3000 m.
 
 ## Raster (1 x 1 km)
 
