@@ -198,7 +198,7 @@ get_base_layers <- function(select.region,
   }
 
   # Retrieve bathymetry contours -------------------------------------------------------------------
-  # Different contours are used for different regions
+  # Different contour values are typically used for different surveys/regions
 
   contours <- c(50, 100, 200)
 
@@ -222,7 +222,8 @@ get_base_layers <- function(select.region,
   bathymetry <-
     sf::st_read(
       system.file("extdata", "bathymetry.gpkg", package = "akgfmaps"),
-      query = "SELECT DEPTH_M, GEOM as geometry FROM CONTOURS"
+      query = "SELECT DEPTH_M, GEOM as geometry FROM CONTOURS",
+      quiet = TRUE
     )
 
   bathymetry <- bathymetry[bathymetry[['DEPTH_M']] %in% contours, ]
