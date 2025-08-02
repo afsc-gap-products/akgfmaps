@@ -14,7 +14,7 @@ The 1 x 1 km bathymetry raster in akgfmaps was derived from a compilation of dig
 
 ![](/assets/bathy_images/akgfmaps_contours.png)
 
-[Bathymetry contours/isolines](./inst/extdata/bathymetry.gpkg) in were calculated from a 100 x 100 m raster using `as.contour()` from the [terra R package](https://rspatial.org/) to obtain depth contour lines for 50, 100, 200, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000, and 3000 m isobaths. Contour lines were simplified using the Douglas-Peuker algorithm with a 0.3 retention proportion using `ms_simplify()` in the [rmapshaper package](https://andyteucher.ca/rmapshaper/). Contours with length \< 40 km were removed.
+[Bathymetry contours/isolines](./inst/extdata/bathymetry.gpkg) in were calculated from a 100 x 100 m raster using `as.contour()` from the [terra R package](https://rspatial.org/) to obtain depth contour lines for 50, 100, 200, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000, and 3000 m isobaths. Contours with length \< 40 km were removed then contours were smoothed using point densification and Gaussian kernel regression smoothing as implemented in the smoothr package ( `smoothr::smooth(method = "ksmooth")`; [Strimas-Mackey, 2023](https://CRAN.R-project.org/package=smoothr)).
 
 ## Disclaimer
 
@@ -28,9 +28,12 @@ GEBCO Bathymetric Compilation Group 2024, 2024. *The GEBCO_2024 Grid - a continu
 
 NOAA NGDC, 2009. Prince William Sound, Alaska 8/3 Arc-second MHHW Coastal Digital Elevation Model. NOAA National Centers for Environmental Information. <https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ngdc.mgg.dem:735>
 
-Hijmans R (2025). *terra: Spatial Data Analysis*. R package version 1.8-61. <https://rspatial.org/>
+Hijmans, R., 2025. *terra: Spatial Data Analysis*. R package version 1.8-61. <https://rspatial.org/>
 
 Prescott, M.M., Zimmermann, M., 2015. *Smooth sheet bathymetry of Norton Sound.* U.S. Dep. Commer., NOAA Tech. Memo. NMFS-AFSC-298. 23. <https://doi.org/10.7289/V5V69GJ9>
+
+Strimas-Mackey, M., 2023. *smoothr: Smooth and Tidy Spatial Features*. R package version 1.0.1.
+  <https://CRAN.R-project.org/package=smoothr>
 
 Zimmermann, M., Prescott, M.M., 2021. *Passes of the Aleutian Islands: First detailed description.* Fish. Oceanogr. 30, 280–299. <https://doi.org/10.1111/fog.12519>
 
