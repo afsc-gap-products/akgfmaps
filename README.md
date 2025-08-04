@@ -63,7 +63,7 @@ The table below lists the vector data (polygons, lines, and points) in the packa
 | All | ADFG Statistical/Management Areas | get_adfg_areas() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](http://www.adfg.alaska.gov/index.cfm?adfg=fishingCommercialByFishery.statmaps) |
 | All | NMFS Statistical Areas | get_nmfs_areas() | [A. Jahn (AKRO)](https://github.com/abby-jahn) | [Link](https://www.ecfr.gov/cgi-bin/text-idx?mc=true&node=pt50.13.679&rgn=div5#ap50.13.679.0000_0nbspnbspnbsp.1) |
 | All | Ecosystem Status Report Areas/Subareas | get_esr_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](https://apps-afsc.fisheries.noaa.gov/refm/reem/ecoweb/index.php) |
-| All | North Pacific bathymetry (0-3000 m) | get_base_layers() | [Multiple sources](./assets/akgfmaps_bathymetry.md) | [Description](./assets/akgfmaps_bathymetry.md) |
+| All | North Pacific bathymetry (0-3000 m) | get_base_layers() | [Multiple sources](./assets/bathymetry_description/akgfmaps_bathymetry.md) | [Description](./assets/bathymetry_description/akgfmaps_bathymetry.md) |
 | AI | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | AI | Groundfish survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | AI | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |

@@ -1,13 +1,14 @@
-akgfmaps 4.1.0 (August 1, 2025)
+akgfmaps 4.1.0 (In progress)
 ----------------------------------------------------------------
 
 NEW FEATURES
 
 - Added 1 x 1 km bathymetry raster to the package.
-- Added a single Alaska-wide bathymetry contours to replace the old
-  one derived from 1998 GEBCO bathymetry.
-- Bathymetry geopackage: inst/extdata/bathymetry.gpkg
-- Bathymetry description: github.com/asses/akgfmaps_bathymetry.md
+- Added a single Alaska-wide bathymetry contours to replace out-
+ dated contours that had been derived from 1998 GEBCO bathymetry.
+- Bathymetry geopackage in inst/extdata/bathymetry.gpkg
+- Bathymetry description in
+    assets/bathymetry_description/akgfmaps_bathymetry.md
 
 FUNCTIONALITY CHANGES
 
