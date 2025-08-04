@@ -22,10 +22,12 @@ See [NEWS](./NEWS) for information about package updates.
 The package can installed for R versions >= 4.0 using the using the following code:
 
 ```{r}
-remotes::install_github("afsc-gap-products/akgfmaps", build_vignettes = TRUE)
+library(remotes)
+
+install_github("afsc-gap-products/akgfmaps", build_vignettes = TRUE)
 ```
 
-Spatial features are saved locally during package installation. Therefore, the package must be re-installed to access newer versions of spatial features when they are updated.
+Spatial data are saved locally during package installation. Therefore, the package must be re-installed to access new spatial data when they are updated.
 
 # Vignettes
 
@@ -35,15 +37,22 @@ Vignettes can be accessed using:
 browseVignettes('akgfmaps')
 ```
 
-# GeoPackage downloads
+# Download GeoPackages
 
-akgfmaps primarily uses [GeoPackages (.gpkg)](https://www.geopackage.org/) for storing spatial data because they can store vector and raster data in a single SQLite database file and support large datasets, rich attribute types, and full Unicode. This makes them suitable for long-term data management and ensures field names and attributes are consistent with other AFSC data products.
+akgfmaps primarily uses [GeoPackages (.gpkg)](https://www.geopackage.org/) for storing spatial data. GeoPackages can store vector and raster data in a single SQLite database file. They support large datasets, rich attribute types, and full Unicode, which makes them suitable for long-term data management and helps to ensure attributes in spatial data are consistent with other AFSC data products. Some data sets have not been converted to GeoPackages.
 
-Users who do not wish to install the package can download geopackages containing [current and historical bottom trawl survey features](./inst/extdata/afsc_bottom_trawl_surveys.gpkg), [current EBS/NBS crab stratum features](./inst/all_crab_from_akgfmaps_grid.gpkg), and [coastline features](./inst/extdata/land_layers.gpkg). Zip files containing GeoPackages and metadata for AFSC groundfish bottom trawl survey regions are also available [here](https://github.com/afsc-gap-products/akgfmaps/tree/main/assets/bts_geopackages).
+Please note that both current and historical spatial data sets are included in the package. The contents of the GeoPackages gets updated over time due to improvements in bathymetry information, changes in survey coverage, error corrections, and other factors ([NEWS](./NEWS)). Therefore, it is recommended that users access spatial data using the most recent package release to ensure up-to-date spatial data are used for analysis. However, users can also access and download GeoPackages directly:
 
-# Vector geometries in the package
+- [GAP bottom trawl survey features (current and historical)](./inst/extdata/afsc_bottom_trawl_surveys.gpkg): Survey areas, groundfish strata, and stations/grids for the EBS shelf, NBS, EBS Slope, GOA, AI, and Chukchi Sea. Contains both current and historical features.
+- [GAP bottom trawl survey features by region (current)](https://github.com/afsc-gap-products/akgfmaps/tree/main/assets/bts_geopackages): Current survey areas, groundfish strata, and stations/grids by region. Only current features.
+- [EBS/NBS crab strata](./inst/all_crab_from_akgfmaps_grid.gpkg): Current EBS/NBS crab strata.
+- [Coastline](./inst/extdata/land_layers.gpkg): Coastline polygons for Alaska, western Canada, and eastern Russia.
+- [Bathymetry](./inst/extdata/bathymetry.gpkg): Compiled 1x1 km raster and 50-3000 m bathymetry contours ( [description](./assets/akgfmaps_bathymetry.md)).
 
-The table below lists the vector geometry layers (polygons) in the package by region (AI = Aleutian Islands, BSS = eastern Bering Sea Slope, ECS = eastern Chukchi Sea, GOA = Gulf of Alaska, NBS = Northern Bering Sea, SEBS = southeastern Bering Sea continental shelf). 
+
+# Vector data in the package
+
+The table below lists the vector data (polygons, lines, and points) in the package by region (AI = Aleutian Islands, BSS = eastern Bering Sea Slope, ECS = eastern Chukchi Sea, GOA = Gulf of Alaska, NBS = Northern Bering Sea, SEBS = southeastern Bering Sea continental shelf). 
 
 | Region  | Layer | Function | Contributor/Creator | Source | 
 |---------|-------|----------|-------------|--------|
@@ -54,7 +63,7 @@ The table below lists the vector geometry layers (polygons) in the package by re
 | All | ADFG Statistical/Management Areas | get_adfg_areas() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](http://www.adfg.alaska.gov/index.cfm?adfg=fishingCommercialByFishery.statmaps) |
 | All | NMFS Statistical Areas | get_nmfs_areas() | [A. Jahn (AKRO)](https://github.com/abby-jahn) | [Link](https://www.ecfr.gov/cgi-bin/text-idx?mc=true&node=pt50.13.679&rgn=div5#ap50.13.679.0000_0nbspnbspnbsp.1) |
 | All | Ecosystem Status Report Areas/Subareas | get_esr_regions() | [M. Callahan (PSMFC/AKFIN)](https://github.com/MattCallahan-NOAA) | [Link](https://apps-afsc.fisheries.noaa.gov/refm/reem/ecoweb/index.php) |
-| All | North Pacific bathymetry (0-1000 m) | get_base_layers() | A. Grieg (AFSC Ret.) | GEBCO 1998 |
+| All | North Pacific bathymetry (0-3000 m) | get_base_layers() | [Multiple sources](./assets/bathymetry_description/akgfmaps_bathymetry.md) | [Description](./assets/bathymetry_description/akgfmaps_bathymetry.md) |
 | AI | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | AI | Groundfish survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
 | AI | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
@@ -86,3 +95,5 @@ The table below lists the vector geometry layers (polygons) in the package by re
 ## Legal disclaimer
 
 This repository is a software product and is not official communication of the National Oceanic and Atmospheric Administration (NOAA), or the United States Department of Commerce (DOC). All NOAA GitHub project code is provided on an 'as is' basis and the user assumes responsibility for its use. Any claims against the DOC or DOC bureaus stemming from the use of this GitHub project will be governed by all applicable Federal law. Any reference to specific commercial products, processes, or services by service mark, trademark, manufacturer, or otherwise, does not constitute or imply their endorsement, recommendation, or favoring by the DOC. The DOC seal and logo, or the seal and logo of a DOC bureau, shall not be used in any manner to imply endorsement of any commercial product or activity by the DOC or the United States Government.
+
+Bathymetric data in akgfmaps are not to be used for navigation. For navigation products, please refer to U.S. Nautical Charts available from the NOAA Office of Coast Survey [(https://www.nauticalcharts.noaa.gov/)](https://www.nauticalcharts.noaa.gov/).

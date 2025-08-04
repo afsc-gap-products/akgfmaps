@@ -1,3 +1,37 @@
+akgfmaps 4.1.0 (August 4, 2025)
+----------------------------------------------------------------
+
+AFSC survey groups have historically used a variety of diff-
+erent bathymetry shapefiles derived from different sources and
+created at different times for publications/presentations/etc.
+This release replaces historical bathymetry contours in
+akgfmaps with a continuous bathymetry contour line data set
+derived from modern bathymetry data. The new bathymetry contour
+covers all Alaska marine regions from 10-3000 m and is intended
+to be used in region and subregion maps.
+
+NEW FEATURES
+
+- Added 1 x 1 km bathymetry raster to the package.
+- Added a single Alaska-wide bathymetry contours to replace out-
+  dated contours that had been derived from 1998 GEBCO bathymetry
+  and other unknown sources.
+- Bathymetry geopackage in inst/extdata/bathymetry.gpkg
+- Bathymetry description in
+    assets/bathymetry_description/akgfmaps_bathymetry.md
+
+FUNCTIONALITY CHANGES
+
+- Field names have changed for new bathymetry contours (now DEPTH_M).
+- use.survey.bathymetry argument in get_base_layers() has been
+  deprecated.
+
+BUG FIX
+
+- Fix instances where Russia was not showing up in some multiple
+  region selections using get_base_layers().
+
+
 akgfmaps 4.0.8 (July 9, 2025)
 ----------------------------------------------------------------
 
