@@ -1,3 +1,6 @@
+  <!-- badges: start -->
+  [![R-CMD-check](https://github.com/sean-rohan-NOAA/akgfmaps/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sean-rohan-NOAA/akgfmaps/actions/workflows/R-CMD-check.yaml)
+  <!-- badges: end -->
 # akgfmaps
 
 The akgfmaps package is used to vector geometries that are commonly needed for mapping and spatial analysis in Alaska marine management areas, marine statistical areas, and fishery-independent survey regions in Alaska. 
