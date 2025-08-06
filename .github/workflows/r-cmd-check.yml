@@ -10,10 +10,8 @@ on:
 name: r-cmd-check
 
 jobs:
-
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
-
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
@@ -24,21 +22,18 @@ jobs:
           - {os: macOS-latest, r: 'release'}
 
     env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      RSPM: ${{ matrix.config.rspm }}
 
-     steps:
+    steps:
       - uses: actions/checkout@v4
 
-      # This single action replaces all your manual setup, install, and check steps.
-      # It handles R setup, Pandoc setup, dependency installation, and running the check.
       - uses: r-lib/actions/check-r-package@v2
         with:
           args: "--no-manual --as-cran"
           error-on: "error"
           check-dir: "check"
 
-      # This step is still useful for debugging failures
       - name: Upload check results
         if: failure()
         uses: actions/upload-artifact@v4
