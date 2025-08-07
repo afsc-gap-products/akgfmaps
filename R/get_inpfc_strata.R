@@ -117,7 +117,7 @@ get_inpfc_strata <- function(select.region, set.crs, use.v3 = FALSE, design.year
   }
 
   strata <- sf::st_read(
-    system.file("extdata", "afsc_bottom_trawl_surveys.gpkg", package = "akgfmaps"),
+    system.file("extdata", "afsc_bts_strata.gpkg", package = "akgfmaps"),
     query = paste0("SELECT SURVEY_DEFINITION_ID, AREA_NAME,
                       DESIGN_YEAR, AREA_ID, AREA_M2, GEOM AS geometry
                      FROM INPFC_STRATA WHERE SURVEY_DEFINITION_ID IN (",

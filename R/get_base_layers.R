@@ -232,7 +232,7 @@ get_base_layers <- function(select.region,
   if(!is.null(survey_definition_id)) {
 
     survey.area <- sf::st_read(
-      system.file("extdata", "afsc_bottom_trawl_surveys.gpkg", package = "akgfmaps"),
+      system.file("extdata", "afsc_bts_strata.gpkg", package = "akgfmaps"),
       query = paste0("SELECT SURVEY_DEFINITION_ID, SURVEY_NAME,
                       DESIGN_YEAR, AREA_ID, AREA_M2, GEOM AS geometry
                      FROM SURVEY_AREA WHERE SURVEY_DEFINITION_ID IN (",
@@ -246,7 +246,7 @@ get_base_layers <- function(select.region,
       )
 
     survey.grid <- sf::st_read(
-      system.file("extdata", "afsc_bottom_trawl_surveys.gpkg", package = "akgfmaps"),
+      system.file("extdata", "afsc_bts_stations.gpkg", package = "akgfmaps"),
       query = paste0("SELECT SURVEY_DEFINITION_ID, DESIGN_YEAR, GRID_ID,
                       STATION, AREA_ID AS STRATUM, AREA_M2, GEOM AS geometry
                      FROM SURVEY_GRID WHERE SURVEY_DEFINITION_ID IN (",
@@ -261,7 +261,7 @@ get_base_layers <- function(select.region,
 
 
     survey.strata <- sf::st_read(
-      system.file("extdata", "afsc_bottom_trawl_surveys.gpkg", package = "akgfmaps"),
+      system.file("extdata", "afsc_bts_strata.gpkg", package = "akgfmaps"),
       query = paste0("SELECT SURVEY_DEFINITION_ID, DESIGN_YEAR, AREA_ID AS STRATUM,
                       AREA_M2, GEOM AS geometry FROM SURVEY_STRATA WHERE SURVEY_DEFINITION_ID IN (",
                      paste(survey_definition_id, collapse = ", "), ")"

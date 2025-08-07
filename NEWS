@@ -1,5 +1,22 @@
-akgfmaps 4.1.0 (August 4, 2025)
+akgfmaps 4.1.0 (August 6, 2025)
 ----------------------------------------------------------------
+
+NEW FEATURES
+
+The GOA bottom trawl survey was restratified in 2025. Part of
+restratification included removing parts of historical GOA
+survey area from the southeast and near Unimak Pass in order
+to align the restratified survey with NMFS statistical area
+boundaries. To facilitate the change, akgfmaps includes GOA
+survey geometries that excise parts of the 1984 survey area,
+strata, and grid that are outside of the 2025 survey area.
+These polygons are designated as SURVEY_DEFINITION_ID = 47
+with DESIGN_YEAR = 2024.
+
+- Added 2024 GOA DESIGN_YEAR polygons as a built-in data sets
+  to survey_grid, survey_area, and survey_strata tables in
+  inst/extdata/afsc_bts_strata.gpkg and
+  inst/extdata/afsc_bts_stations.gpkg
 
 AFSC survey groups have historically used a variety of diff-
 erent bathymetry shapefiles derived from different sources and
@@ -9,8 +26,6 @@ akgfmaps with a continuous bathymetry contour line data set
 derived from modern bathymetry data. The new bathymetry contour
 covers all Alaska marine regions from 10-3000 m and is intended
 to be used in region and subregion maps.
-
-NEW FEATURES
 
 - Added 1 x 1 km bathymetry raster to the package.
 - Added a single Alaska-wide bathymetry contours to replace out-
@@ -22,6 +37,9 @@ NEW FEATURES
 
 FUNCTIONALITY CHANGES
 
+- Split bottom trawl survey station/stratum/area GeoPackage
+  (afsc_bottom_trawl_surveys.gpkg) into two geopackages to stay below
+  GitHub file size limits.
 - Field names have changed for new bathymetry contours (now DEPTH_M).
 - use.survey.bathymetry argument in get_base_layers() has been
   deprecated.
