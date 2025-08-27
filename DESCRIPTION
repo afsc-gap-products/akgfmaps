@@ -1,15 +1,15 @@
 Package: akgfmaps
 Type: Package
-Title: Alaska Groundfish and Ecosystem Survey Area Mapping
-Version: 4.1.0
-Date: 2025-08-01
+Title: Alaska Groundfish, Crab, and Ecosystem Survey Area Mapping
+Version: 4.1.1
+Date: 2025-08-27
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
-    person("Emily", "Markowitz", email = "emily.markowitz@noaa.gov", role = "ctb"),
-    person("Zack", "Oyafuso", email = "zack.oyafuso@noaa.gov", role = "ctb"),
-    person("Matt", "Callahan", email = "matt.callahan@noaa.gov", role = "ctb"),
-    person("Jason", "Conner", email = "jason.conner@noaa.gov", role = "ctb"),
-    person("Emily", "Ryznar", email = "emily.ryznar@noaa.gov", role = "ctb"),
-    person("Katy", "Echave", email = "katy.echave@noaa.gov", role = "ctb"),
+    person("Zack", "Oyafuso", email = "zack.oyafuso@noaa.gov", role = "aut"),
+    person("Emily", "Markowitz", email = "emily.markowitz@noaa.gov", role = "aut"),
+    person("Matt", "Callahan", email = "matt.callahan@noaa.gov", role = "aut"),
+    person("Jason", "Conner", email = "jason.conner@noaa.gov", role = "aut"),
+    person("Katy", "Echave", email = "katy.echave@noaa.gov", role = "aut"),
+    person("Emily", "Ryznar", email = "emily.ryznar@noaa.gov", role = "aut"),
     person("Liz", "Dawson", role = "ctb"),
     person("Ned", "Laman", email = "ned.laman@noaa.gov", role = "ctb"))
 Maintainer: Sean Rohan <sean.rohan@noaa.gov>

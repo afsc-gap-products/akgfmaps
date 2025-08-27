@@ -1,3 +1,13 @@
+akgfmaps 4.1.1 (August 27, 2025)
+----------------------------------------------------------------
+
+BUG FIX
+
+- Fix degenerate geometry error that occurred when constructing
+  boundaries for "goa.west" station using the GOA station grid
+  from 4.0.6.
+
+
 akgfmaps 4.1.0 (August 6, 2025)
 ----------------------------------------------------------------
 
