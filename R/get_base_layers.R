@@ -499,7 +499,9 @@ get_base_layers <- function(select.region,
   # Set plot boundary ------------------------------------------------------------------------------
   if(all(select.region %in% c("ai.east", "ai.west", "ai.central", "goa.west", "goa.east"))) {
 
-    lat.lon.grid <- sf::st_transform(survey.grid, crs = "EPSG:4269")
+    lat.lon.grid <-
+      sf::st_transform(survey.grid, crs = "EPSG:4269") |>
+      sf::st_make_valid()
 
     grid_index <- numeric()
 

@@ -4,21 +4,25 @@
 \name{akgfmaps-package}
 \alias{akgfmaps}
 \alias{akgfmaps-package}
-\title{akgfmaps: Alaska Groundfish and Ecosystem Survey Area Mapping}
+\title{akgfmaps: Alaska Groundfish, Crab, and Ecosystem Survey Area Mapping}
 \description{
 Functions and vector geometry layers ('shapefiles') for making maps and conducting spatial analyses in Alaska marine regions.
 }
 \author{
 \strong{Maintainer}: Sean Rohan \email{sean.rohan@noaa.gov}
 
+Authors:
+\itemize{
+  \item Zack Oyafuso \email{zack.oyafuso@noaa.gov}
+  \item Emily Markowitz \email{emily.markowitz@noaa.gov}
+  \item Matt Callahan \email{matt.callahan@noaa.gov}
+  \item Jason Conner \email{jason.conner@noaa.gov}
+  \item Katy Echave \email{katy.echave@noaa.gov}
+  \item Emily Ryznar \email{emily.ryznar@noaa.gov}
+}
+
 Other contributors:
 \itemize{
-  \item Emily Markowitz \email{emily.markowitz@noaa.gov} [contributor]
-  \item Zack Oyafuso \email{zack.oyafuso@noaa.gov} [contributor]
-  \item Matt Callahan \email{matt.callahan@noaa.gov} [contributor]
-  \item Jason Conner \email{jason.conner@noaa.gov} [contributor]
-  \item Emily Ryznar \email{emily.ryznar@noaa.gov} [contributor]
-  \item Katy Echave \email{katy.echave@noaa.gov} [contributor]
   \item Liz Dawson [contributor]
   \item Ned Laman \email{ned.laman@noaa.gov} [contributor]
 }
