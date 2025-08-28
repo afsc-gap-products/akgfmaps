@@ -1,4 +1,4 @@
-# Generate zip files with regional shapefiles
+# Generate zip files with regional geopackages
 # Run for every new release or when shapefiles are updated
 library(akgfmaps)
 
