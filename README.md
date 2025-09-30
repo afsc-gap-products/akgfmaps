@@ -50,7 +50,7 @@ Please note that both current and historical spatial data sets are included in t
 - [GAP bottom trawl survey features by region (current)](https://github.com/afsc-gap-products/akgfmaps/tree/main/assets/bts_geopackages): Current survey areas, groundfish strata, and stations/grids by region. Only current features.
 - [EBS/NBS crab strata](./inst/all_crab_from_akgfmaps_grid.gpkg): Current EBS/NBS crab strata.
 - [Coastline](./inst/extdata/land_layers.gpkg): Coastline polygons for Alaska, western Canada, and eastern Russia.
-- [Bathymetry](./inst/extdata/bathymetry.gpkg): Compiled 1x1 km raster and 50-3000 m bathymetry contours ( [description](./assets/akgfmaps_bathymetry.md)).
+- [Bathymetry](./inst/extdata/bathymetry.gpkg): Compiled 1x1 km raster and 50-3000 m bathymetry contours ([description](./assets/bathymetry_description/akgfmaps_bathymetry.md)).
 
 
 # Vector data in the package
