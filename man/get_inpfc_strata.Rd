@@ -4,14 +4,12 @@
 \alias{get_inpfc_strata}
 \title{INPFC strata for the GOA or AI}
 \usage{
-get_inpfc_strata(select.region, set.crs, use.v3 = FALSE, design.year = NULL)
+get_inpfc_strata(select.region, set.crs, design.year = NULL)
 }
 \arguments{
 \item{select.region}{Region for INPFC strata. Either GOA or AI.}
 
 \item{set.crs}{Which coordinate reference system should be used? If 'auto', an Albers Equal Area coordinate reference system is automatically assigned.}
-
-\item{use.v3}{Should stratum geometries from akgfmaps v3 be used? Default is FALSE.}
 
 \item{design.year}{Survey design year for files to retrieve. Returns the most recent year when NULL or closest year before the design year when there isn't an exact match.}
 }

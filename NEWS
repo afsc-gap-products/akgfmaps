@@ -1,3 +1,68 @@
+akgfmaps 4.2.0 (December 23, 2025) 
+----------------------------------------------------------------
+
+Completed the planned obsolescence of functions and internal 
+files/data sets from akgfmaps versions before 4.0.0. They had 
+been temporarily maintained to avoid breaking backwards 
+compatibility, as described in the release notes for version 
+4.0.0.
+
+FUNCTIONALITY CHANGES
+
+1. Removed 30 legacy shapefiles from inst/extdata to avoid
+replication and reduce the package size by ~25%. Removed files 
+are listed below and the new location for the layer, or its 
+replacement, is provided in parentheses. 
+
+- Alaska_Coastline.shp (land_layers.gpkg)
+- Alaska_Generalized.shp (land_layers.gpkg)
+- EBS_NBS_2019.shp (afsc_bts_strata.gpkg)
+- ai_area.shp (afsc_bts_strata.gpkg; DESIGN_YEAR = 1991)
+- ai_grid.shp (afsc_bts_stations.gpkg; DESIGN_YEAR = 1991)
+- ai_strata.shp (afsc_bts_strata.gpkg; DESIGN_YEAR = 1991)
+- ak_russia.shp (land_layers.gpkg; US polygons deprecated)
+- akland.shp (land_layers.gpkg; US polygons deprecated)
+- alaska_canada_dcw.shp (land_layers.gpkg; US polygons depre-
+  cated)
+- alaska_race.shp (land_layers.gpkg; US polygons deprecated)
+- bs_grid.shp (afsc_bts_stations.gpkg; DESIGN_YEAR = 2024)
+- bs_grid_w_corners (afsc_bts_stations.gpkg; 
+  DESIGN_YEAR = 2010)
+- bssa1to6_2022.shp (deprecated)
+- bssa_survey_boundary_2022.shp (deprecated)
+- chukchi_strata.shp (afsc_bts_strata.gpkg; 
+  DESIGN_YEAR = 2012)
+- chukchi_survey_boundary.shp (afsc_bts_strata.gpkg; 
+  DESIGN_YEAR = 2012)
+- e_russia (land_layers.gpkg)
+- ebs_chukchi_strata.shp (afsc_bts_strata.gpkg; 
+  DESIGN_YEAR = 2012)
+- ebs_chukchi_survey_boundary.shp (afsc_bts_strata.gpkg; 
+  DESIGN_YEAR = 2012)
+- ebs_strata.shp (afsc_bts_strata.gpkg; DESIGN_YEAR = 2022)
+- ebs_survey_boundary.shp (afsc_bts_strata.gpkg; 
+  DESIGN_YEAR = 2022)
+- goa_area.shp (afsc_bts_strata.gpkg; DESIGN_YEAR = 1984)
+- goa_grid.shp (afsc_bts_stations.gpkg; DESIGN_YEAR = 1984)
+- goa_strata.shp (afsc_bts_strata.gpkg; DESIGN_YEAR = 1984)
+- nebs_strata.shp (afsc_bts_strata.gpkg; DESIGN_YEAR = 2022)
+- nebs_survey_boundary.shp (afsc_bts_stations.gpkg; 
+  DESIGN_YEAR = 2022)
+- npac_0-1000_meters.shp (deprecated; new version in 
+  bathymetry.gpkg)
+- npac_0-200_meters.shp (deprecated; new version in 
+  bathymetry.gpkg)
+- npac_bathy_1998.shp (deprecated; new version in 
+  bathymetry.gpkg)
+- slope_strata.shp (afsc_bts_strata.gpkg; DESIGN_YEAR = 2023)
+
+2. Removed get_base_layers_v3().
+3. Removed use.v3 argument from get_inpfc_strata().
+4. Removed use.survey.bathymetry argument from make_idw_map().
+
+
+FUNCTIONALITY CHANGES
+
 akgfmaps 4.1.2 (August 28, 2025)
 ----------------------------------------------------------------
 
