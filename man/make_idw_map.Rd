@@ -21,7 +21,6 @@ make_idw_map(
   key.title.units = "CPUE (kg/ha)",
   log.transform = FALSE,
   idw.nmax = 4,
-  use.survey.bathymetry = TRUE,
   return.continuous.grid = TRUE
 )
 }
@@ -57,8 +56,6 @@ make_idw_map(
 \item{log.transform}{Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.}
 
 \item{idw.nmax}{Maximum number of adjacent stations to use for interpolation. Default = 8}
-
-\item{use.survey.bathymetry}{Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE}
 
 \item{return.continuous.grid}{If TRUE, also returns an extrapolation grid on a continuous scale.}
 }

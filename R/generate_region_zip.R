@@ -134,6 +134,6 @@ generate_region_zip <- function(select.region, set.crs = "EPSG:3338", zip.path =
 
   unlink(tmp_path, recursive = TRUE)
 
-  message("generate_region_zip: ", length(tmp_files), " shapefiles saved to ", zip_path)
+  message("generate_region_zip: Files saved to ", zip_path, ":", tmp_files)
 
 }

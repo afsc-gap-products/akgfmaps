@@ -6,12 +6,6 @@ testthat::test_that("Test regions exists",
                     }
 )
 
-testthat::test_that("Test get survey bathymetry ",
-                    {
-                      expect_true(class(get_survey_bathymetry(select.region = "ebs", set.crs = "auto"))[1] == "sf")
-                    }
-)
-
 testthat::test_that("Test Bering Sea grid filtering",
                     {
                       bs_south <- suppressWarnings(akgfmaps::get_base_layers(select.region = "bs.south",
