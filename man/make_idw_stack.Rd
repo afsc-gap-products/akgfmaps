@@ -19,8 +19,7 @@ make_idw_stack(
   in.crs = "+proj=longlat",
   out.crs = "EPSG:3338",
   log.transform = FALSE,
-  idw.nmax = 4,
-  use.survey.bathymetry = TRUE
+  idw.nmax = 4
 )
 }
 \arguments{
@@ -53,8 +52,6 @@ make_idw_stack(
 \item{log.transform}{Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.}
 
 \item{idw.nmax}{Maximum number of adjacent stations to use for interpolation. Default = 8}
-
-\item{use.survey.bathymetry}{Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE}
 }
 \value{
 Returns a list containing:
