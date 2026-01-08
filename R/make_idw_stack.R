@@ -17,7 +17,6 @@
 #' @param out.crs Character vector containing the coordinate reference system for projecting the extrapolation grid. The default is Alaska Albers Equal Area (EPSG:3338).
 #' @param log.transform Character vector indicating whether CPUE values should be log-transformed for IDW. Default = FALSE.
 #' @param idw.nmax Maximum number of adjacent stations to use for interpolation. Default = 8
-#' @param use.survey.bathymetry Logical indicating if historical survey bathymetry should be used instead of continuous regional bathymetry. Default = TRUE
 #' @details
 #' This function include an argument for algorithmic break selection using the `set.breaks` argument. However, algorithmic break selection is provided for convenience purposes and **users are strongly encouraged to select their own breaks based on the properties of their data**. No single algorithm in the package can be expected to perform well in all cases. See ?classInt::classIntervals for a algorithmic break selection method options.
 #' @return Returns a list containing:
@@ -45,8 +44,7 @@ make_idw_stack <- function(x = NA,
                            in.crs = "+proj=longlat",
                            out.crs = "EPSG:3338",
                            log.transform = FALSE,
-                           idw.nmax = 4,
-                           use.survey.bathymetry = TRUE) {
+                           idw.nmax = 4) {
 
   var1.var <- var1.pred <- id_temp <- NULL
 
@@ -80,11 +78,6 @@ make_idw_stack <- function(x = NA,
   # Assign CRS to handle automatic selection--------------------------------------------------------
   if(out.crs == "auto") {
     out.crs <- map_layers$crs
-  }
-
-  # Use survey bathymetry---------------------------------------------------------------------------
-  if(use.survey.bathymetry) {
-    map_layers$bathymetry <- get_survey_bathymetry(select.region = region, set.crs = out.crs)
   }
 
   # Generate extrapolation grid---------------------------------------------------------------------

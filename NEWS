@@ -1,3 +1,11 @@
+akgfmaps 4.2.1 (January 8, 2026) 
+----------------------------------------------------------------
+
+BUG FIX
+
+- Removed use.survey.bathymetry argument from make_idw_stack().
+  Argument was deprecated in 4.2.0.
+
 akgfmaps 4.2.0 (December 23, 2025) 
 ----------------------------------------------------------------
 
