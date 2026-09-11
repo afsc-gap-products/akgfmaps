@@ -1,8 +1,8 @@
-citEntry(entry = "software",
+citEntry(entry = "Misc",
  title = "akgfmaps: Alaska Groundfish, Crab, and Ecosystem Survey Area Mapping",
  year = "2026",
- author = "SK Rohan, MW Callahan, J Connor, EA Laman, EH Markowitz, ZS Oyafuso, ZS, ER Ryznar",
- textVersion = "Rohan, SK, Callahan, MW, Connor, J, Laman, EA, Markowitz, EH, Oyafuso, ZS, and Ryznar, ER. 2026. akgfmaps: Alaska Groundfish, Crab, and Ecosystem Survey Area Mapping. R package version 4.2.2. doi: 10.5281/zenodo.16973192", 
+ author = "SK Rohan, MW Callahan, J Conner, EA Laman, EH Markowitz, ZS Oyafuso, ER Ryznar",
+ textVersion = "Rohan, SK, Callahan, MW, Conner, J, Laman, EA, Markowitz, EH, Oyafuso, ZS, and Ryznar, ER. 2026. akgfmaps: Alaska Groundfish, Crab, and Ecosystem Survey Area Mapping. R package version 4.2.2. doi: 10.5281/zenodo.16973192", 
  url = "https://github.com/afsc-gap-products/akgfmaps",
  doi = "10.5281/zenodo.16973192"
 )

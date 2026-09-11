@@ -99,7 +99,7 @@ The table below lists the vector data (polygons, lines, and points) in the packa
 
 # Citation
 
-Rohan, SK, Callahan, MW, Connor, J, Laman, EA, Markowitz, EH, Oyafuso, ZS, and Ryznar, ER. 2026. akgfmaps: Alaska Groundfish, Crab, and Ecosystem Survey Area Mapping. R package version 4.2.2. [doi: 10.5281/zenodo.16973192](https://doi.org/10.5281/zenodo.16973192)
+Rohan, SK, Callahan, MW, Conner, J, Laman, EA, Markowitz, EH, Oyafuso, ZS, and Ryznar, ER. 2026. akgfmaps: Alaska Groundfish, Crab, and Ecosystem Survey Area Mapping. R package version 4.2.2. [doi: 10.5281/zenodo.16973192](https://doi.org/10.5281/zenodo.16973192)
 
 ## Legal disclaimer
 
