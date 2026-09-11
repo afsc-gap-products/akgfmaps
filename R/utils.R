@@ -195,3 +195,17 @@ select_design_year <- function(x, design.year = NULL, layer.type = NA) {
   return(output)
 
 }
+
+
+#' Calculate Spatial Centroids Silently
+#'
+#' A wrapper around \code{\link[sf]{st_centroid}} that safely suppresses warnings. 
+#'
+#' @param x An \code{sf}, \code{sfc}, or \code{sfg} object representing spatial geometries.
+#'
+#' @return An object of the same class as \code{x} containing the point geometries of the centroids.
+#' @noRd
+
+st_centroid_no_warn <- function(x) {
+  suppressWarnings(sf::st_centroid(x))
+}

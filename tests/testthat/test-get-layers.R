@@ -8,8 +8,8 @@ testthat::test_that("Test regions exists",
 
 testthat::test_that("Test Bering Sea grid filtering",
                     {
-                      bs_south <- suppressWarnings(akgfmaps::get_base_layers(select.region = "bs.south",
-                                                                             set.crs = "WGS84"));
+                      bs_south <- akgfmaps::get_base_layers(select.region = "bs.south",
+                                                                             set.crs = "WGS84");
                       bs_north <- suppressWarnings(akgfmaps::get_base_layers(select.region = "nbs",
                                                                              set.crs = "WGS84"));
                       expect_equal(length(bs_north$survey.grid$geometry), 144);

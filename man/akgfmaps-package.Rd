@@ -13,6 +13,7 @@ Functions and vector geometry layers ('shapefiles') for making maps and conducti
 
 Authors:
 \itemize{
+  \item Sean Rohan \email{sean.rohan@noaa.gov}
   \item Zack Oyafuso \email{zack.oyafuso@noaa.gov}
   \item Emily Markowitz \email{emily.markowitz@noaa.gov}
   \item Matt Callahan \email{matt.callahan@noaa.gov}

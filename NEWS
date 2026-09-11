@@ -1,3 +1,12 @@
+akgfmaps 4.2.2 (September 11, 2026) 
+----------------------------------------------------------------
+
+BUG FIX
+
+- Suppress st_centroid() warning messages from GOA and AI 
+  subregion selection using get_base_layers().
+
+
 akgfmaps 4.2.1 (January 8, 2026) 
 ----------------------------------------------------------------
 

@@ -58,9 +58,9 @@ ggplot() +
                      breaks = sebs$lat.breaks) +
   theme_bw()
 
-# EBS bottom trawl survey layers in NAD83 (EPSG:4269) with corner stations, 2022 design year survey strata, and high resolution
-# coastline. High resolution coastline takes longer to load and plot but is recommended when land
-# polygons are used for spatial analysis
+# EBS BT survey layers in NAD83 (EPSG:4269) with corner stations, 2022 design year strata, 
+# and high resolution coastline. High resolution coastline takes longer to load and plot but is 
+# recommended when land polygons are used for spatial analysis.
 
 sebs_corners <- get_base_layers(select.region = "sebs",
                                 set.crs = "EPSG:4269",

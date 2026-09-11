@@ -1,8 +1,8 @@
 Package: akgfmaps
 Type: Package
 Title: Alaska Groundfish, Crab, and Ecosystem Survey Area Mapping
-Version: 4.2.1
-Date: 2026-01-08
+Version: 4.2.2
+Date: 2026-09-11
 Authors@R: c(person("Sean", "Rohan", email = "sean.rohan@noaa.gov", role = c("aut", "cre")),
     person("Zack", "Oyafuso", email = "zack.oyafuso@noaa.gov", role = "aut"),
     person("Emily", "Markowitz", email = "emily.markowitz@noaa.gov", role = "aut"),
@@ -23,10 +23,10 @@ Description: Functions and vector geometry layers ('shapefiles') for making maps
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
     rmarkdown
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0

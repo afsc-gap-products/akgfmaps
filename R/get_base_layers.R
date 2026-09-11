@@ -37,9 +37,9 @@
 #'                      breaks = sebs$lat.breaks) +
 #'   theme_bw()
 #'
-#' # EBS bottom trawl survey layers in NAD83 (EPSG:4269) with corner stations, 2022 design year survey strata, and high resolution
-#' # coastline. High resolution coastline takes longer to load and plot but is recommended when land
-#' # polygons are used for spatial analysis
+#' # EBS BT survey layers in NAD83 (EPSG:4269) with corner stations, 2022 design year strata, 
+#' # and high resolution coastline. High resolution coastline takes longer to load and plot but is 
+#' # recommended when land polygons are used for spatial analysis.
 #'
 #' sebs_corners <- get_base_layers(select.region = "sebs",
 #'                                 set.crs = "EPSG:4269",
@@ -507,39 +507,39 @@ get_base_layers <- function(select.region,
 
     if("ai.east" %in% select.region) {
       grid_index <- c(grid_index,
-                      which(sf::st_coordinates(sf::st_centroid(lat.lon.grid))[,1] > -173.5 &
-                            sf::st_coordinates(sf::st_centroid(lat.lon.grid))[,1] < 0 &
+                      which(sf::st_coordinates(st_centroid_no_warn(lat.lon.grid))[,1] > -173.5 &
+                            sf::st_coordinates(st_centroid_no_warn(lat.lon.grid))[,1] < 0 &
                               lat.lon.grid$SURVEY_DEFINITION_ID == 52)
       )
     }
 
     if("ai.central" %in% select.region) {
       grid_index <- c(grid_index,
-                      which((sf::st_coordinates(sf::st_centroid(lat.lon.grid))[,1] <= -173.5 |
-                             (sf::st_coordinates(sf::st_centroid(lat.lon.grid))[,1] > 178.5)) &
-                            sf::st_coordinates(sf::st_centroid(lat.lon.grid))[,2] < 53.25 &
+                      which((sf::st_coordinates(st_centroid_no_warn(lat.lon.grid))[,1] <= -173.5 |
+                             (sf::st_coordinates(st_centroid_no_warn(lat.lon.grid))[,1] > 178.5)) &
+                            sf::st_coordinates(st_centroid_no_warn(lat.lon.grid))[,2] < 53.25 &
                               lat.lon.grid$SURVEY_DEFINITION_ID == 52)
       )
     }
 
     if("ai.west" %in% select.region) {
       grid_index <- c(grid_index,
-                      which(sf::st_coordinates(sf::st_centroid(lat.lon.grid))[,1] > 0 &
-                            sf::st_coordinates(sf::st_centroid(lat.lon.grid))[,1] <= 178.5 &
+                      which(sf::st_coordinates(st_centroid_no_warn(lat.lon.grid))[,1] > 0 &
+                            sf::st_coordinates(st_centroid_no_warn(lat.lon.grid))[,1] <= 178.5 &
                               lat.lon.grid$SURVEY_DEFINITION_ID == 52)
       )
     }
 
     if("goa.west" %in% select.region) {
       grid_index <- c(grid_index,
-                      which(sf::st_coordinates(sf::st_centroid(lat.lon.grid))[,1] < -150 &
+                      which(sf::st_coordinates(st_centroid_no_warn(lat.lon.grid))[,1] < -150 &
                               lat.lon.grid$SURVEY_DEFINITION_ID == 47)
       )
     }
 
     if("goa.east" %in% select.region) {
       grid_index <- c(grid_index,
-                      which(sf::st_coordinates(sf::st_centroid(lat.lon.grid))[,1] >= -150 &
+                      which(sf::st_coordinates(st_centroid_no_warn(lat.lon.grid))[,1] >= -150 &
                               lat.lon.grid$SURVEY_DEFINITION_ID == 47)
       )
     }
