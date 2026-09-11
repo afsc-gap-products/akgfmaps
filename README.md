@@ -1,4 +1,6 @@
-  <!-- badges: start -->[![R-CMD-check](https://github.com/sean-rohan-NOAA/akgfmaps/actions/workflows/r-cmd-check.yaml/badge.svg)](https://github.com/sean-rohan-NOAA/akgfmaps/actions/workflows/r-cmd-check.yaml)     [![DOI](https://zenodo.org/badge/242933923.svg)](https://doi.org/10.5281/zenodo.16973192)<!-- badges: end -->
+  <!-- badges: start -->[![R-CMD-check](https://github.com/sean-rohan-NOAA/akgfmaps/actions/workflows/r-cmd-check.yaml/badge.svg)](https://github.com/sean-rohan-NOAA/akgfmaps/actions/workflows/r-cmd-check.yaml)
+  [![DOI](https://zenodo.org/badge/242933923.svg)](https://doi.org/10.5281/zenodo.16973192)
+  <!-- badges: end -->
 
 
 # akgfmaps
