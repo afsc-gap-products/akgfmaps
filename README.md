@@ -1,6 +1,8 @@
   <!-- badges: start -->
   [![R-CMD-check](https://github.com/sean-rohan-NOAA/akgfmaps/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sean-rohan-NOAA/akgfmaps/actions/workflows/R-CMD-check.yaml)
+  [![DOI](https://zenodo.org/badge/242933923.svg)](https://doi.org/10.5281/zenodo.16973192)
   <!-- badges: end -->
+
 # akgfmaps
 
 The akgfmaps package is used to vector geometries that are commonly needed for mapping and spatial analysis in Alaska marine management areas, marine statistical areas, and fishery-independent survey regions in Alaska. 
@@ -78,9 +80,9 @@ The table below lists the vector data (polygons, lines, and points) in the packa
 | BSS | Groundfish survey strata | get_base_layers() | A. Grieg (AFSC Ret.) | |
 | ECS  | Bottom trawl survey area | get_base_layers() | B. Lauth (AFSC Ret.) | |
 | ECS  | Bottom trawl survey grid | get_base_layers() | B. Lauth (AFSC Ret.) | |
-| GOA | Bottom trawl survey area | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
-| GOA | Groundfish survey strata | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
-| GOA | Bottom trawl survey grid | get_base_layers() | [N. Laman (AFSC)](https://github.com/Ned-Laman-NOAA) | |
+| GOA | Bottom trawl survey area | get_base_layers() | [Z. Oyafuso (AFSC)](https://github.com/zoyafuso-NOAA) | |
+| GOA | Groundfish survey strata | get_base_layers() | [Z. Oyafuso (AFSC)](https://github.com/zoyafuso-NOAA) | |
+| GOA | Bottom trawl survey grid | get_base_layers() | [Z. Oyafuso (AFSC)](https://github.com/zoyafuso-NOAA) | |
 | NBS | Bottom trawl survey area | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
 | NBS | Groundfish survey strata | get_base_layers() | [J. Conner (AFSC)](https://github.com/Jason-Conner-NOAA) | [Link](https://github.com/afsc-gap-products/bering-sea-spatial) |
 | NBS | Bottom trawl survey grid | get_base_layers() | J. Benson (AFSC Ret.) | |
@@ -94,6 +96,10 @@ The table below lists the vector data (polygons, lines, and points) in the packa
 | SEBS | Pribilof Island BKC strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
 | SEBS | Pribilof Island RKC strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
 | SEBS | St. Matthew's BKC strata | get_crab_strata() | [E. Ryznar (AFSC)](https://github.com/eryznar) | |
+
+# Citation
+
+Rohan, SK, Callahan, MW, Connor, J, Laman, EA, Markowitz, EH, Oyafuso, ZS, E, Ryznar, ER. 2026. akgfmaps: Alaska Groundfish, Crab, and Ecosystem Survey Area Mapping. R package version 4.2.2. [doi: 10.5281/zenodo.16973192](https://doi.org/10.5281/zenodo.16973192)
 
 ## Legal disclaimer
 
