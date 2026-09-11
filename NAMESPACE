@@ -31,13 +31,19 @@ import(stars)
 import(terra)
 import(units)
 importFrom(classInt,classIntervals)
-importFrom(grDevices,dev.off)
-importFrom(grDevices,png)
+importFrom(grDevices,
+  dev.off,
+  png
+)
 importFrom(methods,is)
-importFrom(stats,reshape)
-importFrom(stats,sd)
+importFrom(stats,
+  reshape,
+  sd
+)
 importFrom(tools,toTitleCase)
-importFrom(utils,read.csv)
-importFrom(utils,sessionInfo)
-importFrom(utils,write.csv)
-importFrom(utils,zip)
+importFrom(utils,
+  read.csv,
+  sessionInfo,
+  write.csv,
+  zip
+)
