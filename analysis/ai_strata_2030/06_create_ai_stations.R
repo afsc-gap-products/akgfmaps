@@ -1,109 +1,118 @@
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## Project: Update Aleutian Islands stations with updated bathymetry
+## Project: Create AI stations from the new AI strata, transfer the trawlability
+##          status from the old stations to the new stations following a series
+##          of case logic. 
 ## Author:  Zack Oyafuso (zack.oyafuso@noaa.gov)
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+rm(list = ls())
 
 ## Import libraries
 library(terra)
-library(akgfmaps) ## v.4.1.2
+library(sf)
+library(akgfmaps) 
+
+shared_dir <- "G:/My Drive/Aleutian Island BTS Redesign/shapefiles/"
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Import AI stations with trawlability information as of the 2024 BTS
+##   Turn NA TRAWLABLE values to "UNK"
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ai_base_layers <- akgfmaps::get_base_layers(select.region = "AI",
-                                            set.crs = "EPSG:3338") 
 ai_stations_current <- 
-  sf::st_read(dsn = "Y:/RACE_GF/AI-GOA/shapefiles/aigrid_stratum_corrected.shp")
-ai_stations_current$TRAWLABLE <- 
-  ifelse(test = ai_stations_current$Field2 == "[NULL]",
-         yes = "UNK", 
-         no = ai_stations_current$Field2)
+  sf::st_read(dsn = paste0(shared_dir, 
+                           "historical_objects/current_ai_stations.gpkg")) |>
+  transform(TRAWLABLE = ifelse(test = is.na(x = TRAWLABLE),
+                              yes = "UNK", 
+                              no = TRAWLABLE))
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##   Import new stratum polygons and 5-km grid
+##   Import new stratum polygons and 5-km grid created for the GOA 2025 design
+##   Import historical tow paths and remove Green Hope (VESSEL 83) and 80s data
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ai_grid_5km <- sf::st_read(dsn = "analysis/goa_strata_2025/goaai_grid_2025.shp")
-ai_strata_new <- sf::st_read(dsn = "analysis/ai_strata_2028/ai_strata_2028.gpkg")
+ai_strata_new <- sf::st_read(dsn = paste0(shared_dir, 
+                                          "final_objects/ai_strata_2030.gpkg")) |>
+  transform(STRATUM = AREA_ID) |>
+  subset(select = "STRATUM")
 
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##   Import tow data
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-if (!file.exists("output/ai/shapefiles/ai_towpath.shp")) {
-  
-  library(navmaps)
-  library(gapindex)
-  ## Connect to Oracle. Make sure you are connected to the NOAA internal 
-  ## network or VPN.  
-  navmaps::get_gps_data(channel = channel, region = "ai")
-  navmaps::make_towpaths(region = "ai")
-  
-  ## Move shapefile folder into the analysis/goa_strata_2025 folder
-  file.copy(from = "output/ai/shapefiles/", 
-            to = "analysis/ai_strata_2028/",
-            recursive = TRUE)
-  
-  towpaths <- sf::st_read(dsn = "output/ai/shapefiles/ai_towpath.shp")
-  towpath_mid <- sf::st_read(dsn = "output/ai/shapefiles/ai_midpoint.shp")
-  
-} else {
-  towpaths <- sf::st_read(dsn = "output/ai/shapefiles/ai_towpath.shp")
-  towpath_mid <- sf::st_read(dsn = "output/ai/shapefiles/ai_midpoint.shp")
-}
-## Remove Green Hope (VESSEL 83) and 80s data
-towpaths <- subset(x = towpaths,
-                   subset = CRUISE >= 199100 & VESSEL != 83)
+towpaths <- sf::st_read(dsn = paste0(shared_dir, "towpaths/ai_towpath.shp")) |>
+  subset(subset = CRUISE >= 199100 & VESSEL != 83)
 towpaths_mid <- sf::st_centroid(x = towpaths)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##   Import tow data
+##   Create version 1 of the ai stations: the result of the intersection of the 
+##   5km survey grid and the new ai strata. STATION is a concatenation of the 
+##   Grid ID and the Stratum. 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ai_stations_v1 <- sf::st_intersection(x = ai_grid_5km,
                                       y = ai_strata_new)
 ai_stations_v1$STATION <- paste0(ai_stations_v1$GRIDID, "-", 
                                  ai_stations_v1$STRATUM)
 
-## Intersect the station polygons with the trawl_polygons to calculate any new 
-## stations with mixed trawlability information. 
+## Intersect v1 with the current ai stations with TRAWLABLE status. This is the 
+## first step in transferring the trawlability information from the old to the
+## new stations. Because we're using both a new grid and new strata, the old
+## stations won't line up with the new stations. So the resulting new stations
+## now contain 1 or more of the new stations. 
 ai_stations_v1_trawl <- 
   sf::st_intersection(x = ai_stations_v1, 
-                      y = ai_stations_current[, c("TRAWLABLE", "ID")])
+                      y = ai_stations_current[, c("TRAWLABLE", "GRID_ID")])
+sf::st_write(obj = ai_stations_v1_trawl, 
+             dsn = paste0(shared_dir, 
+                          "intermediate_objects/ai_stations_v1_trawl.gpkg"))
 
-ai_stations_v2_trawl <-
+## In this intersection, there are areas of the new stations outside of the old
+## survey footprint that are left out. Extract these bits, assign them as 
+## "UNK" because these are new survey areas 
+ai_station_bits <- st_difference(ai_stations_v1, 
+                                 st_union(st_combine(ai_stations_current))) 
+ai_station_bits$TRAWLABLE <- "UNK"
+
+sf::st_write(obj = ai_station_bits,
+             dsn = paste0(shared_dir, 
+                          "intermediate_objects/ai_stations_bits.gpkg"))
+
+## Combine the ai_station_bits to v1 of the stations based on the group_by 
+## statement as version 2
+ai_stations_v2_trawl <- 
   ai_stations_v1_trawl %>%
+  subset(select = names(sf::st_drop_geometry(ai_station_bits) )) |>
+  rbind(ai_station_bits) |>
   dplyr::group_by(GRIDID, STRATUM, STATION, TRAWLABLE) %>% 
   dplyr::summarize()
 
-## Query 2025 stations that inherited > 1 trawlability statuses from the 
-## legacy GOA survey stations 
+sf::st_write(obj = ai_stations_v2_trawl,
+             dsn = paste0(shared_dir, 
+                          "intermediate_objects/ai_stations_v2_trawl.gpkg"))
+
+## Query new stations that inherited > 1 trawlable statuses from the 
+## legacy GOA survey stations.
 stns_mixed_trawl_info <- 
   names(x = which(x = table(ai_stations_v2_trawl$STATION) > 1))
 
-## `updated_stations` will contain updated trawlability status of the stations
-## within the stns_mixed_trawl_info 
+## For these stations, we need to resolve the trawlable status. 
+## `updated_stations` will contain the updated trawlability status of the 
+## stations contained in stns_mixed_trawl_info 
 updated_stations <- list()
 
-# sf::st_write(obj = ai_stations_v2_trawl, 
-# dsn = "Y:/RACE_GF/Oyafuso/AI New Strata/ai_stations_v2_trawl.gpkg")
-
+## Each station in stns_mixed_trawl_info will fall under one of four scenarios
+## assign each station an updated trawlable status based on the scenario 
 for (istn in stns_mixed_trawl_info) { ## loop over affected stations -- start
   
-  ## Subset stations within istn
-  temp_stn <- subset(x = ai_stations_v2_trawl,
-                     subset = STATION == istn)
+  ## Subset the mixture of historical stations within istn
+  temp_stn <- subset(x = ai_stations_v2_trawl, subset = STATION == istn)
   
-  plot(st_geometry(obj = temp_stn),
-       axes = F,
-       col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLABLE])
-  points(sf::st_geometry(towpaths_mid),  lwd = 2, xpd = F)
-  plot(sf::st_geometry(towpaths), add = TRUE, lwd = 2, xpd = NA)
+  # plot(st_geometry(obj = temp_stn),
+  #      axes = F,
+  #      col = c("Y" = "green", "UNK" = "grey", "N" = "red")[temp_stn$TRAWLABLE])
+  # points(sf::st_geometry(towpaths_mid),  lwd = 2, xpd = F)
+  # plot(sf::st_geometry(towpaths), add = TRUE, lwd = 2, xpd = NA)
   
   ## Scenario 1: station is a mixture of T area (with good tows paths)
   ## and either UKN or UT area. Since there is a good tow in the station,
   ## the whole station is turned to T if it contains the midpoint of the 
   ## towline. 
   
-  ## Query whether there are any good tows in the mixed station
+  ## Query whether there are any good tows in the temp_stn
   good_tow_in_station <- 
     # sum(sf::st_intersects(x = towpaths_mid[towpaths_mid$PERFORM >= 0, ],
     #                       y = temp_stn, 
@@ -127,7 +136,7 @@ for (istn in stns_mixed_trawl_info) { ## loop over affected stations -- start
     temp_stn$FLAG <- 1
     temp_stn$AREA_KM2 <- sf::st_area(x = temp_stn)
     units(x = temp_stn$AREA_KM2) <- "km2"
-  } else {
+  } else { ## If there are no historical good tows in temp_stn 
     
     ## Subset any stns features that are either trawlable (Y) or unknown (UNK) 
     open_area <- subset(x = temp_stn, subset = TRAWLABLE %in% c("UNK", "Y"))
@@ -170,7 +179,8 @@ for (istn in stns_mixed_trawl_info) { ## loop over affected stations -- start
       temp_stn$FLAG <- 4
     }
   }
-  ## and then replace the merged station in new_goa_stations_2025
+  
+  ## append to updated_stations and print out the change and progress
   updated_stations <- c(updated_stations, list(temp_stn))
   cat(paste0("Station ", istn, " converted to ", 
              temp_stn$TRAWLABLE, ". Finished with ", 
@@ -181,17 +191,15 @@ for (istn in stns_mixed_trawl_info) { ## loop over affected stations -- start
 ## Bind updated stations into one sf object
 updated_stations <- do.call(dplyr::bind_rows, updated_stations)
 
-## Update newly trawlability-reassigned stations
+## Update newly trawlability-reassigned stations as version 3
 ai_stations_v3_trawl <- dplyr::bind_rows(
   ai_stations_v2_trawl[!(ai_stations_v2_trawl$STATION %in% 
                            updated_stations$STATION), ],
   updated_stations
 )
 
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##   Any leftover stations that intersect with the midpoints of good tows
-##   are turned trawlable. 
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Any trawlable stations that don't intersect with the midpoint of a good tow
+## are turned unknown
 T_areas <- sf::st_intersects(
   x = ai_stations_v3_trawl[ai_stations_v3_trawl$TRAWLABLE == "Y", ],
   y = towpaths_mid[towpaths_mid$PERFORM >= 0, ],
@@ -206,8 +214,22 @@ ai_stations_v3_trawl$TRAWLABLE[
     rownames(x = T_areas)[rowSums(x = T_areas) == 0] 
 ] <- "UNK"
 
+## Any areas outside the historical footprint that are currently unknown but
+## have good tows are turned trawlable
+stations_unk_t <- 
+  sf::st_intersection(  x = ai_stations_v3_trawl[ai_stations_v3_trawl$TRAWLABLE == "UNK", ],
+                        y = towpaths_mid[towpaths_mid$PERFORM >= 0, ]) |>
+  subset(select = "STATION") |>
+  sf::st_drop_geometry() |>
+  unique() |>
+  unlist() 
+
+ai_stations_v3_trawl$TRAWLABLE[
+  ai_stations_v3_trawl$STATION %in% stations_unk_t
+]  <- "Y"
+
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##   Recalculate area and centorid lat/lon of the new stations.
+##   Recalculate total area of the new stations.
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ai_stations_v3_trawl$AREA_KM2 <- sf::st_area(x = ai_stations_v3_trawl)
 units(x = ai_stations_v3_trawl$AREA_KM2) <- "km2"
@@ -218,7 +240,7 @@ units(x = ai_stations_v3_trawl$AREA_KM2) <- "km2"
 sf::st_write(obj = sf::st_cast(x = subset(ai_stations_v3_trawl, 
                                           select = -FLAG), 
                                to = "MULTIPOLYGON"),
-             dsn = "Y:/RACE_GF/Oyafuso/AI New Strata/ai_stations_2028.gpkg",
+             dsn = paste0(shared_dir, "final_objects/ai_stations_2030.gpkg"),
              append = FALSE)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -232,7 +254,7 @@ for (iscenario in 1:4) { ## Loop over the 4 scenarios -- start
                             subset = FLAG == iscenario)
   
   ## Open a pdf for the scenario 
-  pdf(file = paste0("analysis/ai_strata_2028/trawl_scenario_", 
+  pdf(file = paste0(shared_dir, "checks/trawl_scenario_", 
                     iscenario, ".pdf"), width = 8, height = 11, 
       onefile = T, family = "serif")
   
@@ -315,6 +337,6 @@ for (iscenario in 1:4) { ## Loop over the 4 scenarios -- start
   dev.off()
   
   ## Print message
-  cat("Finished with", paste0("analysis/goa_strata_2025/trawl_scenario_", 
+  cat("Finished with", paste0(shared_dir, "checks/trawl_scenario_", 
                               iscenario, ".pdf\n"))
 } ## Loop over the 4 scenarios -- end
