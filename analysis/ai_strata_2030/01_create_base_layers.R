@@ -1,7 +1,7 @@
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##  Create spatial polygon that captures each AI subarea
+##  Create spatial layers needed for the new Aleutian Islands survey design
 ##  Output base spatial data from akgfmaps to a form that can be imported 
-##  into ArcPro
+##  into ArcGIS Pro
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 rm(list = ls())
 
@@ -28,7 +28,7 @@ for (idir in c("coastline", "towpaths", "survey_footprint", "checks",
 ## google drive directory as gpkg files
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-## 1991 Design Year Aleutian Islands Base Layers from akgfmaps
+## 1991 Design Year Aleutian Islands base layers from akgfmaps
 ai_base_layers <- 
   akgfmaps::get_base_layers(select.region = "ai", 
                             design.year = 1991, 
@@ -37,7 +37,7 @@ ai_base_layers <-
 current_ai_strata <- ai_base_layers$survey.strata |> terra::vect()
 current_ai_stations <- ai_base_layers$survey.grid |> terra::vect()
 
-## Import Stratum table from GAP_PRODUCTS.AREA
+## Import station data with trawlability status
 current_ai_trawl_status <- gapindex::sql_query(channel = chl,
                                                query = "SELECT 
                       AIGRID_ID AS GRID_ID, 
@@ -46,16 +46,19 @@ current_ai_trawl_status <- gapindex::sql_query(channel = chl,
                       STRATUM FROM AI.AIGRID_GIS 
                     WHERE STRATUM != 0")
 
-## Merge trawlability status information with the station data
+## Merge trawlability status information with the station spatial data
 current_ai_stations <- merge(x = current_ai_stations,
                              y = current_ai_trawl_status,
                              by = c("GRID_ID", "STATION", "STRATUM"))
 
+## Import stratum information from GAP_PRODUCTS.AREA
 current_ai_strata_tbl <- 
   gapindex::sql_query(channel = chl,
                       query = "
-SELECT * 
-FROM GAP_PRODUCTS.AREA
+SELECT 
+  * 
+FROM 
+  GAP_PRODUCTS.AREA
 WHERE
   SURVEY_DEFINITION_ID = 52 
   AND DESIGN_YEAR = 1991 
@@ -108,11 +111,11 @@ bs_footprint <-
   terra::vect() 
 
 ## 2023 Design Year Bering Sea Slope survey footprint
-bss_footprint <- 
-  akgfmaps::get_base_layers(select.region = "ebs.slope", 
+bss_footprint <-
+  akgfmaps::get_base_layers(select.region = "ebs.slope",
                             design.year = 2023,
-                            set.crs = "EPSG:3338")$survey.area |> 
-  terra::vect() 
+                            set.crs = "EPSG:3338")$survey.area |>
+  terra::vect()
 
 ## Alaska Coastline West of 164 W 
 akland <- 
@@ -143,9 +146,9 @@ if (!file.exists(paste0(shared_dir, "towpaths/ai_towpath.shp"))){
 } else(paste("towpaths are already saved to", shared_dir))
 
 
-## Save objects
-for (iobj in c("bss_footprint", "bs_footprint", "goa_footprint_1984", 
-               "goa_footprint_2025")) {
+## Save objects to the shared folder to be imported into ArcGIS Pro
+for (iobj in c("bss_footprint", "bs_footprint", 
+               "goa_footprint_1984", "goa_footprint_2025")) {
   get(x = iobj) |>
     terra::writeVector(filename = paste0(shared_dir, "survey_footprint/",
                                          iobj, ".gpkg"), 
