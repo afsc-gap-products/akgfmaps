@@ -26,7 +26,7 @@ ai_bathy <- terra::rast(paste0(shared_dir,
 
 ## Import the created AI hull that we'll use as a mask on the bathy raster
 ai_hull <- terra::vect(x = paste0(shared_dir, 
-                                  "intermediate_objects/ai_hull_w_passes.gpkg"))
+                                  "intermediate_objects/ai_hull.gpkg"))
 
 ## Import base AI spatial layers from akgfmaps
 akland <- terra::vect(x = paste0(shared_dir, 
