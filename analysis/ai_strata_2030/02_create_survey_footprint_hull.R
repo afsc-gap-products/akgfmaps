@@ -36,15 +36,29 @@ library(akgfmaps)
 ## Setup directories to put the outputted spatial objects
 shared_dir <- "G:/My Drive/Aleutian Island BTS Redesign/shapefiles/"
 
-for (iobj in c("bss_footprint", "bs_footprint", "goa_footprint_1984", 
+## Import survey footprints
+for (iobj in c("bss_footprint", 
+               "bs_footprint", "goa_footprint_1984", 
                "goa_footprint_2025")) {
   assign(x = iobj, 
          value = terra::vect(x = paste0(shared_dir, "survey_footprint/",
                                         iobj, ".gpkg")))
 }; rm(iobj)
 
+## Import current strata
 current_ai_strata <- 
-  terra::vect(x = paste0(shared_dir, "historical_objects/current_ai_strata.gpkg"))
+  terra::vect(x = paste0(shared_dir, 
+                         "historical_objects/current_ai_strata.gpkg"))
+
+## Import Line object that contains current passes that split the CAI and EAI into
+## northern (Bering) and southern (Pacific) sides
+ai_passes <- 
+  terra::vect(x = paste0(shared_dir, 
+                         "AI_Passes/current_ai_passes.shp"))
+
+## Box to exclude the eastern portion of the survey area north of 54.5 N
+eastern_boundary <- 
+  terra::vect(x = paste0(shared_dir, "eastern_boundary/boundary.shp"))
 
 ## Define longitudes for each subarea (see comments above)
 longs <- c(175, 177, 180, -177, -174, -170, -168)
@@ -61,7 +75,9 @@ lines_vect <- do.call(rbind, lines_list)
 lines_vect_3338 <- terra::project(lines_vect, "EPSG:3338")
 
 ## First create a hull around the ai survey footprint, excluding the strata
-## on Petrel Bank and the SBS and add a 12 km buffer. 
+## on Petrel Bank and the SBS and add a 12 km buffer to capture extensions of
+## the survey footprint in deeper areas that are informed by the updated
+## bathymetry. 
 ai_hull <- 
   current_ai_strata[
     !current_ai_strata$STRATUM %in% c(311:314, 711, 712, 721, 722, 793, 794)
@@ -69,13 +85,17 @@ ai_hull <-
   terra::hull(type = "concave_ratio", param = 0.05) |> 
   terra::buffer(width = 12000) 
 
-## Separately isolate the Petrel Bank area and add a 3 km buffer
+## Separately isolate the Petrel Bank area and add a 3 km buffer to capture 
+## extensions of the survey footprint in deeper areas that are informed by the
+## updated bathymetry. 
 petrel_bank <- current_ai_strata[current_ai_strata$STRATUM %in% 311:314] |> 
   terra::aggregate() |> 
   terra::fillHoles() |>
   terra::buffer(width = 3000) 
 
-## Separately isolate the SBS area, add a 5 km buffer
+## Separately isolate the SBS area, add a 5 km buffer to capture extensions of 
+## the survey footprint in deeper areas that are informed by the updated 
+## bathymetry. 
 sbs_hull <- 
   current_ai_strata[ 
     current_ai_strata$STRATUM %in% c(711, 712, 721, 722, 793, 794)
@@ -90,24 +110,27 @@ sbs_hull <-
 total_ai_hull <- rbind(ai_hull, sbs_hull, goa_footprint_1984) |> 
   terra::aggregate() |>
   terra::erase(y = bs_footprint) |>
-  terra::erase(y = bss_footprint) |>
   terra::erase(y = lines_vect_3338 |> terra::buffer(width = 0.0001)) |> 
   terra::disagg() |>
+  terra::erase(y = eastern_boundary) |>
+  split(f = ai_passes)|>
   rbind(petrel_bank)
 
 total_ai_hull$INPFC_AREA <-
   c("Southern Bering Sea", "Southern Bering Sea", 
     "Eastern Aleutians", "Eastern Aleutians", 
+    "Eastern Aleutians", "Eastern Aleutians", 
+    "Central Aleutians", "Central Aleutians", 
     "Central Aleutians", "Central Aleutians", 
     "Western Aleutians", "Western Aleutians", 
-    "Southern Bering Sea", "Southern Bering Sea", 
     "Central Aleutians")
 total_ai_hull$STRATUM_NAME <-
   c("W Southern Bering Sea", "E Southern Bering Sea",
-    "E Eastern Aleutians", "W Eastern Aleutians",
-    "E Central Aleutians", "W Central Aleutians",
+    "SE Eastern Aleutians", "NE Eastern Aleutians",
+    "SW Eastern Aleutians", "NW Eastern Aleutians",
+    "SE Central Aleutians", "NE Central Aleutians", 
+    "SW Central Aleutians", "NW Central Aleutians",
     "E Western Aleutians", "W Western Aleutians",
-    "E Southern Bering Sea", "E Southern Bering Sea",
     "Petrel Bank")
 
 ## Aggregate Unimak polygon with the Southern Bering Sea polygons
@@ -116,13 +139,14 @@ total_ai_hull <- terra::aggregate(total_ai_hull,
                                   count = FALSE)
 
 ## Plot
-plot(total_ai_hull, col = RColorBrewer::brewer.pal(name = "Paired", n = 12) )
+plot(total_ai_hull,
+     col = sample(RColorBrewer::brewer.pal(name = "Paired", n = 12)) )
 plot(lines_vect_3338, add = TRUE)
 text(total_ai_hull |> terra::centroids() |> terra::crds(),
-     total_ai_hull$STRATUM_NAME, cex = 0.5)
+     total_ai_hull$STRATUM_NAME, cex = 0.5, font = 2)
 
-## Save 
-terra::writeVector(x = total_ai_hull, 
-                   filename = paste0(shared_dir, 
-                                     "intermediate_objects/ai_hull.gpkg"),
-                   overwrite = TRUE)
+## Save
+writeVector(x = total_ai_hull,
+            filename = paste0(shared_dir, 
+                              "intermediate_objects/ai_hull.gpkg"),
+            overwrite = TRUE)
