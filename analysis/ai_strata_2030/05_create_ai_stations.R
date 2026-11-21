@@ -21,8 +21,8 @@ ai_stations_current <-
   sf::st_read(dsn = paste0(shared_dir, 
                            "historical_objects/current_ai_stations.gpkg")) |>
   transform(TRAWLABLE = ifelse(test = is.na(x = TRAWLABLE),
-                              yes = "UNK", 
-                              no = TRAWLABLE))
+                               yes = "UNK", 
+                               no = TRAWLABLE))
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##   Import new stratum polygons and 5-km grid created for the GOA 2025 design
@@ -34,8 +34,14 @@ ai_strata_new <- sf::st_read(dsn = paste0(shared_dir,
   transform(STRATUM = AREA_ID) |>
   subset(select = "STRATUM")
 
-towpaths <- sf::st_read(dsn = paste0(shared_dir, "towpaths/ai_towpath.shp")) |>
-  subset(subset = CRUISE >= 199100 & VESSEL != 83)
+towpaths <- 
+  rbind(
+    sf::st_read(dsn = paste0(shared_dir, "ai_towpaths/ai_towpath.shp")) |>
+      subset(subset = CRUISE >= 199100 & VESSEL != 83),
+    sf::st_read(dsn = paste0(shared_dir, "goa_towpaths/goa_towpath.shp")) |>
+      subset(subset = CRUISE >= 199000)            
+  )
+
 towpaths_mid <- sf::st_centroid(x = towpaths)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
